@@ -4,6 +4,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getProjectBySlug, projects } from "@/data/projects"
+import { ProjectGallery } from "@/shared/components/sections/projects/project-gallery"
+import { ProjectNavigation } from "@/shared/components/sections/projects/project-navigation"
+import { ProjectResults } from "@/shared/components/sections/projects/project-results"
 import { Badge } from "@/shared/components/ui/badge"
 import { buttonVariants } from "@/shared/components/ui/button"
 
@@ -43,6 +46,10 @@ export default async function ProjectDetailPage({ params }: Props) {
 	if (!project) {
 		notFound()
 	}
+
+	const currentIndex = projects.findIndex((p) => p.slug === slug)
+	const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null
+	const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null
 
 	return (
 		<article>
@@ -111,9 +118,23 @@ export default async function ProjectDetailPage({ params }: Props) {
 						))}
 					</div>
 				</div>
+			</div>
 
-				{/* Back link */}
-				<div className="mt-16">
+			{/* Image gallery */}
+			<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+				<ProjectGallery images={project.images} title={project.title} />
+			</div>
+
+			{/* Results */}
+			<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+				<ProjectResults results={project.results} />
+			</div>
+
+			{/* Prev/Next navigation + Back link */}
+			<div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8">
+				<ProjectNavigation prev={prevProject} next={nextProject} />
+
+				<div className="mt-8">
 					<Link href="/projects" className={buttonVariants({ variant: "outline" })}>
 						&larr; Voltar aos projetos
 					</Link>
