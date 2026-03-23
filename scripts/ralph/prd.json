@@ -1,6 +1,511 @@
 {
-  "project": "",
-  "branchName": "",
-  "description": "",
-  "userStories": []
+  "project": "Portfolio Luan Campos K.",
+  "branchName": "ralph/portfolio",
+  "description": "Portfólio web multi-page criativo com animações pesadas, dark mode, e componentes shadcn. Stack: Next.js 16 + React 19 + Tailwind CSS v4 + shadcn (base-nova) + Motion + TypeScript.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Setup de dependências e configuração base",
+      "description": "As a developer, I need to install dependencies and configure the project to support animations (Motion), blog (MDX), and dark/light theme.",
+      "acceptanceCriteria": [
+        "motion is installed and working",
+        "@next/mdx, @mdx-js/loader, @mdx-js/react, @types/mdx installed",
+        "next.config.ts configured with MDX support (createMDX + pageExtensions)",
+        "mdx-components.tsx created at project root",
+        "@tailwindcss/typography installed for prose styles",
+        "next-themes installed for dark/light theme management",
+        "Folder structure created: components/layout/, components/creative/, components/sections/, data/, content/blog/",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Install shadcn components",
+      "description": "As a developer, I need to install all shadcn components used in the portfolio for visual consistency.",
+      "acceptanceCriteria": [
+        "shadcn components installed via CLI: card, badge, separator, sheet, navigation-menu, dialog, skeleton, tabs, toggle, avatar, tooltip, scroll-area, carousel, dropdown-menu",
+        "Hook use-mobile installed via shadcn",
+        "All components importable without error",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Dark/light theme system with shadcn",
+      "description": "As a visitor, I want to toggle between dark mode and light mode to browse in my preferred theme.",
+      "acceptanceCriteria": [
+        "next-themes configured with ThemeProvider in root layout",
+        "Dark mode is the default (defaultTheme: 'dark')",
+        "Respects system preference as fallback",
+        "Toggle button in navbar using shadcn dropdown-menu with options: Light, Dark, System",
+        "Icon changes between Sun/Moon (lucide-react) based on active theme",
+        "Smooth transition between themes (CSS transition on background-color)",
+        "Theme persists via cookie/localStorage",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Responsive Navbar with animation",
+      "description": "As a visitor, I want to navigate between portfolio pages via an elegant menu that reacts to scroll.",
+      "acceptanceCriteria": [
+        "Sticky navbar at top using shadcn navigation-menu as base",
+        "Links: Home, Projetos, About",
+        "Logo/name 'Luan Campos K.' on the left",
+        "Theme toggle on the right (from US-003)",
+        "Backdrop-blur + shrink effect on scroll (CSS transition + scroll event)",
+        "On mobile: hamburger menu opens shadcn sheet (side drawer) with animated links (stagger with Motion)",
+        "Uses shadcn use-mobile hook for breakpoint detection",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Footer component",
+      "description": "As a visitor, I want to see contact information and social links in the footer.",
+      "acceptanceCriteria": [
+        "Footer with shadcn separator on top",
+        "Social links: GitHub, LinkedIn, Email (lucide-react icons)",
+        "Copyright with dynamic year",
+        "Responsive layout (vertical stack on mobile, horizontal on desktop)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Root layout with Navbar and Footer",
+      "description": "As a developer, I need to assemble the root layout wrapping all pages with Navbar and Footer.",
+      "acceptanceCriteria": [
+        "layout.tsx updated with ThemeProvider, Navbar and Footer",
+        "scroll-behavior: smooth in globals.css",
+        "Content (children) fills space between Navbar and Footer (flex-grow)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Creative component — Gradient Blob",
+      "description": "As a visitor, I want to see animated decorative blobs in the hero background for visual atmosphere.",
+      "acceptanceCriteria": [
+        "Component gradient-blob.tsx in components/creative/",
+        "Blobs use CSS @keyframes (float/morph) — no JS for performance",
+        "Colors based on theme variables (oklch) — change with dark/light",
+        "position: absolute + pointer-events: none to not block interaction",
+        "Strong blur (blur-3xl) for soft glow effect",
+        "Accepts props: className, color, size, delay",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Creative component — Text Reveal",
+      "description": "As a visitor, I want to see text appearing character by character or word by word on scroll — cinematic effect.",
+      "acceptanceCriteria": [
+        "Component text-reveal.tsx in components/creative/",
+        "Uses Motion whileInView + stagger to animate each word/character",
+        "Props: text, className, delay, mode: 'words' | 'chars'",
+        "Respects prefers-reduced-motion (shows text directly without animation)",
+        "Animation uses opacity + translateY (GPU-composited)",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Creative component — Cursor Spotlight",
+      "description": "As a desktop visitor, I want to see a subtle light effect following my cursor on the dark background — premium feel.",
+      "acceptanceCriteria": [
+        "Component cursor-spotlight.tsx in components/creative/",
+        "Radial gradient follows mouse position via CSS custom properties",
+        "Uses mousemove event listener on container",
+        "Disabled on mobile (no mouse)",
+        "pointer-events: none to not block clicks",
+        "Loaded with next/dynamic({ ssr: false }) to avoid hydration cost",
+        "Subtle — must not distract from content",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Creative component — Magnetic Button",
+      "description": "As a visitor, I want important CTA buttons to 'pull' toward my cursor — interactive magnetic effect.",
+      "acceptanceCriteria": [
+        "Component magnetic-button.tsx in components/creative/",
+        "Uses Motion useMotionValue + useSpring for smooth mouse tracking",
+        "Effect active only on hover (desktop)",
+        "Accepts children and inherits shadcn button styles",
+        "Returns smoothly to original position on hover exit (spring physics)",
+        "Respects prefers-reduced-motion",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Creative component — Marquee",
+      "description": "As a visitor, I want to see a strip of technologies/tools scrolling infinitely — modern tech stack visual.",
+      "acceptanceCriteria": [
+        "Component marquee.tsx in components/creative/",
+        "Infinite horizontal scroll using CSS @keyframes translateX (no JS)",
+        "Accepts items: string[] and speed as props",
+        "Duplicates items to create seamless loop",
+        "Pauses on hover (CSS animation-play-state: paused)",
+        "Respects prefers-reduced-motion (stays static)",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Creative component — Animated Counter",
+      "description": "As a visitor, I want to see numbers counting from 0 to the final value when the section enters the screen — demonstrates impact.",
+      "acceptanceCriteria": [
+        "Component counter.tsx in components/creative/",
+        "Uses Motion useInView for trigger + animate for count-up",
+        "Props: target: number, suffix?: string (e.g. '+', '%'), duration?: number",
+        "Animates only once (first time entering viewport)",
+        "Respects prefers-reduced-motion (shows final value directly)",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Creative component — Project Card with 3D tilt",
+      "description": "As a visitor, I want project cards to have a subtle 3D effect on hover — highlights each project interactively.",
+      "acceptanceCriteria": [
+        "Component project-card.tsx in components/creative/",
+        "Base: shadcn card with custom overlay",
+        "3D tilt effect via CSS perspective + rotateX/rotateY calculated from mouse position",
+        "Overlay with gradient that reveals title and tags on hover",
+        "Cover image with subtle parallax effect on hover",
+        "Typed props: project: Project (type defined in data/projects.ts)",
+        "Clickable — navigates to /projects/[slug]",
+        "Respects prefers-reduced-motion (no tilt, normal hover)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Section Wrapper with scroll reveal",
+      "description": "As a developer, I need a reusable wrapper that animates any section with fade-up when entering the viewport.",
+      "acceptanceCriteria": [
+        "Component section-wrapper.tsx in components/layout/",
+        "Uses Motion whileInView with fadeIn + translateY(20px → 0)",
+        "Props: children, className, delay?: number",
+        "viewport: { once: true } — animates only the first time",
+        "Respects prefers-reduced-motion",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Mock project data",
+      "description": "As a developer, I need placeholder project data to build the pages.",
+      "acceptanceCriteria": [
+        "File src/data/projects.ts with exported Project type",
+        "Type includes: slug, title, subtitle, description, longDescription, coverImage, images: string[], tags: string[], category, client, year, liveUrl?, githubUrl?, featured: boolean, results: string[]",
+        "5-6 mock projects with realistic data (fictional but plausible names)",
+        "2-3 projects marked as featured: true",
+        "Images referencing paths in /public/images/projects/ (placeholder — use placeholder.svg or similar)",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Home — Hero Section",
+      "description": "As a visitor, I want to be impacted in the first seconds with an animated and striking hero.",
+      "acceptanceCriteria": [
+        "Component hero.tsx in components/sections/",
+        "Full viewport height (min-h-svh)",
+        "Large bold heading with text-reveal animation: impactful phrase about delivering results",
+        "Subtitle with short description",
+        "CTA using magnetic-button → link to /projects",
+        "gradient-blob in background (2-3 blobs with different colors)",
+        "cursor-spotlight active on entire section",
+        "Layout centered vertically and horizontally",
+        "Responsive — works well on mobile (no mouse-dependent effects)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Home — Tech Stack Marquee Section",
+      "description": "As a visitor, I want to see the technologies the dev masters in a scrolling strip.",
+      "acceptanceCriteria": [
+        "Component tech-stack.tsx in components/sections/",
+        "Uses marquee component with list of technologies",
+        "Icons or monospace text for each tech",
+        "shadcn separator above and below the strip",
+        "Wrapped in section-wrapper for fade-in on scroll",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Home — Featured Projects Section",
+      "description": "As a visitor, I want to see 2-3 highlighted projects with interactive cards that lead to details.",
+      "acceptanceCriteria": [
+        "Component featured-projects.tsx in components/sections/",
+        "Filters projects with featured: true from data/projects.ts",
+        "Renders project-card for each project",
+        "Section heading with text-reveal",
+        "Responsive grid: 1 col mobile, 2-3 cols desktop",
+        "Stagger animation on cards (each appears with incremental delay)",
+        "Link 'Ver todos os projetos' at the end → /projects",
+        "Wrapped in section-wrapper",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Home — About Preview with Counters",
+      "description": "As a visitor, I want a summary about the dev with animated impact numbers.",
+      "acceptanceCriteria": [
+        "Component about-preview.tsx in components/sections/",
+        "Split layout: text on left, counters on right",
+        "Placeholder text: brief bio, work approach",
+        "3-4 animated counters: years of experience, projects delivered, satisfied clients, technologies mastered",
+        "Each counter uses counter component with suffix ('+')",
+        "Button 'Saiba mais' → /about",
+        "Wrapped in section-wrapper",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Home — CTA Section",
+      "description": "As an interested visitor, I want a clear final section encouraging me to get in touch.",
+      "acceptanceCriteria": [
+        "Component cta.tsx in components/sections/",
+        "Impactful heading: 'Vamos construir algo incrível juntos?'",
+        "magnetic-button with link to email (mailto:)",
+        "Social links (GitHub, LinkedIn) with lucide-react icons",
+        "Differentiated background (subtle gradient or accent color)",
+        "Wrapped in section-wrapper",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Compose Home Page",
+      "description": "As a developer, I need to compose all sections in the home page in the correct order.",
+      "acceptanceCriteria": [
+        "src/app/page.tsx composes sections in order: Hero → Tech Stack → Featured Projects → About Preview → CTA",
+        "Consistent spacing between sections (py-20 or similar)",
+        "All animations work on scroll",
+        "Responsive: all sections work on mobile and desktop",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 21,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Projects listing page with filters",
+      "description": "As a visitor, I want to see all projects organized with category filters.",
+      "acceptanceCriteria": [
+        "src/app/projects/page.tsx created",
+        "Animated heading with text-reveal",
+        "Filter bar with shadcn toggle-group: All, Web, SaaS, E-commerce, Mobile",
+        "Grid of project-card with all projects (filtered by active category)",
+        "Stagger animation on cards when switching filter",
+        "Responsive layout: 1 col mobile, 2 col tablet, 3 col desktop",
+        "Metadata (title, description) for SEO",
+        "Wrapped in section-wrapper",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 22,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-023",
+      "title": "Project detail page — Layout, metadata, and loading",
+      "description": "As a visitor, I want to see full project details with hero image, info, and description.",
+      "acceptanceCriteria": [
+        "src/app/projects/[slug]/page.tsx created",
+        "await params used correctly (Next.js 16 — params is Promise)",
+        "generateStaticParams exported to pre-render all slugs",
+        "generateMetadata for dynamic title, description, og:image",
+        "Hero: cover image full-width with title overlay",
+        "Info section: client, year, tags with shadcn badge, links (live/GitHub) with shadcn button",
+        "Long description of the project rendered",
+        "loading.tsx with shadcn skeleton",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 23,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-024",
+      "title": "Project detail page — Gallery, results, and navigation",
+      "description": "As a visitor, I want to see project image gallery, results with animated counters, and prev/next navigation.",
+      "acceptanceCriteria": [
+        "Image gallery with shadcn carousel or dialog for lightbox on the project detail page",
+        "Results section with counter-animated cards",
+        "Prev/next navigation to other projects at the bottom",
+        "All sections animate with scroll reveal",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 24,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-025",
+      "title": "About page — Hero, bio, and skills",
+      "description": "As a visitor, I want to learn about the dev in detail: bio and skills.",
+      "acceptanceCriteria": [
+        "src/app/about/page.tsx created",
+        "Hero: placeholder avatar + name + title with entry animation",
+        "Bio: extended text about background, approach and philosophy (placeholder)",
+        "Skills: grid of technologies grouped by category (Frontend, Backend, DevOps, Tools) using shadcn badge and shadcn card",
+        "Metadata for SEO",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 25,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-026",
+      "title": "About page — Timeline and CTA",
+      "description": "As a visitor, I want to see professional experience timeline and a contact CTA on the about page.",
+      "acceptanceCriteria": [
+        "Timeline: professional experience in vertical timeline, each item with scroll reveal",
+        "CTA final: reuses cta.tsx component from home",
+        "All sections wrapped in section-wrapper for scroll animations",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 26,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-027",
+      "title": "Creative 404 page",
+      "description": "As a visitor who accesses an invalid URL, I want to see a 404 page with personality instead of a generic screen.",
+      "acceptanceCriteria": [
+        "src/app/not-found.tsx created",
+        "Large '404' heading with animation",
+        "Friendly message",
+        "Button to return home using shadcn button",
+        "Gradient blob in background",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 27,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-028",
+      "title": "Polish — Performance and Accessibility",
+      "description": "As a developer, I need to ensure the site is performant and accessible despite heavy animations.",
+      "acceptanceCriteria": [
+        "All animations respect prefers-reduced-motion (mediaQuery check)",
+        "Images use next/image with lazy loading",
+        "Heavy components (cursor-spotlight, magnetic-button) loaded with next/dynamic({ ssr: false })",
+        "Semantic HTML: hierarchical headings, landmarks (main, nav, footer)",
+        "Skip-to-content accessible link",
+        "Focus visible on all interactives",
+        "npm run build passes without errors",
+        "Typecheck passes"
+      ],
+      "priority": 28,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-029",
+      "title": "Polish — Metadata and SEO",
+      "description": "As a developer, I need the site to have good SEO and look good when shared on social media.",
+      "acceptanceCriteria": [
+        "Global metadata in layout.tsx: title template, description, og:image default",
+        "Each page has generateMetadata or static metadata with unique title and description",
+        "Open Graph images for social sharing",
+        "robots.txt and sitemap.xml via Next.js App Router conventions",
+        "Structured data (JSON-LD) for Person schema on home",
+        "Typecheck passes"
+      ],
+      "priority": 29,
+      "passes": false,
+      "notes": ""
+    }
+  ]
 }

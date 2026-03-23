@@ -1,0 +1,33 @@
+# Ralph Progress Log
+Started: Mon Mar 23 10:09:31 PDT 2026
+---
+
+## Codebase Patterns
+- Project uses `src/` directory: components in `src/shared/components/`, app in `src/app/`
+- shadcn UI components go in `src/shared/components/ui/`
+- Section components go in `src/shared/components/sections/`
+- Layout components go in `src/shared/components/layout/`
+- Creative/decorative components go in `src/shared/components/creative/`
+- Data files go in `src/data/`
+- Blog content goes in `content/blog/` (project root)
+- `mdx-components.tsx` lives in `src/` (inside src since project uses src dir)
+- next.config.ts uses `createMDX` wrapper from `@next/mdx`
+- Motion (not framer-motion) is the animation library — import from `"motion/react"`
+- Typecheck: `npx tsc --noEmit`
+- Lint: `npm run lint` (biome)
+- page.tsx and layout.tsx must NEVER be "use client" (Server Components only)
+
+## 2026-03-23 - US-001
+- Installed MDX dependencies: @next/mdx, @mdx-js/loader, @mdx-js/react, @types/mdx
+- Installed next-themes for dark/light theme management
+- Installed @tailwindcss/typography for prose styles
+- Configured next.config.ts with createMDX + pageExtensions
+- Created src/mdx-components.tsx
+- Created folder structure: components/layout/, components/creative/, components/sections/, data/, content/blog/
+- Motion was already installed in package.json
+- Files changed: next.config.ts, src/mdx-components.tsx, package.json, package-lock.json, .gitkeep files
+- **Learnings for future iterations:**
+  - Next.js 16 MDX docs say `useMDXComponents` takes no arguments (breaking change from older versions)
+  - The project uses biome for linting, not eslint
+  - `reactCompiler: true` is enabled in next.config — React Compiler is active
+---
