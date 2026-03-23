@@ -1,10 +1,12 @@
 "use client"
 
 import { Github, Linkedin, Mail } from "lucide-react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
-import { MagneticButton } from "@/shared/components/creative/magnetic-button"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
+
+const MagneticButton = dynamic(() => import("@/shared/components/creative/magnetic-button").then((mod) => ({ default: mod.MagneticButton })), { ssr: false })
 
 const socialLinks = [
 	{ href: "https://github.com/luancamposk", label: "GitHub", icon: Github },

@@ -8,7 +8,7 @@ import { ProjectGallery } from "@/shared/components/sections/projects/project-ga
 import { ProjectNavigation } from "@/shared/components/sections/projects/project-navigation"
 import { ProjectResults } from "@/shared/components/sections/projects/project-results"
 import { Badge } from "@/shared/components/ui/badge"
-import { buttonVariants } from "@/shared/components/ui/button"
+import { buttonVariants } from "@/shared/components/ui/button-variants"
 
 type Props = {
 	params: Promise<{ slug: string }>

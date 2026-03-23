@@ -1,7 +1,7 @@
 "use client"
 
 import { Menu, X } from "lucide-react"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -20,6 +20,7 @@ function Navbar() {
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const isMobile = useIsMobile()
 	const pathname = usePathname()
+	const prefersReduced = useReducedMotion()
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 20)
@@ -82,20 +83,20 @@ function Navbar() {
 					<>
 						{/* Backdrop */}
 						<motion.div
-							initial={{ opacity: 0 }}
+							initial={prefersReduced ? false : { opacity: 0 }}
 							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={{ duration: 0.2 }}
+							exit={prefersReduced ? undefined : { opacity: 0 }}
+							transition={prefersReduced ? { duration: 0 } : { duration: 0.2 }}
 							className="fixed inset-0 z-40 bg-black/50"
 							onClick={() => setMobileOpen(false)}
 							aria-hidden="true"
 						/>
 						{/* Side drawer */}
 						<motion.div
-							initial={{ x: "100%" }}
+							initial={prefersReduced ? false : { x: "100%" }}
 							animate={{ x: 0 }}
-							exit={{ x: "100%" }}
-							transition={{ type: "spring", damping: 25, stiffness: 300 }}
+							exit={prefersReduced ? undefined : { x: "100%" }}
+							transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 25, stiffness: 300 }}
 							className="fixed inset-y-0 right-0 z-50 flex w-3/4 max-w-sm flex-col gap-6 border-l border-border bg-background p-6 shadow-lg"
 						>
 							<div className="flex items-center justify-between">
@@ -106,7 +107,12 @@ function Navbar() {
 							</div>
 							<nav className="flex flex-col gap-2">
 								{navLinks.map((link, i) => (
-									<motion.div key={link.href} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 + i * 0.08, duration: 0.3 }}>
+									<motion.div
+										key={link.href}
+										initial={prefersReduced ? false : { opacity: 0, x: 20 }}
+										animate={{ opacity: 1, x: 0 }}
+										transition={prefersReduced ? { duration: 0 } : { delay: 0.05 + i * 0.08, duration: 0.3 }}
+									>
 										<Link
 											href={link.href}
 											onClick={() => setMobileOpen(false)}

@@ -4,10 +4,10 @@ import { ArrowRight } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { GradientBlob } from "@/shared/components/creative/gradient-blob"
-import { MagneticButton } from "@/shared/components/creative/magnetic-button"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 
 const CursorSpotlight = dynamic(() => import("@/shared/components/creative/cursor-spotlight").then((mod) => ({ default: mod.CursorSpotlight })), { ssr: false })
+const MagneticButton = dynamic(() => import("@/shared/components/creative/magnetic-button").then((mod) => ({ default: mod.MagneticButton })), { ssr: false })
 
 export function Hero() {
 	return (
