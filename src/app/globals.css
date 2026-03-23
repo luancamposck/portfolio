@@ -144,8 +144,24 @@
   animation: blob 12s ease-in-out infinite;
 }
 
+@keyframes marquee {
+  0% {
+    translate: 0 0;
+  }
+  100% {
+    translate: -50% 0;
+  }
+}
+
+@utility animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-blob {
+    animation: none;
+  }
+  .animate-marquee {
     animation: none;
   }
 }
