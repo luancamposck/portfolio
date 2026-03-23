@@ -1,0 +1,124 @@
+import { ExternalLink, Github } from "lucide-react"
+import type { Metadata } from "next"
+import Image from "next/image"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { getProjectBySlug, projects } from "@/data/projects"
+import { Badge } from "@/shared/components/ui/badge"
+import { buttonVariants } from "@/shared/components/ui/button"
+
+type Props = {
+	params: Promise<{ slug: string }>
+}
+
+export async function generateStaticParams() {
+	return projects.map((project) => ({
+		slug: project.slug
+	}))
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { slug } = await params
+	const project = getProjectBySlug(slug)
+
+	if (!project) {
+		return { title: "Projeto não encontrado" }
+	}
+
+	return {
+		title: project.title,
+		description: project.description,
+		openGraph: {
+			title: project.title,
+			description: project.description,
+			images: [{ url: project.coverImage, width: 1200, height: 630, alt: project.title }]
+		}
+	}
+}
+
+export default async function ProjectDetailPage({ params }: Props) {
+	const { slug } = await params
+	const project = getProjectBySlug(slug)
+
+	if (!project) {
+		notFound()
+	}
+
+	return (
+		<article>
+			{/* Hero: full-width cover image with title overlay */}
+			<div className="relative -mt-16 h-[50vh] min-h-[400px] w-full sm:h-[60vh]">
+				<Image src={project.coverImage} alt={project.title} fill className="object-cover" priority sizes="100vw" />
+				<div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20" />
+				<div className="absolute inset-x-0 bottom-0 pb-10 pt-16">
+					<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+						<p className="text-sm font-medium text-muted-foreground">{project.category}</p>
+						<h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">{project.title}</h1>
+						<p className="mt-3 max-w-2xl text-lg text-muted-foreground">{project.subtitle}</p>
+					</div>
+				</div>
+			</div>
+
+			{/* Info section */}
+			<div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+				<div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+					<div className="flex flex-wrap gap-6 text-sm">
+						<div>
+							<p className="font-medium text-muted-foreground">Cliente</p>
+							<p className="mt-1 font-semibold">{project.client}</p>
+						</div>
+						<div>
+							<p className="font-medium text-muted-foreground">Ano</p>
+							<p className="mt-1 font-semibold">{project.year}</p>
+						</div>
+						<div>
+							<p className="font-medium text-muted-foreground">Categoria</p>
+							<p className="mt-1 font-semibold">{project.category}</p>
+						</div>
+					</div>
+
+					<div className="flex gap-3">
+						{project.liveUrl && (
+							<a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "default", size: "lg" })}>
+								<ExternalLink data-icon="inline-start" />
+								Ver ao vivo
+							</a>
+						)}
+						{project.githubUrl && (
+							<a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline", size: "lg" })}>
+								<Github data-icon="inline-start" />
+								GitHub
+							</a>
+						)}
+					</div>
+				</div>
+
+				{/* Tags */}
+				<div className="mt-8 flex flex-wrap gap-2">
+					{project.tags.map((tag) => (
+						<Badge key={tag} variant="secondary">
+							{tag}
+						</Badge>
+					))}
+				</div>
+
+				{/* Long description */}
+				<div className="mt-12">
+					<h2 className="text-2xl font-bold">Sobre o projeto</h2>
+					<div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
+						{project.longDescription.split("\n\n").map((paragraph) => (
+							<p key={paragraph.slice(0, 40)}>{paragraph}</p>
+						))}
+					</div>
+				</div>
+
+				{/* Back link */}
+				<div className="mt-16">
+					<Link href="/projects" className={buttonVariants({ variant: "outline" })}>
+						&larr; Voltar aos projetos
+					</Link>
+				</div>
+			</div>
+		</article>
+	)
+}
