@@ -81,7 +81,7 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Focus on quality translations. Project data (titles, descriptions) stays in PT-BR — only UI labels are translated."
     },
     {
@@ -99,7 +99,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Replace all hardcoded Portuguese strings with useTranslations() calls. Server components use getTranslations() from next-intl/server."
     },
     {

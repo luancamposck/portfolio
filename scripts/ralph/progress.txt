@@ -16,6 +16,12 @@
 - Root layout (`src/app/layout.tsx`) handles fonts + html/body only; `[locale]/layout.tsx` handles ThemeProvider, Navbar, Footer, NextIntlClientProvider
 - `setRequestLocale(locale)` must be called in `[locale]/layout.tsx` for static rendering to work
 - `params` is always `Promise<{...}>` in Next.js 16 — always `await params` in pages and layouts
+- Translation namespaces mirror component names: `useTranslations('hero')`, `useTranslations('navbar')`, `getTranslations('projectsPage')` etc.
+- ICU message format for dynamic values: `t('copyright', { year })`, `t('imageAlt', { title, index })`
+- All internal links use `Link` from `@/i18n/navigation` (not `next/link`) — auto-prepends locale
+- `usePathname()` from `@/i18n/navigation` returns path without locale prefix — active state comparisons use clean paths like `/projects`
+- Server components needing translations must be `async` and use `getTranslations()` from `next-intl/server`
+- Pages with translated metadata use `generateMetadata()` (not static `export const metadata`) + `setRequestLocale(locale)` inside
 
 ---
 
@@ -77,4 +83,40 @@
   - `generateStaticParams` in `[locale]/layout.tsx` generates params for all locales; nested pages' `generateStaticParams` only need their own params (e.g. `slug`)
   - When restructuring from flat to `[locale]/`, delete `.next/` to clear stale generated types that reference old paths
   - Existing components with hardcoded `href="/projects"` still work via proxy redirect, but should be updated to use `Link` from `@/i18n/navigation` in US-006
+---
+
+## 2026-03-24 - US-005
+- Created comprehensive translation files for all 3 locales: `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- Sections translated: metadata, layout, navbar, footer, themeToggle, hero, featuredProjects, aboutPreview, cta, notFound, projectsPage, projectDetail, projectNavigation, projectResults, projectGallery, aboutPage, aboutHero, aboutBio, aboutSkills, aboutTimeline
+- EN and ES translations are natural and idiomatic, not literal machine translations
+- Translation keys use nested namespaces (e.g. `aboutPreview.stats.experience`) for clean organization
+- Files changed: `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - Translation namespace structure mirrors component hierarchy: `aboutPreview`, `aboutBio`, `aboutSkills`, `aboutTimeline` etc.
+  - `useTranslations('namespace')` in client components, `getTranslations('namespace')` in server components — both available via next-intl since NextIntlClientProvider is in `[locale]/layout.tsx`
+  - The `footer.copyright` key uses `{year}` ICU placeholder — use `t('copyright', { year: new Date().getFullYear() })` when consuming
+  - `projectDetail.imageAlt` uses `{title}` and `{index}` ICU placeholders for dynamic image alt text
+  - Timeline experiences are keyed by company slug (nexus, techvista, criativa, startup) — components should iterate these keys or use a known list
+  - Project data (titles, descriptions, results) stays in PT-BR as hardcoded data — only UI labels/chrome are translated
+---
+
+## 2026-03-24 - US-006
+- Updated all existing components to use translations instead of hardcoded strings
+- Client components use `useTranslations('namespace')` from next-intl
+- Server components (footer, project-navigation) use `getTranslations('namespace')` from next-intl/server
+- Replaced `next/link` Link with `@/i18n/navigation` Link in all components with internal hrefs (navbar, hero, featured-projects, about-preview, not-found-content, project-card, project-navigation, project detail page)
+- Replaced `next/navigation` usePathname with `@/i18n/navigation` usePathname in navbar
+- Updated locale layout to translate skip-to-content link
+- Updated home page with translated JSON-LD metadata
+- Converted about and projects pages from static `metadata` export to `generateMetadata()` for translated metadata
+- Updated project detail page labels (Cliente, Ano, Categoria, Ver ao vivo, Sobre o projeto, Voltar aos projetos) with translations
+- Files changed: navbar.tsx, footer.tsx, theme-toggle.tsx, hero.tsx, featured-projects.tsx, about-preview.tsx, cta.tsx, not-found-content.tsx, about-bio.tsx, about-hero.tsx, about-skills.tsx, about-timeline.tsx, project-gallery.tsx, project-navigation.tsx, project-results.tsx, project-card.tsx, [locale]/layout.tsx, [locale]/page.tsx, [locale]/about/page.tsx, [locale]/projects/page.tsx, [locale]/projects/[slug]/page.tsx
+- **Learnings for future iterations:**
+  - `useTranslations('namespace')` for client components, `getTranslations('namespace')` for server components — pattern is consistent across the codebase
+  - `Link` from `@/i18n/navigation` automatically prepends locale to href; `usePathname()` from same module strips locale prefix — active state comparison works unchanged
+  - Server components using `getTranslations` must be `async` — e.g. Footer and ProjectNavigation became `async function`
+  - Pages using `generateMetadata` with translations need `setRequestLocale(locale)` called inside `generateMetadata` for static rendering
+  - For timeline/skills components with translated category titles but untranslated data (tech names), use a key-based approach: define keys array + static data map, then `t(\`experiences.${key}.role\`)` for translated fields
+  - The `cta.tsx` mailto link stays as a plain `<a>` tag — not an i18n Link since it's an external mailto URL
+  - Manual browser verification needed for full UI validation
 ---
