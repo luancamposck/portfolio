@@ -38,8 +38,8 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
 							</CarouselItem>
 						))}
 					</CarouselContent>
-					<CarouselPrevious className="-left-4 sm:-left-12" />
-					<CarouselNext className="-right-4 sm:-right-12" />
+					<CarouselPrevious className="-left-2 sm:-left-12" />
+					<CarouselNext className="-right-2 sm:-right-12" />
 				</Carousel>
 			</div>
 

@@ -15,7 +15,7 @@ const stats = [
 
 export function AboutPreview() {
 	return (
-		<SectionWrapper className="px-6 py-20 md:px-12 lg:px-24">
+		<SectionWrapper className="px-4 sm:px-6 py-16 sm:py-20 md:px-12 lg:px-24">
 			<div className="mx-auto max-w-6xl">
 				<div className="grid gap-12 md:grid-cols-2 md:items-center">
 					<div className="space-y-6">
@@ -35,10 +35,10 @@ export function AboutPreview() {
 						</Link>
 					</div>
 
-					<div className="grid grid-cols-2 gap-6">
+					<div className="grid grid-cols-2 gap-3 sm:gap-6">
 						{stats.map((stat) => (
-							<div key={stat.label} className="bg-card rounded-xl border p-6 text-center">
-								<div className="text-primary text-3xl font-bold md:text-4xl">
+							<div key={stat.label} className="bg-card rounded-xl border p-4 sm:p-6 text-center">
+								<div className="text-primary text-2xl sm:text-3xl font-bold md:text-4xl">
 									<Counter target={stat.target} suffix={stat.suffix} />
 								</div>
 								<p className="text-muted-foreground mt-2 text-sm">{stat.label}</p>

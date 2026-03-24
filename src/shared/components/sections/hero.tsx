@@ -21,15 +21,18 @@ export function Hero() {
 			<CursorSpotlight className="pointer-events-auto" />
 
 			{/* Content */}
-			<div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-				<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+			<div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto">
+				<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6">
 					<TextReveal text="Transformando ideias em experiências digitais memoráveis" delay={0.2} />
 				</h1>
-				<p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+				<p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
 					<TextReveal text="Desenvolvedor full-stack apaixonado por criar interfaces bonitas, performáticas e que entregam resultados reais." delay={0.8} />
 				</p>
 				<MagneticButton>
-					<Link href="/projects" className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 text-lg font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+					<Link
+						href="/projects"
+						className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+					>
 						Ver projetos
 						<ArrowRight className="h-5 w-5" />
 					</Link>

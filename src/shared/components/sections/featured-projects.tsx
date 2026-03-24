@@ -20,7 +20,7 @@ export function FeaturedProjects() {
 				</h2>
 				<p className="mt-4 max-w-2xl text-muted-foreground">Uma seleção dos projetos mais impactantes e desafiadores que entreguei.</p>
 
-				<div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+				<div className="mt-8 sm:mt-12 grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
 					{featuredProjects.map((project, i) => (
 						<motion.div
 							key={project.slug}

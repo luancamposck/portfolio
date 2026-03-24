@@ -15,17 +15,17 @@ const socialLinks = [
 
 export function CTA() {
 	return (
-		<SectionWrapper className="px-6 py-20 md:px-12 lg:px-24">
+		<SectionWrapper className="px-4 sm:px-6 py-16 sm:py-20 md:px-12 lg:px-24">
 			<div className="mx-auto max-w-4xl">
-				<div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/30 to-primary/5 p-10 text-center md:p-16">
-					<h2 className="text-3xl font-bold tracking-tight md:text-5xl">
+				<div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/30 to-primary/5 p-6 sm:p-10 text-center md:p-16">
+					<h2 className="text-2xl sm:text-3xl font-bold tracking-tight md:text-5xl">
 						<TextReveal text="Vamos construir algo incrível juntos?" />
 					</h2>
 					<p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">Entre em contato e vamos transformar sua ideia em uma experiência digital memorável.</p>
 
 					<div className="mt-10">
 						<MagneticButton>
-							<Link href="mailto:contato@luancamposk.dev" className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+							<Link href="mailto:contato@luancamposk.dev" className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-8 font-medium text-primary-foreground transition-colors hover:bg-primary/90">
 								<Mail className="size-5" />
 								Entrar em contato
 							</Link>

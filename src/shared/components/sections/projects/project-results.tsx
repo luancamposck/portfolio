@@ -13,7 +13,7 @@ export function ProjectResults({ results }: ProjectResultsProps) {
 	return (
 		<SectionWrapper className="py-12">
 			<h2 className="text-2xl font-bold">Resultados</h2>
-			<div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			<div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 				{results.map((result) => {
 					const parsed = parseResult(result)
 					return (

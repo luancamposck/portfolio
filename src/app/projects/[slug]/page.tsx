@@ -68,8 +68,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
 			{/* Info section */}
 			<div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-				<div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
-					<div className="flex flex-wrap gap-6 text-sm">
+				<div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+					<div className="flex flex-wrap gap-4 sm:gap-6 text-sm">
 						<div>
 							<p className="font-medium text-muted-foreground">Cliente</p>
 							<p className="mt-1 font-semibold">{project.client}</p>
@@ -84,15 +84,15 @@ export default async function ProjectDetailPage({ params }: Props) {
 						</div>
 					</div>
 
-					<div className="flex gap-3">
+					<div className="flex flex-wrap gap-3">
 						{project.liveUrl && (
-							<a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "default", size: "lg" })}>
+							<a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "default" })}>
 								<ExternalLink data-icon="inline-start" />
 								Ver ao vivo
 							</a>
 						)}
 						{project.githubUrl && (
-							<a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline", size: "lg" })}>
+							<a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline" })}>
 								<Github data-icon="inline-start" />
 								GitHub
 							</a>
