@@ -29,6 +29,9 @@
 - Dual theme config for rehype-pretty-code: `{ dark: "github-dark-default", light: "github-light-default" }` — CSS switches via `var(--shiki-light)` / `var(--shiki-dark)` with `.dark` selector
 - Custom MDX components live in `src/shared/components/mdx/` and are registered in `src/mdx-components.tsx` — available globally in all MDX content without imports
 - The `pre` key in `useMDXComponents()` overrides rehype-pretty-code's `<pre>` output — used for CodeBlock with copy button
+- For raw code string highlighting (non-MDX): use `shiki.codeToHtml()` server-side with same theme config as rehype-pretty-code
+- For markdown string → HTML (non-MDX): `unified().use(remarkParse).use(remarkRehype)` + `hast-util-to-html` — no extra installs needed
+- `useSearchParams()` requires `<Suspense>` wrapper for SSG — otherwise build fails
 
 ---
 
@@ -215,5 +218,30 @@
   - `getAssetsByLocale()` is the main data source — filters assets by the route locale before any category/search filtering
   - No toggle-group shadcn component exists — custom filter buttons matching projects-listing pattern are used instead
   - Search input is a native HTML input with Tailwind styling (no shadcn input component in the project)
+  - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-012
+- Created asset detail page at `/<locale>/assets/[slug]` with:
+  - `generateStaticParams` for all asset slugs (30 paths generated across 3 locales)
+  - Asset title with colored language badge (same palette as asset cards)
+  - Full code block with syntax highlighting via `shiki.codeToHtml()` server-side
+  - Copy code button with Clipboard API + visual feedback (Check/Copy icons, 2s timer)
+  - Explanation rendered as markdown → HTML using `unified` + `remark-parse` + `remark-rehype` + `hast-util-to-html`, displayed with `@tailwindcss/typography` prose classes
+  - Tags as clickable badges linking to `/assets?search=tagname` (listing filters by tags)
+  - Prev/next navigation between assets within the same locale
+  - Dynamic metadata via `generateMetadata`
+  - `assetDetail` translations added to all 3 locale files (pt, en, es)
+- Created `AssetCodeBlock` client component with copy button
+- Created `AssetNavigation` async server component following project-navigation pattern
+- Updated `AssetsListing` to read initial search from URL `?search=` param via `useSearchParams()`
+- Wrapped `AssetsListing` in `<Suspense>` boundary (required by `useSearchParams()` for static rendering)
+- Files changed: `src/app/[locale]/assets/[slug]/page.tsx` (new), `src/app/[locale]/assets/page.tsx`, `src/shared/components/sections/assets/asset-code-block.tsx` (new), `src/shared/components/sections/assets/asset-navigation.tsx` (new), `src/shared/components/sections/assets/assets-listing.tsx`, `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - `shiki.codeToHtml()` can be used directly in server components for syntax highlighting of raw code strings (not just MDX) — use same theme config as rehype-pretty-code: `{ dark: "github-dark-default", light: "github-light-default" }`
+  - For rendering markdown strings (not MDX files) server-side: `unified().use(remarkParse).use(remarkRehype)` + `hast-util-to-html` — all available as transitive dependencies, no extra installs needed
+  - `useSearchParams()` in a client component requires the component to be wrapped in `<Suspense>` for static rendering (SSG) — otherwise build fails with "should be wrapped in a suspense boundary"
+  - `biome-ignore lint/security/noDangerouslySetInnerHtml` suppression needed for server-generated HTML (shiki output, remark output) — these are safe since content comes from trusted data, not user input
+  - Prev/next navigation scoped by locale: `getAssetsByLocale(locale)` first, then find index — ensures navigation stays within the same language
   - Manual browser verification needed for full UI validation
 ---
