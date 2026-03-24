@@ -179,3 +179,82 @@
     scroll-behavior: smooth;
   }
 }
+
+/* rehype-pretty-code — syntax highlighting */
+
+/* Use light theme by default, dark when .dark class is present */
+[data-rehype-pretty-code-figure] code[data-theme*=" "],
+[data-rehype-pretty-code-figure] code[data-theme*=" "] span {
+  color: var(--shiki-light);
+  background-color: transparent;
+}
+
+.dark [data-rehype-pretty-code-figure] code[data-theme*=" "],
+.dark [data-rehype-pretty-code-figure] code[data-theme*=" "] span {
+  color: var(--shiki-dark);
+}
+
+[data-rehype-pretty-code-figure] pre {
+  @apply overflow-x-auto rounded-lg border border-border bg-muted/50 py-4 text-sm leading-relaxed;
+}
+
+.dark [data-rehype-pretty-code-figure] pre {
+  @apply bg-muted/30;
+}
+
+[data-rehype-pretty-code-figure] code {
+  @apply grid font-mono;
+  counter-reset: line;
+}
+
+/* Line numbers — enabled via showLineNumbers meta */
+[data-rehype-pretty-code-figure] code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  @apply mr-4 inline-block w-4 text-right text-muted-foreground/40;
+}
+
+[data-rehype-pretty-code-figure] code[data-line-numbers-max-digits="2"] > [data-line]::before {
+  @apply w-6;
+}
+
+[data-rehype-pretty-code-figure] code[data-line-numbers-max-digits="3"] > [data-line]::before {
+  @apply w-8;
+}
+
+/* Line styles */
+[data-rehype-pretty-code-figure] [data-line] {
+  @apply border-l-2 border-transparent px-4;
+  min-height: 1lh;
+}
+
+/* Highlighted lines */
+[data-rehype-pretty-code-figure] [data-highlighted-line] {
+  @apply border-l-2 border-primary/50 bg-primary/5;
+}
+
+/* Highlighted words/chars */
+[data-highlighted-chars] {
+  @apply rounded-sm bg-primary/10 px-1 py-0.5;
+}
+
+/* Code block title (```tsx title="file.tsx") */
+[data-rehype-pretty-code-title] {
+  @apply rounded-t-lg border border-b-0 border-border bg-muted px-4 py-2 font-mono text-xs text-muted-foreground;
+}
+
+[data-rehype-pretty-code-title] + pre {
+  @apply rounded-t-none;
+}
+
+/* Caption below code block */
+[data-rehype-pretty-code-caption] {
+  @apply mt-1 text-center text-xs text-muted-foreground;
+}
+
+/* Inline code with syntax highlighting */
+[data-rehype-pretty-code-figure] > code:not(pre code) {
+  @apply rounded-md border border-border bg-muted/50 px-1.5 py-0.5 text-sm;
+  display: inline;
+  grid: none;
+}

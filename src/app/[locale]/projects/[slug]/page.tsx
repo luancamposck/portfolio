@@ -1,15 +1,13 @@
-import { ExternalLink, Github } from "lucide-react"
 import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { getProjectBySlug, projects } from "@/data/projects"
-import { Link } from "@/i18n/navigation"
 import { ProjectGallery } from "@/shared/components/sections/projects/project-gallery"
+import { BackToProjectsLink, ProjectLinks } from "@/shared/components/sections/projects/project-links"
 import { ProjectNavigation } from "@/shared/components/sections/projects/project-navigation"
 import { ProjectResults } from "@/shared/components/sections/projects/project-results"
 import { Badge } from "@/shared/components/ui/badge"
-import { buttonVariants } from "@/shared/components/ui/button-variants"
 
 type Props = {
 	params: Promise<{ locale: string; slug: string }>
@@ -90,20 +88,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 						</div>
 					</div>
 
-					<div className="flex flex-wrap gap-3">
-						{project.liveUrl && (
-							<a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "default" })}>
-								<ExternalLink data-icon="inline-start" />
-								{t("viewLive")}
-							</a>
-						)}
-						{project.githubUrl && (
-							<a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline" })}>
-								<Github data-icon="inline-start" />
-								GitHub
-							</a>
-						)}
-					</div>
+					<ProjectLinks liveUrl={project.liveUrl} githubUrl={project.githubUrl} />
 				</div>
 
 				{/* Tags */}
@@ -140,11 +125,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 			<div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8">
 				<ProjectNavigation prev={prevProject} next={nextProject} />
 
-				<div className="mt-8">
-					<Link href="/projects" className={buttonVariants({ variant: "outline" })}>
-						&larr; {t("backToProjects")}
-					</Link>
-				</div>
+				<BackToProjectsLink />
 			</div>
 		</article>
 	)
