@@ -268,3 +268,23 @@
   - Blog posts follow similar data layer pattern as assets but read from filesystem instead of inline TypeScript data
   - `coverImage: ""` in frontmatter maps to `undefined` via `data.coverImage || undefined` — empty string is falsy
 ---
+
+## 2026-03-24 - US-014
+- Created blog listing page at `/<locale>/blog` following the assets listing pattern
+- Route: `src/app/[locale]/blog/page.tsx` with TextReveal heading, generateMetadata, setRequestLocale
+- `BlogListing` client component (`src/shared/components/sections/blog/blog-listing.tsx`): category filter buttons + text search, locale-based filtering via `getPostsByLocale()`, categories from `getAllPostCategories()`
+- `BlogCard` client component (`src/shared/components/sections/blog/blog-card.tsx`): title, locale-formatted date (Calendar icon), reading time (Clock icon), description, tags, optional cover image (next/image), stagger animation with `useReducedMotion` support
+- Date formatting uses `Intl.DateTimeFormat` via `toLocaleDateString` with locale mapping (pt→pt-BR, en→en-US, es→es-ES)
+- Posts sorted by date (most recent first) — handled by `getPostsByLocale` which calls `getAllPosts` (already sorted desc)
+- Posts with `published: false` excluded — handled by `getAllPosts` filter
+- Added `blogPage` translations to all 3 locale files (pt, en, es): title, metaDescription, heading, description, allCategories, searchPlaceholder, noResults, readingTime, readMore
+- Responsive grid: 1 col → 2 at sm → 3 at lg
+- Files changed: `src/app/[locale]/blog/page.tsx` (new), `src/shared/components/sections/blog/blog-card.tsx` (new), `src/shared/components/sections/blog/blog-listing.tsx` (new), `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - Blog listing follows same pattern as assets listing: server page with generateMetadata + client listing component with filters
+  - Category filter buttons show raw category names from data (e.g. "Backend", "React", "TypeScript") — not translated since categories are content-specific
+  - `getPostsByLocale()` already returns only published posts sorted desc — no additional filtering needed at the page level
+  - `formatDate()` helper maps locale codes to BCP 47 tags for `toLocaleDateString()` — pt→pt-BR, en→en-US, es→es-ES
+  - Cover image uses next/image `fill` with `relative` parent — same pattern as project cards
+  - Manual browser verification needed for full UI validation
+---
