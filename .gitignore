@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ralph state files
+scripts/ralph/.last-branch
+.claude/settings.local.json
