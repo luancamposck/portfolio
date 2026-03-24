@@ -120,3 +120,22 @@
   - The `cta.tsx` mailto link stays as a plain `<a>` tag — not an i18n Link since it's an external mailto URL
   - Manual browser verification needed for full UI validation
 ---
+
+## 2026-03-24 - US-007
+- Created `LanguageSelector` component using shadcn DropdownMenu + Globe icon from lucide-react
+- Component uses `useLocale()` from next-intl, `useRouter()` and `usePathname()` from `@/i18n/navigation` to switch locale via `router.replace(pathname, { locale })`
+- Options display language names in their own language: Português, English, Español — current locale is bold
+- Added `languageSelector.label` translations to all 3 locale files
+- Integrated into navbar right-side section, positioned before ThemeToggle
+- Added `generateMetadata` to `[locale]/layout.tsx` with og:locale (pt_BR/en_US/es_ES), og:locale:alternate, and hreflang alternate links for all 3 locales
+- Cookie persistence is handled automatically by next-intl's `localeCookie: true` in routing config
+- Files changed: `src/shared/components/language-selector.tsx` (new), `src/shared/components/layout/navbar.tsx`, `src/app/[locale]/layout.tsx`, `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - `useLocale()` from next-intl returns the current locale string — use `as Locale` to type it
+  - `router.replace(pathname, { locale: newLocale })` from next-intl navigation is the standard way to switch locale while staying on the same page
+  - `localeCookie: true` in routing config handles cookie persistence automatically — no manual cookie management needed
+  - Layout `generateMetadata` merges with page `generateMetadata` — og:locale set at layout level applies to all pages
+  - `alternates.languages` in metadata generates `<link rel="alternate" hrefLang="xx">` tags automatically
+  - Pre-existing build failure on `/_not-found` page — not related to i18n changes, likely a next-intl + not-found rendering issue
+  - Manual browser verification needed for full UI validation
+---

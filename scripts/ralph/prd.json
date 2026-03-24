@@ -116,7 +116,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Use next-intl's usePathname and useRouter for locale-aware navigation. Use Globe icon from lucide-react for the trigger."
     },
     {
