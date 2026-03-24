@@ -1,0 +1,384 @@
+# Ralph Progress Log
+---
+
+## Codebase Patterns
+- Use `next/font/local` instead of `next/font/google` — Google Fonts cannot be fetched at build time in this environment. Font files go in `public/fonts/`.
+- Font CSS variable chain: layout.tsx sets `--font-varela-round` on `<html>` via `varelaRound.variable` class → globals.css `@theme inline` maps `--font-sans: var(--font-varela-round)` → `html` applies `@apply font-sans`
+- Geist font files already exist in `public/fonts/` (geist-latin.woff2, geist-mono-latin.woff2)
+- This codebase uses tabs for indentation — when using Edit tool, match with unique string fragments rather than leading whitespace
+- Biome is the linter/formatter — run `npx biome check --fix src/` after edits
+- Responsive mobile-first pattern: `gap-3 sm:gap-6`, `p-4 sm:p-6`, `text-2xl sm:text-3xl` etc.
+- `buttonVariants()` outputs static classes — cannot be made responsive; use default size or custom responsive className
+- Next.js 16 renamed `middleware.ts` to `proxy.ts` — export function `proxy` (not `middleware`), file goes at `src/proxy.ts`
+- next-intl v4 setup: `src/i18n/routing.ts` (defineRouting), `src/i18n/request.ts` (getRequestConfig), `src/i18n/navigation.ts` (createNavigation)
+- next-intl plugin chain in next.config.ts: `withMDX(withNextIntl(nextConfig))` — withNextIntl wraps inner, withMDX wraps outer
+- Translation files in `messages/{locale}.json` — loaded dynamically in `src/i18n/request.ts`
+- Root layout (`src/app/layout.tsx`) handles fonts + html/body only; `[locale]/layout.tsx` handles ThemeProvider, Navbar, Footer, NextIntlClientProvider
+- `setRequestLocale(locale)` must be called in `[locale]/layout.tsx` for static rendering to work
+- `params` is always `Promise<{...}>` in Next.js 16 — always `await params` in pages and layouts
+- Translation namespaces mirror component names: `useTranslations('hero')`, `useTranslations('navbar')`, `getTranslations('projectsPage')` etc.
+- ICU message format for dynamic values: `t('copyright', { year })`, `t('imageAlt', { title, index })`
+- All internal links use `Link` from `@/i18n/navigation` (not `next/link`) — auto-prepends locale
+- `usePathname()` from `@/i18n/navigation` returns path without locale prefix — active state comparisons use clean paths like `/projects`
+- Server components needing translations must be `async` and use `getTranslations()` from `next-intl/server`
+- Pages with translated metadata use `generateMetadata()` (not static `export const metadata`) + `setRequestLocale(locale)` inside
+- Turbopack requires string-based rehype/remark plugin names in `createMDX` options — function references and non-serializable options (callbacks) are not supported
+- rehype-pretty-code CSS: use `data-*` attributes (`data-highlighted-line`, `data-highlighted-chars`, `data-line-numbers`, `data-rehype-pretty-code-title`) for styling — no need for callback-based class names
+- `buttonVariants()` from `button-variants.ts` gets treated as client code by Turbopack because `button.tsx` ("use client") imports it — extract into client components when needed in server components
+- Root `not-found.tsx` (outside `[locale]`) has no i18n context — use plain strings, not `useTranslations()`
+- Dual theme config for rehype-pretty-code: `{ dark: "github-dark-default", light: "github-light-default" }` — CSS switches via `var(--shiki-light)` / `var(--shiki-dark)` with `.dark` selector
+- Custom MDX components live in `src/shared/components/mdx/` and are registered in `src/mdx-components.tsx` — available globally in all MDX content without imports
+- The `pre` key in `useMDXComponents()` overrides rehype-pretty-code's `<pre>` output — used for CodeBlock with copy button
+- For raw code string highlighting (non-MDX): use `shiki.codeToHtml()` server-side with same theme config as rehype-pretty-code
+- For markdown string → HTML (non-MDX): `unified().use(remarkParse).use(remarkRehype)` + `hast-util-to-html` — no extra installs needed
+- `useSearchParams()` requires `<Suspense>` wrapper for SSG — otherwise build fails
+- Blog posts are MDX files in `content/blog/` read via `fs` + `gray-matter` — the `BlogPost` type and utilities are in `src/data/blog-posts.ts`
+- `getAllPosts()` returns published posts sorted by date desc; `getPostBySlug()` returns any post (including drafts)
+- Client components ("use client") CANNOT import modules using `node:fs` — data from `blog-posts.ts` must be fetched in server components and passed as props
+- `next-mdx-remote/rsc` `MDXRemote` renders MDX strings server-side — use for blog post content with rehype/remark plugins (function references OK, not limited by Turbopack)
+
+---
+
+## 2026-03-24 - US-001
+- Switched fonts from `next/font/google` to `next/font/local` to fix Varela Round not loading
+- Added `public/fonts/varela-round-latin.woff2` (extracted from `@fontsource/varela-round`)
+- Added explicit `fallback` arrays: `["system-ui", "arial", "sans-serif"]` for Varela Round, `["ui-monospace", "monospace"]` for Geist Mono
+- Files changed: `src/app/layout.tsx`, `public/fonts/varela-round-latin.woff2`
+- **Learnings for future iterations:**
+  - `next/font/google` requires network access at build time — fails silently or with build error in offline/restricted environments
+  - The `@theme inline` + `var(--font-varela-round)` pattern in globals.css is correct per Next.js 16 docs — the issue was the font not being fetched, not the CSS variable chain
+  - Font files can be sourced from `@fontsource/*` npm packages, copied to `public/fonts/`, then the npm package can be uninstalled
+---
+
+## 2026-03-24 - US-002
+- Verified that the fix from commit `3182097` is complete — `motion.div` parent of `Image fill` in `project-card.tsx` has `className="relative"`
+- Audited all 4 instances of `<Image fill` across the codebase: `project-card.tsx`, `project-gallery.tsx` (2 instances), `projects/[slug]/page.tsx` — all parents have `relative` positioning
+- No code changes needed — fix was already in place
+- Files verified: `src/shared/components/creative/project-card.tsx`, `src/shared/components/sections/projects/project-gallery.tsx`, `src/app/projects/[slug]/page.tsx`
+- **Learnings for future iterations:**
+  - All `<Image fill` usage in this codebase correctly uses `relative` on parent — no outstanding issues
+  - The next/image `fill` prop requires the parent to have `position: relative`, `absolute`, or `fixed` — `relative` is the standard choice
+---
+
+## 2026-03-24 - US-003
+- Comprehensive responsive audit and fixes across all pages
+- Hero: `text-3xl sm:text-4xl md:text-5xl lg:text-7xl` (was text-4xl base), CTA button padding reduced on mobile
+- About preview: stat grid `gap-3 sm:gap-6`, card `p-4 sm:p-6`, counter text `text-2xl sm:text-3xl`
+- Project detail: buttons changed from `size: "lg"` to default, added `flex-wrap` for overflow safety
+- Carousel arrows: `-left-2 sm:-left-12` (was `-left-4`) to prevent mobile overflow
+- Featured projects & projects listing: `gap-6 sm:gap-8`, `mt-8 sm:mt-12`
+- Project results: added `md:grid-cols-3` breakpoint for tablets
+- CTA: `p-6 sm:p-10 md:p-16` (was `p-10 md:p-16`), heading `text-2xl sm:text-3xl`
+- Section wrappers (about-preview, CTA): `px-4 sm:px-6` for tighter mobile side padding
+- Files changed: hero.tsx, about-preview.tsx, cta.tsx, featured-projects.tsx, project-gallery.tsx, project-results.tsx, projects-listing.tsx, projects/[slug]/page.tsx
+- **Learnings for future iterations:**
+  - This codebase uses tabs for indentation — the Edit tool can struggle with tab-based whitespace; use unique string fragments for edits
+  - The biome formatter enforces line length — long className strings on elements with many props get auto-wrapped
+  - Responsive pattern: use `gap-X sm:gap-Y` and `p-X sm:p-Y` for mobile-first spacing
+  - Carousel arrows at `-left-4` on mobile can overlap or go offscreen; `-left-2` is safer
+  - `buttonVariants({ size: "lg" })` can't be made responsive (static class output) — use default size or custom responsive classes instead
+---
+
+## 2026-03-24 - US-004
+- Installed next-intl v4.8.3 for i18n support
+- Created i18n config: `src/i18n/routing.ts` (defineRouting with pt/en/es), `src/i18n/request.ts` (getRequestConfig), `src/i18n/navigation.ts` (createNavigation)
+- Created `src/proxy.ts` using next-intl's createMiddleware, re-exported as `proxy` for Next.js 16 compatibility
+- Created minimal translation files: `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- Restructured app: moved all pages from `src/app/` to `src/app/[locale]/` (home, about, projects, projects/[slug], not-found)
+- Root layout (`src/app/layout.tsx`) now only renders html/body with fonts
+- `[locale]/layout.tsx` wraps with NextIntlClientProvider, ThemeProvider, Navbar, Footer
+- Updated `next.config.ts` with createNextIntlPlugin
+- Updated `[locale]/projects/[slug]/page.tsx` params type to include `locale`
+- Build produces routes: `/pt`, `/en`, `/es`, `/pt/projects`, `/en/about`, etc.
+- Files changed: `next.config.ts`, `package.json`, `src/app/layout.tsx`, `src/app/[locale]/layout.tsx`, `src/app/[locale]/page.tsx`, `src/app/[locale]/not-found.tsx`, `src/app/[locale]/about/page.tsx`, `src/app/[locale]/projects/page.tsx`, `src/app/[locale]/projects/[slug]/page.tsx`, `src/app/[locale]/projects/[slug]/loading.tsx`, `src/proxy.ts`, `src/i18n/routing.ts`, `src/i18n/request.ts`, `src/i18n/navigation.ts`, `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - Next.js 16 uses `proxy.ts` instead of `middleware.ts` — next-intl's `createMiddleware` returns a function compatible with the proxy pattern, just re-export as `proxy`
+  - `createNextIntlPlugin` takes the path to the request config file (e.g. `"./src/i18n/request.ts"`)
+  - `generateStaticParams` in `[locale]/layout.tsx` generates params for all locales; nested pages' `generateStaticParams` only need their own params (e.g. `slug`)
+  - When restructuring from flat to `[locale]/`, delete `.next/` to clear stale generated types that reference old paths
+  - Existing components with hardcoded `href="/projects"` still work via proxy redirect, but should be updated to use `Link` from `@/i18n/navigation` in US-006
+---
+
+## 2026-03-24 - US-005
+- Created comprehensive translation files for all 3 locales: `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- Sections translated: metadata, layout, navbar, footer, themeToggle, hero, featuredProjects, aboutPreview, cta, notFound, projectsPage, projectDetail, projectNavigation, projectResults, projectGallery, aboutPage, aboutHero, aboutBio, aboutSkills, aboutTimeline
+- EN and ES translations are natural and idiomatic, not literal machine translations
+- Translation keys use nested namespaces (e.g. `aboutPreview.stats.experience`) for clean organization
+- Files changed: `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - Translation namespace structure mirrors component hierarchy: `aboutPreview`, `aboutBio`, `aboutSkills`, `aboutTimeline` etc.
+  - `useTranslations('namespace')` in client components, `getTranslations('namespace')` in server components — both available via next-intl since NextIntlClientProvider is in `[locale]/layout.tsx`
+  - The `footer.copyright` key uses `{year}` ICU placeholder — use `t('copyright', { year: new Date().getFullYear() })` when consuming
+  - `projectDetail.imageAlt` uses `{title}` and `{index}` ICU placeholders for dynamic image alt text
+  - Timeline experiences are keyed by company slug (nexus, techvista, criativa, startup) — components should iterate these keys or use a known list
+  - Project data (titles, descriptions, results) stays in PT-BR as hardcoded data — only UI labels/chrome are translated
+---
+
+## 2026-03-24 - US-006
+- Updated all existing components to use translations instead of hardcoded strings
+- Client components use `useTranslations('namespace')` from next-intl
+- Server components (footer, project-navigation) use `getTranslations('namespace')` from next-intl/server
+- Replaced `next/link` Link with `@/i18n/navigation` Link in all components with internal hrefs (navbar, hero, featured-projects, about-preview, not-found-content, project-card, project-navigation, project detail page)
+- Replaced `next/navigation` usePathname with `@/i18n/navigation` usePathname in navbar
+- Updated locale layout to translate skip-to-content link
+- Updated home page with translated JSON-LD metadata
+- Converted about and projects pages from static `metadata` export to `generateMetadata()` for translated metadata
+- Updated project detail page labels (Cliente, Ano, Categoria, Ver ao vivo, Sobre o projeto, Voltar aos projetos) with translations
+- Files changed: navbar.tsx, footer.tsx, theme-toggle.tsx, hero.tsx, featured-projects.tsx, about-preview.tsx, cta.tsx, not-found-content.tsx, about-bio.tsx, about-hero.tsx, about-skills.tsx, about-timeline.tsx, project-gallery.tsx, project-navigation.tsx, project-results.tsx, project-card.tsx, [locale]/layout.tsx, [locale]/page.tsx, [locale]/about/page.tsx, [locale]/projects/page.tsx, [locale]/projects/[slug]/page.tsx
+- **Learnings for future iterations:**
+  - `useTranslations('namespace')` for client components, `getTranslations('namespace')` for server components — pattern is consistent across the codebase
+  - `Link` from `@/i18n/navigation` automatically prepends locale to href; `usePathname()` from same module strips locale prefix — active state comparison works unchanged
+  - Server components using `getTranslations` must be `async` — e.g. Footer and ProjectNavigation became `async function`
+  - Pages using `generateMetadata` with translations need `setRequestLocale(locale)` called inside `generateMetadata` for static rendering
+  - For timeline/skills components with translated category titles but untranslated data (tech names), use a key-based approach: define keys array + static data map, then `t(\`experiences.${key}.role\`)` for translated fields
+  - The `cta.tsx` mailto link stays as a plain `<a>` tag — not an i18n Link since it's an external mailto URL
+  - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-007
+- Created `LanguageSelector` component using shadcn DropdownMenu + Globe icon from lucide-react
+- Component uses `useLocale()` from next-intl, `useRouter()` and `usePathname()` from `@/i18n/navigation` to switch locale via `router.replace(pathname, { locale })`
+- Options display language names in their own language: Português, English, Español — current locale is bold
+- Added `languageSelector.label` translations to all 3 locale files
+- Integrated into navbar right-side section, positioned before ThemeToggle
+- Added `generateMetadata` to `[locale]/layout.tsx` with og:locale (pt_BR/en_US/es_ES), og:locale:alternate, and hreflang alternate links for all 3 locales
+- Cookie persistence is handled automatically by next-intl's `localeCookie: true` in routing config
+- Files changed: `src/shared/components/language-selector.tsx` (new), `src/shared/components/layout/navbar.tsx`, `src/app/[locale]/layout.tsx`, `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - `useLocale()` from next-intl returns the current locale string — use `as Locale` to type it
+  - `router.replace(pathname, { locale: newLocale })` from next-intl navigation is the standard way to switch locale while staying on the same page
+  - `localeCookie: true` in routing config handles cookie persistence automatically — no manual cookie management needed
+  - Layout `generateMetadata` merges with page `generateMetadata` — og:locale set at layout level applies to all pages
+  - `alternates.languages` in metadata generates `<link rel="alternate" hrefLang="xx">` tags automatically
+  - Pre-existing build failure on `/_not-found` page — not related to i18n changes, likely a next-intl + not-found rendering issue
+  - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-008
+- Installed `rehype-pretty-code` and `shiki` for syntax highlighting
+- Configured `next.config.ts` createMDX with Turbopack-compatible string-based plugin: `["rehype-pretty-code", { theme: { dark: "github-dark-default", light: "github-light-default" }, keepBackground: false }]`
+- Added comprehensive CSS in `globals.css` for code blocks: dark/light theme switching via `--shiki-light`/`--shiki-dark`, line numbers (`data-line-numbers`), highlighted lines (`data-highlighted-line`), highlighted chars (`data-highlighted-chars`), file titles (`data-rehype-pretty-code-title`), captions, inline code
+- Fixed pre-existing build failure: root `not-found.tsx` used `useTranslations()` without locale context — replaced with static PT-BR strings and plain HTML button
+- Fixed pre-existing build failure: project detail page called `buttonVariants()` (client function) from server component — extracted `ProjectLinks` and `BackToProjectsLink` client components
+- Files changed: `next.config.ts`, `package.json`, `package-lock.json`, `src/app/globals.css`, `src/app/not-found.tsx`, `src/app/[locale]/projects/[slug]/page.tsx`, `src/shared/components/sections/projects/project-links.tsx` (new)
+- **Learnings for future iterations:**
+  - Turbopack can NOT serialize function references in MDX plugin options — use string-based plugin names: `["rehype-pretty-code", { ...serializableOptions }]` per Next.js 16 docs
+  - rehype-pretty-code adds `data-*` attributes by default (data-highlighted-line, data-line-numbers, data-rehype-pretty-code-title, etc.) — CSS can target these without needing `onVisit*` callbacks
+  - The dual theme `{ dark: "...", light: "..." }` config sets `--shiki-dark` and `--shiki-light` CSS vars on each span — switch between them with `.dark` class selector
+  - `button-variants.ts` (no "use client") still gets treated as client by Turbopack because `button.tsx` ("use client") imports it — any server component needing `buttonVariants()` must extract calls to a client component
+  - Root `not-found.tsx` renders outside `[locale]` segment — no NextIntlClientProvider, no `useTranslations()`, no `Link` from i18n/navigation
+  - Build now passes cleanly (was previously failing on `/_not-found` which masked the `buttonVariants` issue)
+  - Manual browser verification needed for syntax highlighting visual confirmation
+---
+
+## 2026-03-24 - US-009
+- Created 3 custom MDX components in `src/shared/components/mdx/`:
+  - **Callout** (`callout.tsx`): info/warning/error variants with icons (Info, AlertTriangle, AlertCircle from lucide-react), colored borders/backgrounds using design system colors
+  - **CodeBlock** (`code-block.tsx`): wraps `<pre>` with a copy-to-clipboard button (Clipboard API), shows on hover with check/copy icon states, 2s feedback
+  - **MdxImage** (`mdx-image.tsx`): wraps `next/image` with `<figure>` + optional `<figcaption>`, responsive sizes, default 800x450
+- Updated `src/mdx-components.tsx` to register: `pre → CodeBlock`, `Callout`, `Image → MdxImage`
+- Files changed: `src/mdx-components.tsx`, `src/shared/components/mdx/callout.tsx` (new), `src/shared/components/mdx/code-block.tsx` (new), `src/shared/components/mdx/mdx-image.tsx` (new)
+- **Learnings for future iterations:**
+  - MDX component overrides: `pre` key in useMDXComponents replaces all `<pre>` tags rendered by rehype-pretty-code — CodeBlock wraps the original pre and adds a copy button overlay
+  - Callout uses variant-specific Tailwind classes (not CVA) since it's a simple 3-variant component — keeps it lightweight
+  - MdxImage is a server component (no "use client") since next/image doesn't need client interactivity — only CodeBlock and Callout need "use client"
+  - MDX custom components are available globally via `useMDXComponents()` — no need to import in each MDX file
+  - Manual browser verification needed for visual confirmation
+---
+
+## 2026-03-24 - US-010
+- Created `src/data/assets.ts` with `CodeAsset` type, `AssetLocale` and `AssetCategory` type aliases
+- 10 mock assets with real, useful code: debounce, useLocalStorage, retry with backoff, docker-compose template, binary search, useMediaQuery, fetch wrapper, GitHub Actions CI, pipe function, regex collection
+- 8 assets locale 'pt', 2 locale 'en' — explanations in the asset's locale language
+- 6 utility functions: getAssetBySlug, getAssetsByCategory, getAssetsByTag, getAllAssetCategories, getAllAssetTags, getAssetsByLocale
+- Files changed: `src/data/assets.ts` (new)
+- **Learnings for future iterations:**
+  - Data files follow collocation pattern: type + data array + utility functions in same file (matches `projects.ts`)
+  - Biome auto-fixes trailing commas on the last item in arrays/objects — let it run after writing
+  - Asset `code` and `explanation` fields use template literals for multiline strings — watch for backtick escaping inside template literals
+  - Assets are pure TypeScript data (not MDX files) — the `code` field is a raw string, `explanation` is markdown rendered by the consuming component
+---
+
+## 2026-03-24 - US-011
+- Created assets listing page at `/<locale>/assets` with:
+  - TextReveal heading animation (matches projects page pattern)
+  - Category filter bar with translated labels (All, Utilities, Hooks, Patterns, Algorithms, DevOps)
+  - Text search input filtering by title, description, and tags
+  - Locale-based filtering: page only shows assets matching current route locale
+  - Grid of asset cards with: title, colored language badge, description, code preview (4 truncated lines), tags
+  - Cards link to `/<locale>/assets/[slug]` (detail page built in US-012)
+  - Stagger animation on cards via motion.div whileInView with per-card delay
+  - prefers-reduced-motion respected via useReducedMotion
+  - SEO metadata via generateMetadata with translations
+  - Responsive layout: single column → 2 cols at sm → 3 cols at lg
+- Created `AssetCard` component (`src/shared/components/sections/assets/asset-card.tsx`)
+- Created `AssetsListing` client component (`src/shared/components/sections/assets/assets-listing.tsx`)
+- Created page at `src/app/[locale]/assets/page.tsx`
+- Added `assetsPage` translations to all 3 locale files (pt, en, es) including category labels
+- Files changed: `messages/pt.json`, `messages/en.json`, `messages/es.json`, `src/app/[locale]/assets/page.tsx` (new), `src/shared/components/sections/assets/asset-card.tsx` (new), `src/shared/components/sections/assets/assets-listing.tsx` (new)
+- **Learnings for future iterations:**
+  - Asset listing follows same pattern as projects listing: server page + client listing component with filters
+  - Language badge colors use `bg-{color}-500/15 text-{color}-700 dark:text-{color}-400` pattern for consistent light/dark mode
+  - `getAssetsByLocale()` is the main data source — filters assets by the route locale before any category/search filtering
+  - No toggle-group shadcn component exists — custom filter buttons matching projects-listing pattern are used instead
+  - Search input is a native HTML input with Tailwind styling (no shadcn input component in the project)
+  - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-012
+- Created asset detail page at `/<locale>/assets/[slug]` with:
+  - `generateStaticParams` for all asset slugs (30 paths generated across 3 locales)
+  - Asset title with colored language badge (same palette as asset cards)
+  - Full code block with syntax highlighting via `shiki.codeToHtml()` server-side
+  - Copy code button with Clipboard API + visual feedback (Check/Copy icons, 2s timer)
+  - Explanation rendered as markdown → HTML using `unified` + `remark-parse` + `remark-rehype` + `hast-util-to-html`, displayed with `@tailwindcss/typography` prose classes
+  - Tags as clickable badges linking to `/assets?search=tagname` (listing filters by tags)
+  - Prev/next navigation between assets within the same locale
+  - Dynamic metadata via `generateMetadata`
+  - `assetDetail` translations added to all 3 locale files (pt, en, es)
+- Created `AssetCodeBlock` client component with copy button
+- Created `AssetNavigation` async server component following project-navigation pattern
+- Updated `AssetsListing` to read initial search from URL `?search=` param via `useSearchParams()`
+- Wrapped `AssetsListing` in `<Suspense>` boundary (required by `useSearchParams()` for static rendering)
+- Files changed: `src/app/[locale]/assets/[slug]/page.tsx` (new), `src/app/[locale]/assets/page.tsx`, `src/shared/components/sections/assets/asset-code-block.tsx` (new), `src/shared/components/sections/assets/asset-navigation.tsx` (new), `src/shared/components/sections/assets/assets-listing.tsx`, `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - `shiki.codeToHtml()` can be used directly in server components for syntax highlighting of raw code strings (not just MDX) — use same theme config as rehype-pretty-code: `{ dark: "github-dark-default", light: "github-light-default" }`
+  - For rendering markdown strings (not MDX files) server-side: `unified().use(remarkParse).use(remarkRehype)` + `hast-util-to-html` — all available as transitive dependencies, no extra installs needed
+  - `useSearchParams()` in a client component requires the component to be wrapped in `<Suspense>` for static rendering (SSG) — otherwise build fails with "should be wrapped in a suspense boundary"
+  - `biome-ignore lint/security/noDangerouslySetInnerHtml` suppression needed for server-generated HTML (shiki output, remark output) — these are safe since content comes from trusted data, not user input
+  - Prev/next navigation scoped by locale: `getAssetsByLocale(locale)` first, then find index — ensures navigation stays within the same language
+  - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-013
+- Created blog data layer with MDX posts and utility functions
+- Defined `BlogPost` type in `src/data/blog-posts.ts` with all required fields: slug, title, description, locale, date, updatedAt, tags, category, readingTime, coverImage, published, content
+- Installed `gray-matter` for YAML frontmatter parsing from MDX files
+- Reading time calculated from word count (200 wpm, ceil to nearest minute)
+- 3 MDX blog posts created in `content/blog/`:
+  - `construindo-apis-rest-com-nextjs.mdx` (pt) - REST APIs with Next.js 16 Route Handlers
+  - `typescript-utility-types-na-pratica.mdx` (pt) - TypeScript Utility Types practical guide
+  - `react-server-components-guide.mdx` (en) - React Server Components patterns and pitfalls
+- All posts use custom MDX components (Callout) and rehype-pretty-code features (line highlighting, file titles)
+- 8 utility functions: getAllPosts (sorted by date desc, published only), getPostBySlug, getPostsByTag, getPostsByCategory, getPostsByLocale, getAllPostCategories, getAllPostTags, plus internal getPosts with module-level cache
+- Files changed: `package.json`, `package-lock.json`, `src/data/blog-posts.ts` (new), `content/blog/construindo-apis-rest-com-nextjs.mdx` (new), `content/blog/typescript-utility-types-na-pratica.mdx` (new), `content/blog/react-server-components-guide.mdx` (new)
+- **Learnings for future iterations:**
+  - Blog posts use `gray-matter` for frontmatter parsing — YAML frontmatter between `---` delimiters, content is everything after
+  - `getAllPosts()` filters `published: true` — `getPostBySlug()` does NOT filter by published (allows preview of drafts)
+  - Module-level cache (`cachedPosts`) avoids re-reading filesystem on every call — fine for build-time/SSG
+  - MDX files in `content/blog/` are data files read via `fs`, not page routes — @next/mdx processes only files in the App Router
+  - Blog posts follow similar data layer pattern as assets but read from filesystem instead of inline TypeScript data
+  - `coverImage: ""` in frontmatter maps to `undefined` via `data.coverImage || undefined` — empty string is falsy
+---
+
+## 2026-03-24 - US-014
+- Created blog listing page at `/<locale>/blog` following the assets listing pattern
+- Route: `src/app/[locale]/blog/page.tsx` with TextReveal heading, generateMetadata, setRequestLocale
+- `BlogListing` client component (`src/shared/components/sections/blog/blog-listing.tsx`): category filter buttons + text search, locale-based filtering via `getPostsByLocale()`, categories from `getAllPostCategories()`
+- `BlogCard` client component (`src/shared/components/sections/blog/blog-card.tsx`): title, locale-formatted date (Calendar icon), reading time (Clock icon), description, tags, optional cover image (next/image), stagger animation with `useReducedMotion` support
+- Date formatting uses `Intl.DateTimeFormat` via `toLocaleDateString` with locale mapping (pt→pt-BR, en→en-US, es→es-ES)
+- Posts sorted by date (most recent first) — handled by `getPostsByLocale` which calls `getAllPosts` (already sorted desc)
+- Posts with `published: false` excluded — handled by `getAllPosts` filter
+- Added `blogPage` translations to all 3 locale files (pt, en, es): title, metaDescription, heading, description, allCategories, searchPlaceholder, noResults, readingTime, readMore
+- Responsive grid: 1 col → 2 at sm → 3 at lg
+- Files changed: `src/app/[locale]/blog/page.tsx` (new), `src/shared/components/sections/blog/blog-card.tsx` (new), `src/shared/components/sections/blog/blog-listing.tsx` (new), `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - Blog listing follows same pattern as assets listing: server page with generateMetadata + client listing component with filters
+  - Category filter buttons show raw category names from data (e.g. "Backend", "React", "TypeScript") — not translated since categories are content-specific
+  - `getPostsByLocale()` already returns only published posts sorted desc — no additional filtering needed at the page level
+  - `formatDate()` helper maps locale codes to BCP 47 tags for `toLocaleDateString()` — pt→pt-BR, en→en-US, es→es-ES
+  - Cover image uses next/image `fill` with `relative` parent — same pattern as project cards
+  - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-015
+- Created blog post detail page at `/<locale>/blog/[slug]` with:
+  - `generateStaticParams` for all post slugs (9 paths generated across 3 locales)
+  - Header: category badge, title, description, date (locale-formatted), reading time, tags as clickable badges
+  - Cover image support via next/image with aspect-video container
+  - MDX content rendered via `next-mdx-remote/rsc` with `@tailwindcss/typography` prose classes
+  - Syntax highlighting via `rehype-pretty-code` (same dual-theme config as global)
+  - Headings with clickable anchor links via `rehype-slug` + `rehype-autolink-headings` (behavior: "wrap")
+  - Prev/next navigation between posts scoped by locale
+  - Dynamic metadata with OpenGraph article type (publishedTime, modifiedTime, tags, og:image)
+  - Loading skeleton with shadcn Skeleton component
+  - `blogDetail` translations added to all 3 locale files (pt, en, es)
+- Created `BlogNavigation` async server component following asset-navigation pattern
+- Fixed `BlogListing` client component: moved `getPostsByLocale()`/`getAllPostCategories()` calls to server page and passed as props — client components cannot import `node:fs` modules
+- Added `useSearchParams()` to `BlogListing` for tag link support from detail page (`/blog?search=tag`)
+- Wrapped `BlogListing` in `<Suspense>` boundary (required by `useSearchParams()` for SSG)
+- Files changed: `src/app/[locale]/blog/[slug]/page.tsx` (new), `src/app/[locale]/blog/[slug]/loading.tsx` (new), `src/shared/components/sections/blog/blog-navigation.tsx` (new), `src/app/[locale]/blog/page.tsx`, `src/shared/components/sections/blog/blog-listing.tsx`, `messages/pt.json`, `messages/en.json`, `messages/es.json`, `package.json`, `package-lock.json`
+- **Learnings for future iterations:**
+  - `next-mdx-remote/rsc` `MDXRemote` compiles MDX strings server-side at render time — accepts function references for rehype/remark plugins (not limited by Turbopack serialization)
+  - Client components ("use client") that import modules using `node:fs` will fail Turbopack build — data must be fetched in server components and passed as props
+  - `rehype-slug` adds `id` attributes to headings; `rehype-autolink-headings` with `behavior: "wrap"` wraps heading text in `<a>` tags linking to the slug anchor
+  - Blog post tags link to `/blog?search=tagname` — `BlogListing` reads initial search from `useSearchParams().get("search")`
+  - `prose-headings:scroll-mt-20` in the prose container provides scroll margin for anchor navigation
+---
+
+## 2026-03-24 - US-016
+- Added Assets and Blog links to navbar: order is Home, Projects, Assets, Blog, About
+- Added `assets` and `blog` translation keys to navbar section in all 3 locale files (pt, en, es)
+- Fixed PT "about" translation from "About" (English) to "Sobre" (Portuguese)
+- Mobile drawer automatically shows all 5 links since it iterates `navLinks` array
+- Language selector was already integrated from US-007
+- Active state works for all routes using existing `pathname === link.href` pattern
+- Files changed: `src/shared/components/layout/navbar.tsx`, `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - Navbar links are driven by a single `navLinks` array — desktop and mobile drawer both iterate it, so adding new links requires only updating the array + translations
+  - "Assets" and "Blog" are kept untranslated across locales as they're recognized tech terms globally
+  - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-017
+- Rewrote `src/app/sitemap.ts` to generate URLs for all 3 locales (pt, en, es) across all routes:
+  - Static routes: home, projects, about, assets, blog
+  - Dynamic routes: individual projects (6), assets (10), blog posts (3)
+  - Each entry includes `alternates.languages` for cross-locale discovery
+  - Assets use `createdAt`/`updatedAt` for `lastModified`; blog posts use `date`/`updatedAt`
+- Removed incorrect `alternates.languages` from layout `generateMetadata` (was pointing all pages to root locale URLs)
+- Added page-specific `alternates` (canonical + languages) to all 8 page-level `generateMetadata` functions:
+  - Home page (also added missing `generateMetadata` with title/description from translations)
+  - About, Projects, Assets, Blog listing pages
+  - Project detail, Asset detail, Blog post detail pages
+- Layout retains `openGraph.locale` and `openGraph.alternateLocale` (correct at layout level)
+- `robots.ts` unchanged — already correct (allows all, points to sitemap.xml)
+- Files changed: `src/app/sitemap.ts`, `src/app/[locale]/layout.tsx`, `src/app/[locale]/page.tsx`, `src/app/[locale]/about/page.tsx`, `src/app/[locale]/projects/page.tsx`, `src/app/[locale]/projects/[slug]/page.tsx`, `src/app/[locale]/assets/page.tsx`, `src/app/[locale]/assets/[slug]/page.tsx`, `src/app/[locale]/blog/page.tsx`, `src/app/[locale]/blog/[slug]/page.tsx`
+- **Learnings for future iterations:**
+  - Layout `generateMetadata` merges with page `generateMetadata` — `alternates.languages` should be page-specific (not layout-level) since each page needs its own locale URLs
+  - `MetadataRoute.Sitemap` entries support `alternates.languages` which generates `<xhtml:link rel="alternate">` in the XML
+  - `sitemap.ts` can import `node:fs`-dependent modules (like blog-posts.ts) since it runs server-side at build time
+  - The `routing.locales` array from `@/i18n/routing` is the single source of truth for locale list — use it everywhere instead of hardcoding
+---
+
+## 2026-03-24 - US-018
+- Added CSS View Transitions API for smooth cross-fade page transitions between routes
+  - `@view-transition { navigation: auto }` enables native browser cross-fade
+  - `animation-duration: 0.25s` with `ease-in-out` for transition old/new views
+  - Gracefully ignored by browsers that don't support it (Firefox, Safari)
+- Added loading skeleton for asset detail page (`/[locale]/assets/[slug]/loading.tsx`)
+  - Mirrors the page layout: title + badge, description, tags, code block, explanation sections
+  - Follows same skeleton pattern as project detail and blog post loading states
+- Enhanced asset card hover effects to match blog card consistency:
+  - Title: `transition-colors group-hover:text-primary` (same as blog card)
+  - Code preview: `transition-colors group-hover:bg-muted/80` (subtle background highlight)
+- All card hover patterns now consistent:
+  - Project card: 3D tilt + parallax + overlay (unique creative component, intentionally different)
+  - Asset card: shadow + title color + code bg (listing card pattern)
+  - Blog card: shadow + title color + image scale (listing card pattern)
+- `prefers-reduced-motion` fully respected:
+  - View transitions: `animation-duration: 0s` disables cross-fade
+  - All motion/react animations: existing `useReducedMotion()` guards remain in place
+  - CSS animations (blob, marquee): existing `animation: none` rules
+- Animation timings reviewed and confirmed consistent:
+  - Listing stagger: `duration: 0.4, delay: i * 0.08` (projects, assets, blog)
+  - Section stagger: `duration: 0.5, delay: i * 0.1-0.15` (featured projects, timeline, skills)
+  - Both patterns use `ease: "easeOut"` and `viewport: { once: true }`
+- Files changed: `src/app/globals.css`, `src/shared/components/sections/assets/asset-card.tsx`, `src/app/[locale]/assets/[slug]/loading.tsx` (new)
+- **Learnings for future iterations:**
+  - `@view-transition { navigation: auto }` is the simplest way to add page transitions — pure CSS, no JS needed, progressive enhancement
+  - View Transitions API is Chromium-only (Chrome 111+) — safely ignored by other browsers with no fallback needed
+  - Card hover consistency: listing cards should all have `transition-shadow hover:shadow-lg` + `transition-colors group-hover:text-primary` on title at minimum
+  - Loading skeletons should mirror the actual page layout structure for natural content shift
+  - Manual browser verification needed for visual confirmation
+---
