@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useState } from "react"
 import { Link, usePathname } from "@/i18n/navigation"
+import { LanguageSelector } from "@/shared/components/language-selector"
 import { ThemeToggle } from "@/shared/components/theme-toggle"
 import { useIsMobile } from "@/shared/hooks/use-mobile"
 import { cn } from "@/shared/lib/utils"
@@ -64,6 +65,7 @@ function Navbar() {
 
 				{/* Right side: theme toggle + hamburger */}
 				<div className="flex items-center gap-2">
+					<LanguageSelector />
 					<ThemeToggle />
 					{isMobile && (
 						<button

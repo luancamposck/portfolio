@@ -17,6 +17,9 @@
 	"footer": {
 		"copyright": "© {year} Luan Campos K. All rights reserved."
 	},
+	"languageSelector": {
+		"label": "Change language"
+	},
 	"themeToggle": {
 		"toggle": "Toggle theme",
 		"light": "Light",

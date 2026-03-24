@@ -17,6 +17,9 @@
 	"footer": {
 		"copyright": "© {year} Luan Campos K. Todos los derechos reservados."
 	},
+	"languageSelector": {
+		"label": "Cambiar idioma"
+	},
 	"themeToggle": {
 		"toggle": "Cambiar tema",
 		"light": "Claro",
