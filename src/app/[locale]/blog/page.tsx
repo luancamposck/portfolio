@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Suspense } from "react"
 import { type BlogLocale, getAllPostCategories, getPostsByLocale } from "@/data/blog-posts"
+import { routing } from "@/i18n/routing"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { BlogListing } from "@/shared/components/sections/blog/blog-listing"
@@ -16,7 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const t = await getTranslations("blogPage")
 	return {
 		title: t("title"),
-		description: t("metaDescription")
+		description: t("metaDescription"),
+		alternates: {
+			canonical: `https://luancamposk.dev/${locale}/blog`,
+			languages: Object.fromEntries(routing.locales.map((l) => [l, `https://luancamposk.dev/${l}/blog`]))
+		}
 	}
 }
 

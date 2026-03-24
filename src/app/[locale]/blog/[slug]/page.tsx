@@ -9,6 +9,7 @@ import rehypePrettyCode from "rehype-pretty-code"
 import rehypeSlug from "rehype-slug"
 import { type BlogLocale, getAllPosts, getPostBySlug, getPostsByLocale } from "@/data/blog-posts"
 import { Link } from "@/i18n/navigation"
+import { routing } from "@/i18n/routing"
 import { useMDXComponents } from "@/mdx-components"
 import { BlogNavigation } from "@/shared/components/sections/blog/blog-navigation"
 import { Badge } from "@/shared/components/ui/badge"
@@ -44,6 +45,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 			modifiedTime: post.updatedAt,
 			tags: post.tags,
 			...(post.coverImage ? { images: [post.coverImage] } : {})
+		},
+		alternates: {
+			canonical: `https://luancamposk.dev/${locale}/blog/${slug}`,
+			languages: Object.fromEntries(routing.locales.map((l) => [l, `https://luancamposk.dev/${l}/blog/${slug}`]))
 		}
 	}
 }

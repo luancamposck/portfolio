@@ -1,4 +1,6 @@
+import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { routing } from "@/i18n/routing"
 import { AboutPreview } from "@/shared/components/sections/about-preview"
 import { CTA } from "@/shared/components/sections/cta"
 import { FeaturedProjects } from "@/shared/components/sections/featured-projects"
@@ -7,6 +9,22 @@ import { TechStack } from "@/shared/components/sections/tech-stack"
 
 type Props = {
 	params: Promise<{ locale: string }>
+}
+
+const BASE_URL = "https://luancamposk.dev"
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { locale } = await params
+	setRequestLocale(locale)
+	const t = await getTranslations("metadata")
+	return {
+		title: t("title"),
+		description: t("description"),
+		alternates: {
+			canonical: `${BASE_URL}/${locale}`,
+			languages: Object.fromEntries(routing.locales.map((l) => [l, `${BASE_URL}/${l}`]))
+		}
+	}
 }
 
 const HomePage = async ({ params }: Props) => {

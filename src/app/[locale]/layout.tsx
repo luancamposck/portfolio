@@ -26,9 +26,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 		openGraph: {
 			locale: ogLocaleMap[locale],
 			alternateLocale: routing.locales.filter((l) => l !== locale).map((l) => ogLocaleMap[l])
-		},
-		alternates: {
-			languages: Object.fromEntries(routing.locales.map((l) => [l, `/${l}`]))
 		}
 	}
 }

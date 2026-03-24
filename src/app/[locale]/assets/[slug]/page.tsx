@@ -8,6 +8,7 @@ import { codeToHtml } from "shiki"
 import { unified } from "unified"
 import { type AssetLocale, assets, getAssetBySlug, getAssetsByLocale } from "@/data/assets"
 import { Link } from "@/i18n/navigation"
+import { routing } from "@/i18n/routing"
 import { AssetCodeBlock } from "@/shared/components/sections/assets/asset-code-block"
 import { AssetNavigation } from "@/shared/components/sections/assets/asset-navigation"
 import { Badge } from "@/shared/components/ui/badge"
@@ -44,7 +45,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 	return {
 		title: asset.title,
-		description: asset.description
+		description: asset.description,
+		alternates: {
+			canonical: `https://luancamposk.dev/${locale}/assets/${slug}`,
+			languages: Object.fromEntries(routing.locales.map((l) => [l, `https://luancamposk.dev/${l}/assets/${slug}`]))
+		}
 	}
 }
 

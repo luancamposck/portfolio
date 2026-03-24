@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { routing } from "@/i18n/routing"
 import { AboutBio } from "@/shared/components/sections/about/about-bio"
 import { AboutHero } from "@/shared/components/sections/about/about-hero"
 import { AboutSkills } from "@/shared/components/sections/about/about-skills"
@@ -16,7 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const t = await getTranslations("aboutPage")
 	return {
 		title: t("title"),
-		description: t("metaDescription")
+		description: t("metaDescription"),
+		alternates: {
+			canonical: `https://luancamposk.dev/${locale}/about`,
+			languages: Object.fromEntries(routing.locales.map((l) => [l, `https://luancamposk.dev/${l}/about`]))
+		}
 	}
 }
 

@@ -3,6 +3,7 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { getProjectBySlug, projects } from "@/data/projects"
+import { routing } from "@/i18n/routing"
 import { ProjectGallery } from "@/shared/components/sections/projects/project-gallery"
 import { BackToProjectsLink, ProjectLinks } from "@/shared/components/sections/projects/project-links"
 import { ProjectNavigation } from "@/shared/components/sections/projects/project-navigation"
@@ -36,6 +37,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 			title: project.title,
 			description: project.description,
 			images: [{ url: project.coverImage, width: 1200, height: 630, alt: project.title }]
+		},
+		alternates: {
+			canonical: `https://luancamposk.dev/${locale}/projects/${slug}`,
+			languages: Object.fromEntries(routing.locales.map((l) => [l, `https://luancamposk.dev/${l}/projects/${slug}`]))
 		}
 	}
 }
