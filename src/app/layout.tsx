@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist_Mono, Varela_Round } from "next/font/google"
+import localFont from "next/font/local"
 
 import { Footer } from "@/shared/components/layout/footer"
 import { Navbar } from "@/shared/components/layout/navbar"
@@ -7,17 +7,20 @@ import { ThemeProvider } from "@/shared/components/theme-provider"
 
 import "./globals.css"
 
-const varelaRound = Varela_Round({
+const varelaRound = localFont({
+	src: "../../public/fonts/varela-round-latin.woff2",
 	weight: "400",
-	subsets: ["latin"],
+	style: "normal",
 	variable: "--font-varela-round",
-	display: "swap"
+	display: "swap",
+	fallback: ["system-ui", "arial", "sans-serif"]
 })
 
-const geistMono = Geist_Mono({
-	subsets: ["latin"],
+const geistMono = localFont({
+	src: "../../public/fonts/geist-mono-latin.woff2",
 	variable: "--font-geist-mono",
-	display: "swap"
+	display: "swap",
+	fallback: ["ui-monospace", "monospace"]
 })
 
 export const metadata: Metadata = {
