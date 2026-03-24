@@ -134,6 +134,14 @@
 			}
 		}
 	},
+	"assetDetail": {
+		"notFoundTitle": "Asset no encontrado",
+		"codeHeading": "Código",
+		"explanationHeading": "Explicación",
+		"previous": "Anterior",
+		"next": "Siguiente",
+		"backToAssets": "Volver a los assets"
+	},
 	"assetsPage": {
 		"title": "Assets",
 		"metaDescription": "Explora mi colección curada de code snippets — utilidades, hooks, patrones y algoritmos listos para usar en tus proyectos.",

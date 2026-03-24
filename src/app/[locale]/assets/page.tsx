@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { Suspense } from "react"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { AssetsListing } from "@/shared/components/sections/assets/assets-listing"
@@ -32,7 +33,9 @@ export default async function AssetsPage({ params }: Props) {
 				<p className="mt-4 max-w-2xl text-lg text-muted-foreground">{t("description")}</p>
 
 				<div className="mt-12">
-					<AssetsListing locale={locale} />
+					<Suspense>
+						<AssetsListing locale={locale} />
+					</Suspense>
 				</div>
 			</div>
 		</SectionWrapper>

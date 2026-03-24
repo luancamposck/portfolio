@@ -1,6 +1,7 @@
 "use client"
 
 import { Search } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
 import type { AssetCategory, AssetLocale, CodeAsset } from "@/data/assets"
@@ -14,8 +15,9 @@ interface AssetsListingProps {
 
 export function AssetsListing({ locale }: AssetsListingProps) {
 	const t = useTranslations("assetsPage")
+	const searchParams = useSearchParams()
 	const [activeCategory, setActiveCategory] = useState<AssetCategory | "all">("all")
-	const [search, setSearch] = useState("")
+	const [search, setSearch] = useState(searchParams.get("search") ?? "")
 
 	const allAssets = useMemo(() => getAssetsByLocale(locale as AssetLocale), [locale])
 	const categories = useMemo(() => getAllAssetCategories(), [])

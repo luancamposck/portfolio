@@ -134,6 +134,14 @@
 			}
 		}
 	},
+	"assetDetail": {
+		"notFoundTitle": "Asset not found",
+		"codeHeading": "Code",
+		"explanationHeading": "Explanation",
+		"previous": "Previous",
+		"next": "Next",
+		"backToAssets": "Back to assets"
+	},
 	"assetsPage": {
 		"title": "Assets",
 		"metaDescription": "Explore my curated collection of code snippets — utilities, hooks, patterns, and algorithms ready to use in your projects.",
