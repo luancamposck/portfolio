@@ -165,7 +165,7 @@
         "Typecheck passes"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Assets are TypeScript data, not MDX files. The code field is a raw string, explanation is markdown. Include a getAssetsByLocale(locale) utility."
     },
     {

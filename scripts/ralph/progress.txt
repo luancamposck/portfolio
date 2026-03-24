@@ -178,3 +178,16 @@
   - MDX custom components are available globally via `useMDXComponents()` — no need to import in each MDX file
   - Manual browser verification needed for visual confirmation
 ---
+
+## 2026-03-24 - US-010
+- Created `src/data/assets.ts` with `CodeAsset` type, `AssetLocale` and `AssetCategory` type aliases
+- 10 mock assets with real, useful code: debounce, useLocalStorage, retry with backoff, docker-compose template, binary search, useMediaQuery, fetch wrapper, GitHub Actions CI, pipe function, regex collection
+- 8 assets locale 'pt', 2 locale 'en' — explanations in the asset's locale language
+- 6 utility functions: getAssetBySlug, getAssetsByCategory, getAssetsByTag, getAllAssetCategories, getAllAssetTags, getAssetsByLocale
+- Files changed: `src/data/assets.ts` (new)
+- **Learnings for future iterations:**
+  - Data files follow collocation pattern: type + data array + utility functions in same file (matches `projects.ts`)
+  - Biome auto-fixes trailing commas on the last item in arrays/objects — let it run after writing
+  - Asset `code` and `explanation` fields use template literals for multiline strings — watch for backtick escaping inside template literals
+  - Assets are pure TypeScript data (not MDX files) — the `code` field is a raw string, `explanation` is markdown rendered by the consuming component
+---
