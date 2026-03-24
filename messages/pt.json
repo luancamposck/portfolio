@@ -158,5 +158,16 @@
 			"algorithms": "Algoritmos",
 			"devops": "DevOps"
 		}
+	},
+	"blogPage": {
+		"title": "Blog",
+		"metaDescription": "Artigos sobre desenvolvimento web, TypeScript, React e mais.",
+		"heading": "Blog",
+		"description": "Artigos, tutoriais e reflexões sobre desenvolvimento web moderno.",
+		"allCategories": "Todos",
+		"searchPlaceholder": "Buscar posts...",
+		"noResults": "Nenhum post encontrado.",
+		"readingTime": "{time} de leitura",
+		"readMore": "Ler mais"
 	}
 }
