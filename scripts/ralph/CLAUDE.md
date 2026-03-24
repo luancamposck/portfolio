@@ -91,8 +91,33 @@ If no browser tools are available, note in your progress report that manual brow
 
 After completing a user story, check if ALL stories have `passes: true`.
 
-If ALL stories are complete and passing, reply with:
-<promise>COMPLETE</promise>
+If ALL stories are complete and passing, **archive the PRD before finishing**:
+
+1. Read the `prdSource` field from `prd.json` (e.g. `tasks/prd-portfolio.md`)
+2. Extract the name: remove the `prd-` prefix and `.md` extension from the filename (e.g. `prd-portfolio.md` → `portfolio`)
+3. Create the archive directory: `scripts/ralph/archive/<YYYY-MM-DD>-<name>/`
+4. Copy `scripts/ralph/prd.json` and `scripts/ralph/progress.txt` into the archive directory
+5. Reset `scripts/ralph/prd.json` to:
+   ```json
+   {
+     "project": "",
+     "branchName": "",
+     "prdSource": "",
+     "description": "",
+     "userStories": []
+   }
+   ```
+6. Reset `scripts/ralph/progress.txt` to:
+   ```
+   # Ralph Progress Log
+   ---
+
+   ## Codebase Patterns
+
+   ---
+   ```
+7. Commit: `chore: archive <name> prd and reset for next project`
+8. Then reply with: <promise>COMPLETE</promise>
 
 If there are still stories with `passes: false`, end your response normally (another iteration will pick up the next story).
 
