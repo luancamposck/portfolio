@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import localFont from "next/font/local"
+import { Geist_Mono, Varela_Round } from "next/font/google"
 
 import { Footer } from "@/shared/components/layout/footer"
 import { Navbar } from "@/shared/components/layout/navbar"
@@ -7,14 +7,15 @@ import { ThemeProvider } from "@/shared/components/theme-provider"
 
 import "./globals.css"
 
-const geistSans = localFont({
-	src: "../../public/fonts/geist-latin.woff2",
-	variable: "--font-geist-sans",
+const varelaRound = Varela_Round({
+	weight: "400",
+	subsets: ["latin"],
+	variable: "--font-varela-round",
 	display: "swap"
 })
 
-const geistMono = localFont({
-	src: "../../public/fonts/geist-mono-latin.woff2",
+const geistMono = Geist_Mono({
+	subsets: ["latin"],
 	variable: "--font-geist-mono",
 	display: "swap"
 })
@@ -47,12 +48,12 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	return (
-		<html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
+		<html lang="pt-BR" className={`${varelaRound.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
 			<body className="min-h-full flex flex-col">
 				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange={false}>
 					<a
 						href="#main-content"
-						className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:outline-none"
+						className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:outline-none"
 					>
 						Pular para o conteúdo
 					</a>
