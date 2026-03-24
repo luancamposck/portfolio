@@ -9,6 +9,8 @@
 	"navbar": {
 		"home": "Home",
 		"projects": "Projects",
+		"assets": "Assets",
+		"blog": "Blog",
 		"about": "About",
 		"menu": "Menu",
 		"openMenu": "Open menu",

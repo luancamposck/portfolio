@@ -9,7 +9,9 @@
 	"navbar": {
 		"home": "Home",
 		"projects": "Projetos",
-		"about": "About",
+		"assets": "Assets",
+		"blog": "Blog",
+		"about": "Sobre",
 		"menu": "Menu",
 		"openMenu": "Abrir menu",
 		"closeMenu": "Fechar menu"

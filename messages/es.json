@@ -9,6 +9,8 @@
 	"navbar": {
 		"home": "Inicio",
 		"projects": "Proyectos",
+		"assets": "Assets",
+		"blog": "Blog",
 		"about": "Sobre mí",
 		"menu": "Menú",
 		"openMenu": "Abrir menú",

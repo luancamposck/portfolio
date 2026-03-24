@@ -21,6 +21,8 @@ function Navbar() {
 	const navLinks = [
 		{ href: "/" as const, label: t("home") },
 		{ href: "/projects" as const, label: t("projects") },
+		{ href: "/assets" as const, label: t("assets") },
+		{ href: "/blog" as const, label: t("blog") },
 		{ href: "/about" as const, label: t("about") }
 	]
 
