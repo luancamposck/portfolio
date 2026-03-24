@@ -329,3 +329,24 @@
   - "Assets" and "Blog" are kept untranslated across locales as they're recognized tech terms globally
   - Manual browser verification needed for full UI validation
 ---
+
+## 2026-03-24 - US-017
+- Rewrote `src/app/sitemap.ts` to generate URLs for all 3 locales (pt, en, es) across all routes:
+  - Static routes: home, projects, about, assets, blog
+  - Dynamic routes: individual projects (6), assets (10), blog posts (3)
+  - Each entry includes `alternates.languages` for cross-locale discovery
+  - Assets use `createdAt`/`updatedAt` for `lastModified`; blog posts use `date`/`updatedAt`
+- Removed incorrect `alternates.languages` from layout `generateMetadata` (was pointing all pages to root locale URLs)
+- Added page-specific `alternates` (canonical + languages) to all 8 page-level `generateMetadata` functions:
+  - Home page (also added missing `generateMetadata` with title/description from translations)
+  - About, Projects, Assets, Blog listing pages
+  - Project detail, Asset detail, Blog post detail pages
+- Layout retains `openGraph.locale` and `openGraph.alternateLocale` (correct at layout level)
+- `robots.ts` unchanged — already correct (allows all, points to sitemap.xml)
+- Files changed: `src/app/sitemap.ts`, `src/app/[locale]/layout.tsx`, `src/app/[locale]/page.tsx`, `src/app/[locale]/about/page.tsx`, `src/app/[locale]/projects/page.tsx`, `src/app/[locale]/projects/[slug]/page.tsx`, `src/app/[locale]/assets/page.tsx`, `src/app/[locale]/assets/[slug]/page.tsx`, `src/app/[locale]/blog/page.tsx`, `src/app/[locale]/blog/[slug]/page.tsx`
+- **Learnings for future iterations:**
+  - Layout `generateMetadata` merges with page `generateMetadata` — `alternates.languages` should be page-specific (not layout-level) since each page needs its own locale URLs
+  - `MetadataRoute.Sitemap` entries support `alternates.languages` which generates `<xhtml:link rel="alternate">` in the XML
+  - `sitemap.ts` can import `node:fs`-dependent modules (like blog-posts.ts) since it runs server-side at build time
+  - The `routing.locales` array from `@/i18n/routing` is the single source of truth for locale list — use it everywhere instead of hardcoding
+---
