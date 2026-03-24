@@ -150,7 +150,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "These components are used inside MDX content for both blog posts and potentially asset explanations."
     },
     {
