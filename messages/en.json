@@ -2,5 +2,133 @@
 	"metadata": {
 		"title": "Luan Campos K. — Full-Stack Developer",
 		"description": "Portfolio of Luan Campos K. — Full-stack developer specializing in creative and high-performance digital experiences with React, Next.js, and TypeScript."
+	},
+	"layout": {
+		"skipToContent": "Skip to content"
+	},
+	"navbar": {
+		"home": "Home",
+		"projects": "Projects",
+		"about": "About",
+		"menu": "Menu",
+		"openMenu": "Open menu",
+		"closeMenu": "Close menu"
+	},
+	"footer": {
+		"copyright": "© {year} Luan Campos K. All rights reserved."
+	},
+	"themeToggle": {
+		"toggle": "Toggle theme",
+		"light": "Light",
+		"dark": "Dark",
+		"system": "System"
+	},
+	"hero": {
+		"heading": "Turning ideas into memorable digital experiences",
+		"subtitle": "Full-stack developer passionate about building beautiful, performant interfaces that deliver real results.",
+		"cta": "View projects"
+	},
+	"featuredProjects": {
+		"heading": "Featured projects",
+		"description": "A selection of the most impactful and challenging projects I've delivered.",
+		"viewAll": "View all projects"
+	},
+	"aboutPreview": {
+		"heading": "About me",
+		"bio1": "I'm a full-stack developer passionate about creating digital experiences that make a difference. With years of experience across diverse projects, I combine creative design with robust code to deliver solutions that exceed expectations.",
+		"bio2": "My approach is user-centered and results-driven. I believe technology should serve people, and every project is an opportunity to create something that truly impacts lives and businesses.",
+		"learnMore": "Learn more",
+		"stats": {
+			"experience": "Years of experience",
+			"projects": "Projects delivered",
+			"clients": "Satisfied clients",
+			"technologies": "Technologies mastered"
+		}
+	},
+	"cta": {
+		"heading": "Let's build something amazing together?",
+		"description": "Get in touch and let's turn your idea into a memorable digital experience.",
+		"button": "Get in touch"
+	},
+	"notFound": {
+		"heading": "Page not found",
+		"description": "The page you're looking for may have been moved, removed, or never existed.",
+		"backHome": "Back to home"
+	},
+	"projectsPage": {
+		"title": "Projects",
+		"metaDescription": "Explore my project portfolio — web apps, SaaS, e-commerce, and mobile applications built with modern technologies.",
+		"heading": "All projects",
+		"description": "A complete collection of projects I've built, organized by category."
+	},
+	"projectDetail": {
+		"notFoundTitle": "Project not found",
+		"client": "Client",
+		"year": "Year",
+		"category": "Category",
+		"viewLive": "View live",
+		"aboutProject": "About the project",
+		"backToProjects": "Back to projects",
+		"imageAlt": "{title} - Image {index}"
+	},
+	"projectNavigation": {
+		"previous": "Previous",
+		"next": "Next"
+	},
+	"projectResults": {
+		"heading": "Results"
+	},
+	"projectGallery": {
+		"heading": "Gallery"
+	},
+	"aboutPage": {
+		"title": "About",
+		"metaDescription": "Meet Luan Campos K. — a full-stack developer with over 8 years of experience creating creative and high-performance digital experiences."
+	},
+	"aboutHero": {
+		"name": "Luan Campos K.",
+		"role": "Full-Stack Developer & UI Engineer"
+	},
+	"aboutBio": {
+		"heading": "About me",
+		"paragraph1": "I'm a full-stack developer with over 8 years of experience building digital products that blend creative design with high-quality engineering. My journey started with a curiosity about how things work on the web — and grew into a passion for creating experiences that truly matter.",
+		"paragraph2": "Over the years, I've worked with startups, agencies, and tech companies, always striving for the right balance between performance, accessibility, and aesthetics. I believe the best code is the one that serves people — invisible to the user, yet powerful behind the scenes.",
+		"paragraph3": "My approach is user-centered and results-driven. Every project is an opportunity to solve real problems, simplify complexity, and deliver measurable value. I thrive on challenges that push me out of my comfort zone and allow me to learn something new."
+	},
+	"aboutSkills": {
+		"heading": "Skills & Technologies",
+		"frontend": "Frontend",
+		"backend": "Backend",
+		"devops": "DevOps",
+		"tools": "Tools"
+	},
+	"aboutTimeline": {
+		"heading": "Professional Experience",
+		"experiences": {
+			"nexus": {
+				"role": "Senior Full-Stack Developer",
+				"company": "Nexus Digital Agency",
+				"period": "2022 — Present",
+				"description": "Technical leadership on high-impact projects for enterprise clients. Architecting scalable solutions with Next.js, Node.js, and AWS services."
+			},
+			"techvista": {
+				"role": "Full-Stack Developer",
+				"company": "TechVista Solutions",
+				"period": "2020 — 2022",
+				"description": "Building SaaS and e-commerce platforms. Implementing CI/CD pipelines and DevOps practices for continuous delivery."
+			},
+			"criativa": {
+				"role": "Frontend Developer",
+				"company": "Criativa Digital",
+				"period": "2018 — 2020",
+				"description": "Creating responsive and accessible interfaces with a focus on performance. Working closely with design teams to turn prototypes into code."
+			},
+			"startup": {
+				"role": "Junior Developer",
+				"company": "StartUp Labs",
+				"period": "2016 — 2018",
+				"description": "Early career building features for web applications. Accelerated learning in agile methodologies and coding best practices."
+			}
+		}
 	}
 }
