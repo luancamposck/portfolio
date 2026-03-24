@@ -1,0 +1,144 @@
+---
+slug: typescript-utility-types-na-pratica
+title: "TypeScript Utility Types na Prática"
+description: "Guia prático dos utility types mais úteis do TypeScript com exemplos reais de quando e como usar cada um."
+locale: pt
+date: "2026-02-20"
+tags: ["typescript", "tipos", "frontend"]
+category: "TypeScript"
+coverImage: ""
+published: true
+---
+
+## Por que Utility Types?
+
+O TypeScript vem com um conjunto de **utility types** built-in que transformam tipos existentes. Dominar esses tipos evita duplicação e mantém seus tipos sincronizados com a fonte de verdade.
+
+Vamos explorar os mais úteis com exemplos de código real — não exemplos genéricos com `Foo` e `Bar`.
+
+## Partial e Required
+
+`Partial<T>` torna todas as propriedades opcionais. Ideal para funções de update onde você quer atualizar apenas alguns campos:
+
+```ts title="partial-example.ts" {8}
+interface User {
+  id: string
+  name: string
+  email: string
+  avatar: string
+}
+
+type UpdateUserInput = Partial<Omit<User, "id">>
+
+async function updateUser(id: string, data: UpdateUserInput) {
+  // data pode ter qualquer combinação de name, email, avatar
+  return db.user.update({ where: { id }, data })
+}
+
+// Válido — atualiza apenas o nome
+updateUser("123", { name: "Novo Nome" })
+```
+
+`Required<T>` faz o oposto — torna tudo obrigatório. Útil quando você precisa garantir que um tipo com campos opcionais está completo:
+
+```ts
+type CompleteUser = Required<User>
+```
+
+## Pick e Omit
+
+`Pick<T, K>` seleciona propriedades específicas. `Omit<T, K>` remove propriedades:
+
+```ts title="pick-omit-example.ts"
+// Apenas os dados públicos do usuário
+type PublicUser = Pick<User, "id" | "name" | "avatar">
+
+// Dados para criar um usuário (sem o id auto-gerado)
+type CreateUserInput = Omit<User, "id">
+
+// Composição: dados de update sem o id, todos opcionais
+type UpdateUserInput = Partial<Omit<User, "id">>
+```
+
+<Callout variant="info">
+A composição de utility types é onde o poder real aparece. `Partial&lt;Omit&lt;User, "id"&gt;&gt;` é um padrão tão comum que vale a pena memorizar.
+</Callout>
+
+## Record
+
+`Record<K, V>` cria um tipo de objeto com chaves de tipo `K` e valores de tipo `V`:
+
+```ts title="record-example.ts"
+// Mapa de status para configuração de UI
+type Status = "pending" | "active" | "archived"
+
+const statusConfig: Record<Status, { label: string; color: string }> = {
+  pending: { label: "Pendente", color: "yellow" },
+  active: { label: "Ativo", color: "green" },
+  archived: { label: "Arquivado", color: "gray" },
+}
+
+// TypeScript garante que TODOS os status estão cobertos
+// Esquecer um status = erro de compilação
+```
+
+## Extract e Exclude
+
+Filtram union types. `Extract` mantém apenas os tipos que são atribuíveis a outro tipo. `Exclude` remove:
+
+```ts title="extract-exclude-example.ts"
+type Event =
+  | { type: "click"; x: number; y: number }
+  | { type: "keypress"; key: string }
+  | { type: "scroll"; offset: number }
+
+// Apenas eventos de input
+type InputEvent = Extract<Event, { type: "click" | "keypress" }>
+
+// Tudo exceto scroll
+type NonScrollEvent = Exclude<Event, { type: "scroll" }>
+```
+
+## ReturnType e Parameters
+
+Extraem tipos de funções existentes — perfeitos para manter tipos sincronizados sem duplicação:
+
+```ts title="return-type-example.ts"
+async function fetchUser(id: string) {
+  const response = await fetch(`/api/users/${id}`)
+  return response.json() as Promise<User>
+}
+
+// O tipo do retorno de fetchUser, resolvendo a Promise
+type FetchUserResult = Awaited<ReturnType<typeof fetchUser>>
+// = User
+
+// Os tipos dos parâmetros
+type FetchUserParams = Parameters<typeof fetchUser>
+// = [id: string]
+```
+
+<Callout variant="warning">
+`ReturnType` com funções async retorna `Promise&lt;T&gt;`. Use `Awaited&lt;ReturnType&lt;...&gt;&gt;` para obter o tipo resolvido.
+</Callout>
+
+## Satisfies — O Operador Moderno
+
+O operador `satisfies` (TS 4.9+) valida que um valor conforma a um tipo sem perder a inferência específica:
+
+```ts title="satisfies-example.ts"
+const routes = {
+  home: "/",
+  about: "/about",
+  blog: "/blog",
+} satisfies Record<string, string>
+
+// routes.home é inferido como "/" (string literal), não string
+// Mas o TypeScript validou que todos os valores são strings
+```
+
+## Conclusão
+
+Utility types eliminam duplicação de tipos e criam uma **única fonte de verdade**. Quando você muda a interface `User`, todos os tipos derivados (`UpdateUserInput`, `PublicUser`, etc.) se atualizam automaticamente.
+
+**Regra prática:** se você está copiando propriedades de um tipo para outro, provavelmente existe um utility type que faz isso de forma derivada.
