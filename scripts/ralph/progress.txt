@@ -191,3 +191,29 @@
   - Asset `code` and `explanation` fields use template literals for multiline strings — watch for backtick escaping inside template literals
   - Assets are pure TypeScript data (not MDX files) — the `code` field is a raw string, `explanation` is markdown rendered by the consuming component
 ---
+
+## 2026-03-24 - US-011
+- Created assets listing page at `/<locale>/assets` with:
+  - TextReveal heading animation (matches projects page pattern)
+  - Category filter bar with translated labels (All, Utilities, Hooks, Patterns, Algorithms, DevOps)
+  - Text search input filtering by title, description, and tags
+  - Locale-based filtering: page only shows assets matching current route locale
+  - Grid of asset cards with: title, colored language badge, description, code preview (4 truncated lines), tags
+  - Cards link to `/<locale>/assets/[slug]` (detail page built in US-012)
+  - Stagger animation on cards via motion.div whileInView with per-card delay
+  - prefers-reduced-motion respected via useReducedMotion
+  - SEO metadata via generateMetadata with translations
+  - Responsive layout: single column → 2 cols at sm → 3 cols at lg
+- Created `AssetCard` component (`src/shared/components/sections/assets/asset-card.tsx`)
+- Created `AssetsListing` client component (`src/shared/components/sections/assets/assets-listing.tsx`)
+- Created page at `src/app/[locale]/assets/page.tsx`
+- Added `assetsPage` translations to all 3 locale files (pt, en, es) including category labels
+- Files changed: `messages/pt.json`, `messages/en.json`, `messages/es.json`, `src/app/[locale]/assets/page.tsx` (new), `src/shared/components/sections/assets/asset-card.tsx` (new), `src/shared/components/sections/assets/assets-listing.tsx` (new)
+- **Learnings for future iterations:**
+  - Asset listing follows same pattern as projects listing: server page + client listing component with filters
+  - Language badge colors use `bg-{color}-500/15 text-{color}-700 dark:text-{color}-400` pattern for consistent light/dark mode
+  - `getAssetsByLocale()` is the main data source — filters assets by the route locale before any category/search filtering
+  - No toggle-group shadcn component exists — custom filter buttons matching projects-listing pattern are used instead
+  - Search input is a native HTML input with Tailwind styling (no shadcn input component in the project)
+  - Manual browser verification needed for full UI validation
+---
