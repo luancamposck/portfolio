@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Counter } from "@/shared/components/creative/counter"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 
@@ -8,11 +9,13 @@ interface ProjectResultsProps {
 }
 
 export function ProjectResults({ results }: ProjectResultsProps) {
+	const t = useTranslations("projectResults")
+
 	if (results.length === 0) return null
 
 	return (
 		<SectionWrapper className="py-12">
-			<h2 className="text-2xl font-bold">Resultados</h2>
+			<h2 className="text-2xl font-bold">{t("heading")}</h2>
 			<div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 				{results.map((result) => {
 					const parsed = parseResult(result)

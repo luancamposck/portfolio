@@ -2,9 +2,9 @@
 
 import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react"
 import Image from "next/image"
-import Link from "next/link"
 import { useCallback, useRef } from "react"
 import type { Project } from "@/data/projects"
+import { Link } from "@/i18n/navigation"
 import { Badge } from "@/shared/components/ui/badge"
 import { cn } from "@/shared/lib/utils"
 

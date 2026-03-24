@@ -1,9 +1,10 @@
 import { ExternalLink, Github } from "lucide-react"
 import type { Metadata } from "next"
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { getProjectBySlug, projects } from "@/data/projects"
+import { Link } from "@/i18n/navigation"
 import { ProjectGallery } from "@/shared/components/sections/projects/project-gallery"
 import { ProjectNavigation } from "@/shared/components/sections/projects/project-navigation"
 import { ProjectResults } from "@/shared/components/sections/projects/project-results"
@@ -21,11 +22,13 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const { slug } = await params
+	const { locale, slug } = await params
+	setRequestLocale(locale)
 	const project = getProjectBySlug(slug)
 
 	if (!project) {
-		return { title: "Projeto não encontrado" }
+		const t = await getTranslations("projectDetail")
+		return { title: t("notFoundTitle") }
 	}
 
 	return {
@@ -40,12 +43,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProjectDetailPage({ params }: Props) {
-	const { slug } = await params
+	const { locale, slug } = await params
+	setRequestLocale(locale)
 	const project = getProjectBySlug(slug)
 
 	if (!project) {
 		notFound()
 	}
+
+	const t = await getTranslations("projectDetail")
 
 	const currentIndex = projects.findIndex((p) => p.slug === slug)
 	const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null
@@ -71,15 +77,15 @@ export default async function ProjectDetailPage({ params }: Props) {
 				<div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
 					<div className="flex flex-wrap gap-4 sm:gap-6 text-sm">
 						<div>
-							<p className="font-medium text-muted-foreground">Cliente</p>
+							<p className="font-medium text-muted-foreground">{t("client")}</p>
 							<p className="mt-1 font-semibold">{project.client}</p>
 						</div>
 						<div>
-							<p className="font-medium text-muted-foreground">Ano</p>
+							<p className="font-medium text-muted-foreground">{t("year")}</p>
 							<p className="mt-1 font-semibold">{project.year}</p>
 						</div>
 						<div>
-							<p className="font-medium text-muted-foreground">Categoria</p>
+							<p className="font-medium text-muted-foreground">{t("category")}</p>
 							<p className="mt-1 font-semibold">{project.category}</p>
 						</div>
 					</div>
@@ -88,7 +94,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 						{project.liveUrl && (
 							<a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "default" })}>
 								<ExternalLink data-icon="inline-start" />
-								Ver ao vivo
+								{t("viewLive")}
 							</a>
 						)}
 						{project.githubUrl && (
@@ -111,7 +117,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
 				{/* Long description */}
 				<div className="mt-12">
-					<h2 className="text-2xl font-bold">Sobre o projeto</h2>
+					<h2 className="text-2xl font-bold">{t("aboutProject")}</h2>
 					<div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
 						{project.longDescription.split("\n\n").map((paragraph) => (
 							<p key={paragraph.slice(0, 40)}>{paragraph}</p>
@@ -136,7 +142,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
 				<div className="mt-8">
 					<Link href="/projects" className={buttonVariants({ variant: "outline" })}>
-						&larr; Voltar aos projetos
+						&larr; {t("backToProjects")}
 					</Link>
 				</div>
 			</div>

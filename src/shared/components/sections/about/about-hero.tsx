@@ -2,10 +2,12 @@
 
 import { User } from "lucide-react"
 import { motion, useReducedMotion } from "motion/react"
+import { useTranslations } from "next-intl"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 
 export function AboutHero() {
+	const t = useTranslations("aboutHero")
 	const shouldReduceMotion = useReducedMotion()
 
 	return (
@@ -23,12 +25,12 @@ export function AboutHero() {
 
 				{/* Name */}
 				<h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-					<TextReveal text="Luan Campos K." delay={0.1} />
+					<TextReveal text={t("name")} delay={0.1} />
 				</h1>
 
 				{/* Title */}
 				<p className="mt-4 text-xl text-muted-foreground sm:text-2xl">
-					<TextReveal text="Desenvolvedor Full-Stack & UI Engineer" delay={0.4} />
+					<TextReveal text={t("role")} delay={0.4} />
 				</p>
 			</div>
 		</SectionWrapper>

@@ -1,4 +1,5 @@
 import { Github, Linkedin, Mail } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { Separator } from "@/shared/components/ui/separator"
 
 const socialLinks = [
@@ -7,12 +8,14 @@ const socialLinks = [
 	{ href: "mailto:contato@luancamposk.dev", label: "Email", icon: Mail }
 ]
 
-function Footer() {
+async function Footer() {
+	const t = await getTranslations("footer")
+
 	return (
 		<footer className="mt-auto w-full">
 			<Separator />
 			<div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-8 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
-				<p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Luan Campos K. Todos os direitos reservados.</p>
+				<p className="text-sm text-muted-foreground">{t("copyright", { year: new Date().getFullYear() })}</p>
 				<nav className="flex items-center gap-4" aria-label="Social links">
 					{socialLinks.map((link) => (
 						<a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="text-muted-foreground transition-colors hover:text-foreground" aria-label={link.label}>

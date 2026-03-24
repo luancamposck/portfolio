@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, useReducedMotion } from "motion/react"
+import { useTranslations } from "next-intl"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { Badge } from "@/shared/components/ui/badge"
@@ -8,37 +9,38 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 
 const skillCategories = [
 	{
-		title: "Frontend",
+		titleKey: "frontend" as const,
 		skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Motion", "HTML/CSS", "Figma"]
 	},
 	{
-		title: "Backend",
+		titleKey: "backend" as const,
 		skills: ["Node.js", "Python", "PostgreSQL", "MongoDB", "REST APIs", "GraphQL", "Redis"]
 	},
 	{
-		title: "DevOps",
+		titleKey: "devops" as const,
 		skills: ["Docker", "AWS", "Vercel", "CI/CD", "GitHub Actions", "Nginx", "Linux"]
 	},
 	{
-		title: "Tools",
+		titleKey: "tools" as const,
 		skills: ["Git", "VS Code", "Postman", "Jira", "Notion", "Storybook", "Vitest"]
 	}
 ]
 
 export function AboutSkills() {
+	const t = useTranslations("aboutSkills")
 	const shouldReduceMotion = useReducedMotion()
 
 	return (
 		<SectionWrapper className="py-16">
 			<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 				<h2 className="text-3xl font-bold tracking-tight mb-12 md:text-4xl">
-					<TextReveal text="Habilidades & Tecnologias" />
+					<TextReveal text={t("heading")} />
 				</h2>
 
 				<div className="grid gap-6 sm:grid-cols-2">
 					{skillCategories.map((category, categoryIndex) => (
 						<motion.div
-							key={category.title}
+							key={category.titleKey}
 							initial={shouldReduceMotion ? undefined : { opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: true }}
@@ -46,7 +48,7 @@ export function AboutSkills() {
 						>
 							<Card>
 								<CardHeader>
-									<CardTitle>{category.title}</CardTitle>
+									<CardTitle>{t(category.titleKey)}</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<div className="flex flex-wrap gap-2">

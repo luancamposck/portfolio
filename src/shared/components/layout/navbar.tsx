@@ -2,25 +2,26 @@
 
 import { Menu, X } from "lucide-react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useState } from "react"
+import { Link, usePathname } from "@/i18n/navigation"
 import { ThemeToggle } from "@/shared/components/theme-toggle"
 import { useIsMobile } from "@/shared/hooks/use-mobile"
 import { cn } from "@/shared/lib/utils"
 
-const navLinks = [
-	{ href: "/", label: "Home" },
-	{ href: "/projects", label: "Projetos" },
-	{ href: "/about", label: "About" }
-]
-
 function Navbar() {
+	const t = useTranslations("navbar")
 	const [scrolled, setScrolled] = useState(false)
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const isMobile = useIsMobile()
 	const pathname = usePathname()
 	const prefersReduced = useReducedMotion()
+
+	const navLinks = [
+		{ href: "/" as const, label: t("home") },
+		{ href: "/projects" as const, label: t("projects") },
+		{ href: "/about" as const, label: t("about") }
+	]
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 20)
@@ -69,7 +70,7 @@ function Navbar() {
 							type="button"
 							onClick={toggleMobile}
 							className="inline-flex size-9 items-center justify-center rounded-md border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
-							aria-label={mobileOpen ? "Close menu" : "Open menu"}
+							aria-label={mobileOpen ? t("closeMenu") : t("openMenu")}
 						>
 							{mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
 						</button>
@@ -100,8 +101,8 @@ function Navbar() {
 							className="fixed inset-y-0 right-0 z-50 flex w-3/4 max-w-sm flex-col gap-6 border-l border-border bg-background p-6 shadow-lg"
 						>
 							<div className="flex items-center justify-between">
-								<span className="text-lg font-semibold text-foreground">Menu</span>
-								<button type="button" onClick={() => setMobileOpen(false)} className="inline-flex size-9 items-center justify-center rounded-md text-foreground hover:bg-accent cursor-pointer" aria-label="Close menu">
+								<span className="text-lg font-semibold text-foreground">{t("menu")}</span>
+								<button type="button" onClick={() => setMobileOpen(false)} className="inline-flex size-9 items-center justify-center rounded-md text-foreground hover:bg-accent cursor-pointer" aria-label={t("closeMenu")}>
 									<X className="size-4" />
 								</button>
 							</div>
