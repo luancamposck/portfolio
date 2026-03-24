@@ -22,6 +22,11 @@
 - `usePathname()` from `@/i18n/navigation` returns path without locale prefix — active state comparisons use clean paths like `/projects`
 - Server components needing translations must be `async` and use `getTranslations()` from `next-intl/server`
 - Pages with translated metadata use `generateMetadata()` (not static `export const metadata`) + `setRequestLocale(locale)` inside
+- Turbopack requires string-based rehype/remark plugin names in `createMDX` options — function references and non-serializable options (callbacks) are not supported
+- rehype-pretty-code CSS: use `data-*` attributes (`data-highlighted-line`, `data-highlighted-chars`, `data-line-numbers`, `data-rehype-pretty-code-title`) for styling — no need for callback-based class names
+- `buttonVariants()` from `button-variants.ts` gets treated as client code by Turbopack because `button.tsx` ("use client") imports it — extract into client components when needed in server components
+- Root `not-found.tsx` (outside `[locale]`) has no i18n context — use plain strings, not `useTranslations()`
+- Dual theme config for rehype-pretty-code: `{ dark: "github-dark-default", light: "github-light-default" }` — CSS switches via `var(--shiki-light)` / `var(--shiki-dark)` with `.dark` selector
 
 ---
 
@@ -138,4 +143,21 @@
   - `alternates.languages` in metadata generates `<link rel="alternate" hrefLang="xx">` tags automatically
   - Pre-existing build failure on `/_not-found` page — not related to i18n changes, likely a next-intl + not-found rendering issue
   - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-008
+- Installed `rehype-pretty-code` and `shiki` for syntax highlighting
+- Configured `next.config.ts` createMDX with Turbopack-compatible string-based plugin: `["rehype-pretty-code", { theme: { dark: "github-dark-default", light: "github-light-default" }, keepBackground: false }]`
+- Added comprehensive CSS in `globals.css` for code blocks: dark/light theme switching via `--shiki-light`/`--shiki-dark`, line numbers (`data-line-numbers`), highlighted lines (`data-highlighted-line`), highlighted chars (`data-highlighted-chars`), file titles (`data-rehype-pretty-code-title`), captions, inline code
+- Fixed pre-existing build failure: root `not-found.tsx` used `useTranslations()` without locale context — replaced with static PT-BR strings and plain HTML button
+- Fixed pre-existing build failure: project detail page called `buttonVariants()` (client function) from server component — extracted `ProjectLinks` and `BackToProjectsLink` client components
+- Files changed: `next.config.ts`, `package.json`, `package-lock.json`, `src/app/globals.css`, `src/app/not-found.tsx`, `src/app/[locale]/projects/[slug]/page.tsx`, `src/shared/components/sections/projects/project-links.tsx` (new)
+- **Learnings for future iterations:**
+  - Turbopack can NOT serialize function references in MDX plugin options — use string-based plugin names: `["rehype-pretty-code", { ...serializableOptions }]` per Next.js 16 docs
+  - rehype-pretty-code adds `data-*` attributes by default (data-highlighted-line, data-line-numbers, data-rehype-pretty-code-title, etc.) — CSS can target these without needing `onVisit*` callbacks
+  - The dual theme `{ dark: "...", light: "..." }` config sets `--shiki-dark` and `--shiki-light` CSS vars on each span — switch between them with `.dark` class selector
+  - `button-variants.ts` (no "use client") still gets treated as client by Turbopack because `button.tsx` ("use client") imports it — any server component needing `buttonVariants()` must extract calls to a client component
+  - Root `not-found.tsx` renders outside `[locale]` segment — no NextIntlClientProvider, no `useTranslations()`, no `Link` from i18n/navigation
+  - Build now passes cleanly (was previously failing on `/_not-found` which masked the `buttonVariants` issue)
+  - Manual browser verification needed for syntax highlighting visual confirmation
 ---

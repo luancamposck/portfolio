@@ -133,7 +133,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Configure in next.config.ts createMDX options. Try github-dark-default for dark mode and github-light-default for light mode. This must be done before blog and asset pages that need code rendering."
     },
     {
