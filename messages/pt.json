@@ -133,5 +133,22 @@
 				"description": "Início de carreira desenvolvendo features em aplicações web. Aprendizado acelerado em metodologias ágeis e boas práticas de código."
 			}
 		}
+	},
+	"assetsPage": {
+		"title": "Assets",
+		"metaDescription": "Explore minha coleção curada de code snippets — utilitários, hooks, padrões e algoritmos prontos para usar nos seus projetos.",
+		"heading": "Meus Assets",
+		"description": "Uma coleção curada de code snippets úteis que uso no dia a dia.",
+		"searchPlaceholder": "Buscar assets...",
+		"allCategories": "Todos",
+		"noResults": "Nenhum asset encontrado.",
+		"codePreviewLines": "Prévia do código",
+		"categories": {
+			"utils": "Utilitários",
+			"hooks": "Hooks",
+			"patterns": "Padrões",
+			"algorithms": "Algoritmos",
+			"devops": "DevOps"
+		}
 	}
 }

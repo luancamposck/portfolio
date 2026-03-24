@@ -133,5 +133,22 @@
 				"description": "Early career building features for web applications. Accelerated learning in agile methodologies and coding best practices."
 			}
 		}
+	},
+	"assetsPage": {
+		"title": "Assets",
+		"metaDescription": "Explore my curated collection of code snippets — utilities, hooks, patterns, and algorithms ready to use in your projects.",
+		"heading": "My Assets",
+		"description": "A curated collection of useful code snippets I use on a daily basis.",
+		"searchPlaceholder": "Search assets...",
+		"allCategories": "All",
+		"noResults": "No assets found.",
+		"codePreviewLines": "Code preview",
+		"categories": {
+			"utils": "Utilities",
+			"hooks": "Hooks",
+			"patterns": "Patterns",
+			"algorithms": "Algorithms",
+			"devops": "DevOps"
+		}
 	}
 }
