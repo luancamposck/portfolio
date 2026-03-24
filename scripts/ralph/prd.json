@@ -226,7 +226,7 @@
         "Typecheck passes"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "Blog posts are MDX files, unlike assets which are TypeScript data. Each MDX file has frontmatter with locale field. Include getPostsByLocale(locale) utility."
     },
     {

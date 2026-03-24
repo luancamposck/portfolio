@@ -32,6 +32,8 @@
 - For raw code string highlighting (non-MDX): use `shiki.codeToHtml()` server-side with same theme config as rehype-pretty-code
 - For markdown string → HTML (non-MDX): `unified().use(remarkParse).use(remarkRehype)` + `hast-util-to-html` — no extra installs needed
 - `useSearchParams()` requires `<Suspense>` wrapper for SSG — otherwise build fails
+- Blog posts are MDX files in `content/blog/` read via `fs` + `gray-matter` — the `BlogPost` type and utilities are in `src/data/blog-posts.ts`
+- `getAllPosts()` returns published posts sorted by date desc; `getPostBySlug()` returns any post (including drafts)
 
 ---
 
@@ -244,4 +246,25 @@
   - `biome-ignore lint/security/noDangerouslySetInnerHtml` suppression needed for server-generated HTML (shiki output, remark output) — these are safe since content comes from trusted data, not user input
   - Prev/next navigation scoped by locale: `getAssetsByLocale(locale)` first, then find index — ensures navigation stays within the same language
   - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-013
+- Created blog data layer with MDX posts and utility functions
+- Defined `BlogPost` type in `src/data/blog-posts.ts` with all required fields: slug, title, description, locale, date, updatedAt, tags, category, readingTime, coverImage, published, content
+- Installed `gray-matter` for YAML frontmatter parsing from MDX files
+- Reading time calculated from word count (200 wpm, ceil to nearest minute)
+- 3 MDX blog posts created in `content/blog/`:
+  - `construindo-apis-rest-com-nextjs.mdx` (pt) - REST APIs with Next.js 16 Route Handlers
+  - `typescript-utility-types-na-pratica.mdx` (pt) - TypeScript Utility Types practical guide
+  - `react-server-components-guide.mdx` (en) - React Server Components patterns and pitfalls
+- All posts use custom MDX components (Callout) and rehype-pretty-code features (line highlighting, file titles)
+- 8 utility functions: getAllPosts (sorted by date desc, published only), getPostBySlug, getPostsByTag, getPostsByCategory, getPostsByLocale, getAllPostCategories, getAllPostTags, plus internal getPosts with module-level cache
+- Files changed: `package.json`, `package-lock.json`, `src/data/blog-posts.ts` (new), `content/blog/construindo-apis-rest-com-nextjs.mdx` (new), `content/blog/typescript-utility-types-na-pratica.mdx` (new), `content/blog/react-server-components-guide.mdx` (new)
+- **Learnings for future iterations:**
+  - Blog posts use `gray-matter` for frontmatter parsing — YAML frontmatter between `---` delimiters, content is everything after
+  - `getAllPosts()` filters `published: true` — `getPostBySlug()` does NOT filter by published (allows preview of drafts)
+  - Module-level cache (`cachedPosts`) avoids re-reading filesystem on every call — fine for build-time/SSG
+  - MDX files in `content/blog/` are data files read via `fs`, not page routes — @next/mdx processes only files in the App Router
+  - Blog posts follow similar data layer pattern as assets but read from filesystem instead of inline TypeScript data
+  - `coverImage: ""` in frontmatter maps to `undefined` via `data.coverImage || undefined` — empty string is falsy
 ---
