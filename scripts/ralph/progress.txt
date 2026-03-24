@@ -34,6 +34,8 @@
 - `useSearchParams()` requires `<Suspense>` wrapper for SSG — otherwise build fails
 - Blog posts are MDX files in `content/blog/` read via `fs` + `gray-matter` — the `BlogPost` type and utilities are in `src/data/blog-posts.ts`
 - `getAllPosts()` returns published posts sorted by date desc; `getPostBySlug()` returns any post (including drafts)
+- Client components ("use client") CANNOT import modules using `node:fs` — data from `blog-posts.ts` must be fetched in server components and passed as props
+- `next-mdx-remote/rsc` `MDXRemote` renders MDX strings server-side — use for blog post content with rehype/remark plugins (function references OK, not limited by Turbopack)
 
 ---
 
@@ -287,4 +289,29 @@
   - `formatDate()` helper maps locale codes to BCP 47 tags for `toLocaleDateString()` — pt→pt-BR, en→en-US, es→es-ES
   - Cover image uses next/image `fill` with `relative` parent — same pattern as project cards
   - Manual browser verification needed for full UI validation
+---
+
+## 2026-03-24 - US-015
+- Created blog post detail page at `/<locale>/blog/[slug]` with:
+  - `generateStaticParams` for all post slugs (9 paths generated across 3 locales)
+  - Header: category badge, title, description, date (locale-formatted), reading time, tags as clickable badges
+  - Cover image support via next/image with aspect-video container
+  - MDX content rendered via `next-mdx-remote/rsc` with `@tailwindcss/typography` prose classes
+  - Syntax highlighting via `rehype-pretty-code` (same dual-theme config as global)
+  - Headings with clickable anchor links via `rehype-slug` + `rehype-autolink-headings` (behavior: "wrap")
+  - Prev/next navigation between posts scoped by locale
+  - Dynamic metadata with OpenGraph article type (publishedTime, modifiedTime, tags, og:image)
+  - Loading skeleton with shadcn Skeleton component
+  - `blogDetail` translations added to all 3 locale files (pt, en, es)
+- Created `BlogNavigation` async server component following asset-navigation pattern
+- Fixed `BlogListing` client component: moved `getPostsByLocale()`/`getAllPostCategories()` calls to server page and passed as props — client components cannot import `node:fs` modules
+- Added `useSearchParams()` to `BlogListing` for tag link support from detail page (`/blog?search=tag`)
+- Wrapped `BlogListing` in `<Suspense>` boundary (required by `useSearchParams()` for SSG)
+- Files changed: `src/app/[locale]/blog/[slug]/page.tsx` (new), `src/app/[locale]/blog/[slug]/loading.tsx` (new), `src/shared/components/sections/blog/blog-navigation.tsx` (new), `src/app/[locale]/blog/page.tsx`, `src/shared/components/sections/blog/blog-listing.tsx`, `messages/pt.json`, `messages/en.json`, `messages/es.json`, `package.json`, `package-lock.json`
+- **Learnings for future iterations:**
+  - `next-mdx-remote/rsc` `MDXRemote` compiles MDX strings server-side at render time — accepts function references for rehype/remark plugins (not limited by Turbopack serialization)
+  - Client components ("use client") that import modules using `node:fs` will fail Turbopack build — data must be fetched in server components and passed as props
+  - `rehype-slug` adds `id` attributes to headings; `rehype-autolink-headings` with `behavior: "wrap"` wraps heading text in `<a>` tags linking to the slug anchor
+  - Blog post tags link to `/blog?search=tagname` — `BlogListing` reads initial search from `useSearchParams().get("search")`
+  - `prose-headings:scroll-mt-20` in the prose container provides scroll margin for anchor navigation
 ---
