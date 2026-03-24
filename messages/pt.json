@@ -159,6 +159,18 @@
 			"devops": "DevOps"
 		}
 	},
+	"blogDetail": {
+		"notFoundTitle": "Post não encontrado",
+		"readingTime": "{time} de leitura",
+		"previous": "Anterior",
+		"next": "Próximo",
+		"backToBlog": "Voltar ao blog",
+		"publishedOn": "Publicado em",
+		"updatedOn": "Atualizado em",
+		"tableOfContents": "Índice",
+		"copyLink": "Copiar link",
+		"linkCopied": "Link copiado!"
+	},
 	"blogPage": {
 		"title": "Blog",
 		"metaDescription": "Artigos sobre desenvolvimento web, TypeScript, React e mais.",

@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { Suspense } from "react"
+import { type BlogLocale, getAllPostCategories, getPostsByLocale } from "@/data/blog-posts"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { BlogListing } from "@/shared/components/sections/blog/blog-listing"
@@ -22,6 +24,8 @@ export default async function BlogPage({ params }: Props) {
 	const { locale } = await params
 	setRequestLocale(locale)
 	const t = await getTranslations("blogPage")
+	const posts = getPostsByLocale(locale as BlogLocale)
+	const categories = getAllPostCategories()
 
 	return (
 		<SectionWrapper className="py-20">
@@ -32,7 +36,9 @@ export default async function BlogPage({ params }: Props) {
 				<p className="mt-4 max-w-2xl text-lg text-muted-foreground">{t("description")}</p>
 
 				<div className="mt-12">
-					<BlogListing locale={locale} />
+					<Suspense>
+						<BlogListing posts={posts} categories={categories} />
+					</Suspense>
 				</div>
 			</div>
 		</SectionWrapper>

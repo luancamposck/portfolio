@@ -1,27 +1,27 @@
 "use client"
 
 import { Search } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
-import type { BlogLocale, BlogPost } from "@/data/blog-posts"
-import { getAllPostCategories, getPostsByLocale } from "@/data/blog-posts"
+import type { BlogPost } from "@/data/blog-posts"
 import { cn } from "@/shared/lib/utils"
 import { BlogCard } from "./blog-card"
 
 interface BlogListingProps {
-	locale: string
+	posts: BlogPost[]
+	categories: string[]
 }
 
-export function BlogListing({ locale }: BlogListingProps) {
+export function BlogListing({ posts, categories }: BlogListingProps) {
 	const t = useTranslations("blogPage")
+	const searchParams = useSearchParams()
+	const initialSearch = searchParams.get("search") ?? ""
 	const [activeCategory, setActiveCategory] = useState<string>("all")
-	const [search, setSearch] = useState("")
-
-	const allPosts = useMemo(() => getPostsByLocale(locale as BlogLocale), [locale])
-	const categories = useMemo(() => getAllPostCategories(), [])
+	const [search, setSearch] = useState(initialSearch)
 
 	const filteredPosts = useMemo(() => {
-		let result: BlogPost[] = allPosts
+		let result: BlogPost[] = posts
 
 		if (activeCategory !== "all") {
 			result = result.filter((p) => p.category === activeCategory)
@@ -33,7 +33,7 @@ export function BlogListing({ locale }: BlogListingProps) {
 		}
 
 		return result
-	}, [allPosts, activeCategory, search])
+	}, [posts, activeCategory, search])
 
 	return (
 		<>
