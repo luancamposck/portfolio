@@ -1,10 +1,6 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 
-import { Footer } from "@/shared/components/layout/footer"
-import { Navbar } from "@/shared/components/layout/navbar"
-import { ThemeProvider } from "@/shared/components/theme-provider"
-
 import "./globals.css"
 
 const varelaRound = localFont({
@@ -52,22 +48,7 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	return (
 		<html lang="pt-BR" className={`${varelaRound.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
-			<body className="min-h-full flex flex-col">
-				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange={false}>
-					<a
-						href="#main-content"
-						className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:outline-none"
-					>
-						Pular para o conteúdo
-					</a>
-					<Navbar />
-					{/* biome-ignore lint/correctness/useUniqueElementIds: root layout renders once — static id is safe for skip-to-content target */}
-					<main id="main-content" className="flex-1 pt-16">
-						{children}
-					</main>
-					<Footer />
-				</ThemeProvider>
-			</body>
+			<body className="min-h-full flex flex-col">{children}</body>
 		</html>
 	)
 }

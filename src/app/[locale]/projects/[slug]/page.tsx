@@ -11,7 +11,7 @@ import { Badge } from "@/shared/components/ui/badge"
 import { buttonVariants } from "@/shared/components/ui/button-variants"
 
 type Props = {
-	params: Promise<{ slug: string }>
+	params: Promise<{ locale: string; slug: string }>
 }
 
 export async function generateStaticParams() {

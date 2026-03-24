@@ -2,5 +2,79 @@
 ---
 
 ## Codebase Patterns
+- Use `next/font/local` instead of `next/font/google` — Google Fonts cannot be fetched at build time in this environment. Font files go in `public/fonts/`.
+- Font CSS variable chain: layout.tsx sets `--font-varela-round` on `<html>` via `varelaRound.variable` class → globals.css `@theme inline` maps `--font-sans: var(--font-varela-round)` → `html` applies `@apply font-sans`
+- Geist font files already exist in `public/fonts/` (geist-latin.woff2, geist-mono-latin.woff2)
+- This codebase uses tabs for indentation — when using Edit tool, match with unique string fragments rather than leading whitespace
+- Biome is the linter/formatter — run `npx biome check --fix src/` after edits
+- Responsive mobile-first pattern: `gap-3 sm:gap-6`, `p-4 sm:p-6`, `text-2xl sm:text-3xl` etc.
+- `buttonVariants()` outputs static classes — cannot be made responsive; use default size or custom responsive className
+- Next.js 16 renamed `middleware.ts` to `proxy.ts` — export function `proxy` (not `middleware`), file goes at `src/proxy.ts`
+- next-intl v4 setup: `src/i18n/routing.ts` (defineRouting), `src/i18n/request.ts` (getRequestConfig), `src/i18n/navigation.ts` (createNavigation)
+- next-intl plugin chain in next.config.ts: `withMDX(withNextIntl(nextConfig))` — withNextIntl wraps inner, withMDX wraps outer
+- Translation files in `messages/{locale}.json` — loaded dynamically in `src/i18n/request.ts`
+- Root layout (`src/app/layout.tsx`) handles fonts + html/body only; `[locale]/layout.tsx` handles ThemeProvider, Navbar, Footer, NextIntlClientProvider
+- `setRequestLocale(locale)` must be called in `[locale]/layout.tsx` for static rendering to work
+- `params` is always `Promise<{...}>` in Next.js 16 — always `await params` in pages and layouts
 
+---
+
+## 2026-03-24 - US-001
+- Switched fonts from `next/font/google` to `next/font/local` to fix Varela Round not loading
+- Added `public/fonts/varela-round-latin.woff2` (extracted from `@fontsource/varela-round`)
+- Added explicit `fallback` arrays: `["system-ui", "arial", "sans-serif"]` for Varela Round, `["ui-monospace", "monospace"]` for Geist Mono
+- Files changed: `src/app/layout.tsx`, `public/fonts/varela-round-latin.woff2`
+- **Learnings for future iterations:**
+  - `next/font/google` requires network access at build time — fails silently or with build error in offline/restricted environments
+  - The `@theme inline` + `var(--font-varela-round)` pattern in globals.css is correct per Next.js 16 docs — the issue was the font not being fetched, not the CSS variable chain
+  - Font files can be sourced from `@fontsource/*` npm packages, copied to `public/fonts/`, then the npm package can be uninstalled
+---
+
+## 2026-03-24 - US-002
+- Verified that the fix from commit `3182097` is complete — `motion.div` parent of `Image fill` in `project-card.tsx` has `className="relative"`
+- Audited all 4 instances of `<Image fill` across the codebase: `project-card.tsx`, `project-gallery.tsx` (2 instances), `projects/[slug]/page.tsx` — all parents have `relative` positioning
+- No code changes needed — fix was already in place
+- Files verified: `src/shared/components/creative/project-card.tsx`, `src/shared/components/sections/projects/project-gallery.tsx`, `src/app/projects/[slug]/page.tsx`
+- **Learnings for future iterations:**
+  - All `<Image fill` usage in this codebase correctly uses `relative` on parent — no outstanding issues
+  - The next/image `fill` prop requires the parent to have `position: relative`, `absolute`, or `fixed` — `relative` is the standard choice
+---
+
+## 2026-03-24 - US-003
+- Comprehensive responsive audit and fixes across all pages
+- Hero: `text-3xl sm:text-4xl md:text-5xl lg:text-7xl` (was text-4xl base), CTA button padding reduced on mobile
+- About preview: stat grid `gap-3 sm:gap-6`, card `p-4 sm:p-6`, counter text `text-2xl sm:text-3xl`
+- Project detail: buttons changed from `size: "lg"` to default, added `flex-wrap` for overflow safety
+- Carousel arrows: `-left-2 sm:-left-12` (was `-left-4`) to prevent mobile overflow
+- Featured projects & projects listing: `gap-6 sm:gap-8`, `mt-8 sm:mt-12`
+- Project results: added `md:grid-cols-3` breakpoint for tablets
+- CTA: `p-6 sm:p-10 md:p-16` (was `p-10 md:p-16`), heading `text-2xl sm:text-3xl`
+- Section wrappers (about-preview, CTA): `px-4 sm:px-6` for tighter mobile side padding
+- Files changed: hero.tsx, about-preview.tsx, cta.tsx, featured-projects.tsx, project-gallery.tsx, project-results.tsx, projects-listing.tsx, projects/[slug]/page.tsx
+- **Learnings for future iterations:**
+  - This codebase uses tabs for indentation — the Edit tool can struggle with tab-based whitespace; use unique string fragments for edits
+  - The biome formatter enforces line length — long className strings on elements with many props get auto-wrapped
+  - Responsive pattern: use `gap-X sm:gap-Y` and `p-X sm:p-Y` for mobile-first spacing
+  - Carousel arrows at `-left-4` on mobile can overlap or go offscreen; `-left-2` is safer
+  - `buttonVariants({ size: "lg" })` can't be made responsive (static class output) — use default size or custom responsive classes instead
+---
+
+## 2026-03-24 - US-004
+- Installed next-intl v4.8.3 for i18n support
+- Created i18n config: `src/i18n/routing.ts` (defineRouting with pt/en/es), `src/i18n/request.ts` (getRequestConfig), `src/i18n/navigation.ts` (createNavigation)
+- Created `src/proxy.ts` using next-intl's createMiddleware, re-exported as `proxy` for Next.js 16 compatibility
+- Created minimal translation files: `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- Restructured app: moved all pages from `src/app/` to `src/app/[locale]/` (home, about, projects, projects/[slug], not-found)
+- Root layout (`src/app/layout.tsx`) now only renders html/body with fonts
+- `[locale]/layout.tsx` wraps with NextIntlClientProvider, ThemeProvider, Navbar, Footer
+- Updated `next.config.ts` with createNextIntlPlugin
+- Updated `[locale]/projects/[slug]/page.tsx` params type to include `locale`
+- Build produces routes: `/pt`, `/en`, `/es`, `/pt/projects`, `/en/about`, etc.
+- Files changed: `next.config.ts`, `package.json`, `src/app/layout.tsx`, `src/app/[locale]/layout.tsx`, `src/app/[locale]/page.tsx`, `src/app/[locale]/not-found.tsx`, `src/app/[locale]/about/page.tsx`, `src/app/[locale]/projects/page.tsx`, `src/app/[locale]/projects/[slug]/page.tsx`, `src/app/[locale]/projects/[slug]/loading.tsx`, `src/proxy.ts`, `src/i18n/routing.ts`, `src/i18n/request.ts`, `src/i18n/navigation.ts`, `messages/pt.json`, `messages/en.json`, `messages/es.json`
+- **Learnings for future iterations:**
+  - Next.js 16 uses `proxy.ts` instead of `middleware.ts` — next-intl's `createMiddleware` returns a function compatible with the proxy pattern, just re-export as `proxy`
+  - `createNextIntlPlugin` takes the path to the request config file (e.g. `"./src/i18n/request.ts"`)
+  - `generateStaticParams` in `[locale]/layout.tsx` generates params for all locales; nested pages' `generateStaticParams` only need their own params (e.g. `slug`)
+  - When restructuring from flat to `[locale]/`, delete `.next/` to clear stale generated types that reference old paths
+  - Existing components with hardcoded `href="/projects"` still work via proxy redirect, but should be updated to use `Link` from `@/i18n/navigation` in US-006
 ---

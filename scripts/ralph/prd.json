@@ -17,7 +17,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Font was switched from next/font/local to next/font/google but still shows Times New Roman. Investigate the CSS variable chain: layout.tsx sets --font-varela-round on html, globals.css @theme inline sets --font-sans: var(--font-varela-round). Check if @theme inline can reference runtime CSS vars."
     },
     {
@@ -31,7 +31,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "The relative class was already added but verify the fix is complete and no other images have the same issue."
     },
     {
@@ -48,7 +48,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Use dev-browser to check each page at 375px and 768px widths."
     },
     {
@@ -66,7 +66,7 @@
         "Typecheck passes"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "This is a structural change. Move pages from src/app/ to src/app/[locale]/. Keep root layout.tsx minimal (html, body). The [locale] layout handles ThemeProvider, Navbar, Footer. Use next-intl's createNavigation, routing config, and middleware. Consult next-intl docs and Next.js 16 docs for compatibility. params is a Promise in Next.js 16."
     },
     {
