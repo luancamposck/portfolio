@@ -350,3 +350,35 @@
   - `sitemap.ts` can import `node:fs`-dependent modules (like blog-posts.ts) since it runs server-side at build time
   - The `routing.locales` array from `@/i18n/routing` is the single source of truth for locale list — use it everywhere instead of hardcoding
 ---
+
+## 2026-03-24 - US-018
+- Added CSS View Transitions API for smooth cross-fade page transitions between routes
+  - `@view-transition { navigation: auto }` enables native browser cross-fade
+  - `animation-duration: 0.25s` with `ease-in-out` for transition old/new views
+  - Gracefully ignored by browsers that don't support it (Firefox, Safari)
+- Added loading skeleton for asset detail page (`/[locale]/assets/[slug]/loading.tsx`)
+  - Mirrors the page layout: title + badge, description, tags, code block, explanation sections
+  - Follows same skeleton pattern as project detail and blog post loading states
+- Enhanced asset card hover effects to match blog card consistency:
+  - Title: `transition-colors group-hover:text-primary` (same as blog card)
+  - Code preview: `transition-colors group-hover:bg-muted/80` (subtle background highlight)
+- All card hover patterns now consistent:
+  - Project card: 3D tilt + parallax + overlay (unique creative component, intentionally different)
+  - Asset card: shadow + title color + code bg (listing card pattern)
+  - Blog card: shadow + title color + image scale (listing card pattern)
+- `prefers-reduced-motion` fully respected:
+  - View transitions: `animation-duration: 0s` disables cross-fade
+  - All motion/react animations: existing `useReducedMotion()` guards remain in place
+  - CSS animations (blob, marquee): existing `animation: none` rules
+- Animation timings reviewed and confirmed consistent:
+  - Listing stagger: `duration: 0.4, delay: i * 0.08` (projects, assets, blog)
+  - Section stagger: `duration: 0.5, delay: i * 0.1-0.15` (featured projects, timeline, skills)
+  - Both patterns use `ease: "easeOut"` and `viewport: { once: true }`
+- Files changed: `src/app/globals.css`, `src/shared/components/sections/assets/asset-card.tsx`, `src/app/[locale]/assets/[slug]/loading.tsx` (new)
+- **Learnings for future iterations:**
+  - `@view-transition { navigation: auto }` is the simplest way to add page transitions — pure CSS, no JS needed, progressive enhancement
+  - View Transitions API is Chromium-only (Chrome 111+) — safely ignored by other browsers with no fallback needed
+  - Card hover consistency: listing cards should all have `transition-shadow hover:shadow-lg` + `transition-colors group-hover:text-primary` on title at minimum
+  - Loading skeletons should mirror the actual page layout structure for natural content shift
+  - Manual browser verification needed for visual confirmation
+---
