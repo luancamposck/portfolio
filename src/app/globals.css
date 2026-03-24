@@ -157,12 +157,27 @@
   animation: marquee 30s linear infinite;
 }
 
+/* View Transitions API — cross-fade between page navigations */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-blob {
     animation: none;
   }
   .animate-marquee {
     animation: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0s;
   }
 }
 

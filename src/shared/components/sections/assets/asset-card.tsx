@@ -34,11 +34,11 @@ export function AssetCard({ asset, index }: AssetCardProps) {
 	const content = (
 		<div className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-lg">
 			<div className="flex items-center justify-between p-4 pb-2">
-				<h3 className="font-semibold text-foreground line-clamp-1">{asset.title}</h3>
+				<h3 className="font-semibold text-foreground line-clamp-1 transition-colors group-hover:text-primary">{asset.title}</h3>
 				<Badge className={getLanguageColor(asset.language)}>{asset.language}</Badge>
 			</div>
 			<p className="px-4 text-sm text-muted-foreground line-clamp-2">{asset.description}</p>
-			<div className="mx-4 mt-3 overflow-hidden rounded-md bg-muted/50 p-3">
+			<div className="mx-4 mt-3 overflow-hidden rounded-md bg-muted/50 p-3 transition-colors group-hover:bg-muted/80">
 				<pre className="overflow-hidden text-xs leading-relaxed text-muted-foreground">
 					<code>{getCodePreview(asset.code)}</code>
 				</pre>
