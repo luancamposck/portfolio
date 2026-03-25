@@ -55,7 +55,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
 		<>
 			<div className="relative aspect-16/10 w-full overflow-hidden">
 				<motion.div className="relative h-full w-full" style={shouldReduceMotion ? undefined : { x: springImageX, y: springImageY, scale: 1.05 }}>
-					<Image src={project.coverImage} alt={project.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+					<Image src={project.coverImage} alt={project.title} fill className="object-contain" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
 				</motion.div>
 				<div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 				<div className="absolute inset-x-0 bottom-0 translate-y-4 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">

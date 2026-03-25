@@ -63,9 +63,9 @@ export default async function ProjectDetailPage({ params }: Props) {
 	return (
 		<article>
 			{/* Hero: full-width cover image with title overlay */}
-			<div className="relative -mt-16 h-[50vh] min-h-[400px] w-full sm:h-[60vh]">
-				<Image src={project.coverImage} alt={project.title} fill className="object-cover" priority sizes="100vw" />
-				<div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20" />
+			<div className="relative -mt-16 h-[50vh] min-h-100 w-full sm:h-[60vh]">
+				<Image src={project.coverImage} alt={project.title} fill className="object-contain mx-auto max-w-5xl" priority sizes="100vw" />
+				<div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-background/20" />
 				<div className="absolute inset-x-0 bottom-0 pb-10 pt-16">
 					<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 						<p className="text-sm font-medium text-muted-foreground">{project.category}</p>
