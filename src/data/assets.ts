@@ -17,543 +17,574 @@ export interface CodeAsset {
 
 export const assets: CodeAsset[] = [
 	{
-		slug: "debounce",
-		title: "Debounce Genérico com TypeScript",
-		description: "Implementação type-safe de debounce que preserva os tipos dos argumentos da função original.",
+		slug: "ralph-loop-script",
+		title: "Ralph Loop — Script de agente autônomo",
+		description: "Script bash que executa um agente de IA (Claude Code ou Amp) em loop, implementando user stories de um PRD automaticamente.",
 		locale: "pt",
-		language: "ts",
-		code: `function debounce<T extends (...args: unknown[]) => void>(
-  fn: T,
-  delay: number
-): (...args: Parameters<T>) => void {
-  let timeoutId: ReturnType<typeof setTimeout>
+		language: "bash",
+		code: `#!/bin/bash
+# Ralph Wiggum - Long-running AI agent loop
+# Usage: ./ralph.sh [--tool amp|claude] [max_iterations]
 
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => fn(...args), delay)
-  }
-}
+set -e
 
-// Uso:
-const handleSearch = debounce((query: string) => {
-  fetch(\`/api/search?q=\${query}\`)
-}, 300)
+# Ensure npm global binaries are in PATH (needed in devcontainers)
+export PATH="\${PATH}:/usr/local/share/npm-global/bin"
 
-handleSearch("react") // executa após 300ms sem chamadas`,
-		explanation: `O **debounce** é uma das utilidades mais usadas em frontend. Ele atrasa a execução de uma função até que um período de inatividade passe — ideal para campos de busca, resize de janela ou scroll handlers.
+TOOL="amp"
+MAX_ITERATIONS=10
 
-Esta implementação usa generics do TypeScript (\`T extends (...args: unknown[]) => void\`) para **preservar os tipos dos argumentos**. Isso significa que o TypeScript vai saber que \`handleSearch\` aceita exatamente um \`string\`, não \`any\`.
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --tool) TOOL="$2"; shift 2 ;;
+    --tool=*) TOOL="\${1#*=}"; shift ;;
+    *) [[ "$1" =~ ^[0-9]+$ ]] && MAX_ITERATIONS="$1"; shift ;;
+  esac
+done
 
-**Como funciona:**
-1. Cada chamada limpa o timeout anterior com \`clearTimeout\`
-2. Um novo timeout é criado com o delay especificado
-3. Só quando o delay passa sem novas chamadas, a função original é executada
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 
-**Quando usar:** inputs de busca, auto-save, handlers de scroll/resize.
-**Quando NÃO usar:** eventos que precisam de resposta imediata (clicks de botão, submits de form).`,
-		tags: ["typescript", "performance", "frontend"],
-		category: "utils",
-		createdAt: "2026-02-15"
-	},
-	{
-		slug: "use-local-storage",
-		title: "useLocalStorage Hook",
-		description: "Hook React que sincroniza estado com localStorage, com suporte a SSR e serialização automática.",
-		locale: "pt",
-		language: "ts",
-		code: `import { useState, useEffect, useCallback } from "react"
+echo "Starting Ralph - Tool: $TOOL - Max iterations: $MAX_ITERATIONS"
 
-function useLocalStorage<T>(
-  key: string,
-  initialValue: T
-): [T, (value: T | ((prev: T) => T)) => void] {
-  const [storedValue, setStoredValue] = useState<T>(initialValue)
+for i in $(seq 1 $MAX_ITERATIONS); do
+  echo "==============================================================="
+  echo "  Ralph Iteration $i of $MAX_ITERATIONS ($TOOL)"
+  echo "==============================================================="
 
-  useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(key)
-      if (item) setStoredValue(JSON.parse(item))
-    } catch (error) {
-      console.warn(\`Error reading localStorage key "\${key}":\`, error)
-    }
-  }, [key])
+  if [[ "$TOOL" == "claude" ]]; then
+    OUTPUT=$(claude --dangerously-skip-permissions --print < "$SCRIPT_DIR/CLAUDE.md" 2>&1 | tee /dev/stderr) || true
+  fi
 
-  const setValue = useCallback(
-    (value: T | ((prev: T) => T)) => {
-      setStoredValue((prev) => {
-        const nextValue =
-          value instanceof Function ? value(prev) : value
-        try {
-          window.localStorage.setItem(key, JSON.stringify(nextValue))
-        } catch (error) {
-          console.warn(\`Error setting localStorage key "\${key}":\`, error)
-        }
-        return nextValue
-      })
-    },
-    [key]
-  )
+  if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
+    echo "Ralph completed all tasks at iteration $i!"
+    exit 0
+  fi
 
-  return [storedValue, setValue]
-}
+  sleep 2
+done
 
-// Uso:
-// const [theme, setTheme] = useLocalStorage("theme", "dark")`,
-		explanation: `Hook que persiste estado no \`localStorage\` do navegador. Diferente de implementações ingênuas, este hook é **compatível com SSR** — usa \`useEffect\` para ler do localStorage apenas no cliente, evitando erros de hydration.
+echo "Reached max iterations ($MAX_ITERATIONS) without completing."
+exit 1`,
+		explanation: `## O que é o Ralph?
 
-**Características:**
-- **Serialização automática**: usa \`JSON.parse/stringify\`, suportando objetos, arrays, números, etc.
-- **API funcional**: aceita updater function como \`useState\` (\`setValue(prev => !prev)\`)
-- **Error handling**: falhas de localStorage (modo privado, quota excedida) não quebram a aplicação
-- **SSR-safe**: inicializa com \`initialValue\` no servidor, sincroniza com localStorage no cliente
+[Ralph](https://github.com/snarktank/ralph) é um sistema de loops autônomos para agentes de IA. A ideia é simples: você define um PRD com user stories no formato JSON, e o Ralph executa um agente (Claude Code, Amp, etc.) em loop até completar todas as stories.
 
-**Padrão:** inicializa com valor default → \`useEffect\` lê do storage no mount → \`setValue\` atualiza ambos estado e storage.`,
-		tags: ["react", "hooks", "localStorage", "ssr"],
-		category: "hooks",
-		createdAt: "2026-02-20"
-	},
-	{
-		slug: "retry-with-backoff",
-		title: "Retry com Exponential Backoff",
-		description: "Função async que retenta operações com backoff exponencial e jitter, ideal para chamadas de API instáveis.",
-		locale: "pt",
-		language: "ts",
-		code: `async function retry<T>(
-  fn: () => Promise<T>,
-  options: {
-    maxRetries?: number
-    baseDelay?: number
-    maxDelay?: number
-  } = {}
-): Promise<T> {
-  const { maxRetries = 3, baseDelay = 1000, maxDelay = 10000 } = options
+## Como funciona
 
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await fn()
-    } catch (error) {
-      if (attempt === maxRetries) throw error
+1. O script lê um \`prd.json\` com user stories ordenadas por prioridade
+2. Em cada iteração, o agente recebe instruções via \`CLAUDE.md\` (ou \`prompt.md\` para Amp)
+3. O agente implementa UMA story por iteração, commita, e atualiza o PRD
+4. Quando todas as stories passam, o agente responde com \`<promise>COMPLETE</promise>\`
+5. O script detecta o sinal e para o loop
 
-      const exponentialDelay = baseDelay * 2 ** attempt
-      const jitter = Math.random() * baseDelay
-      const delay = Math.min(exponentialDelay + jitter, maxDelay)
+## Por que guardo isso
 
-      await new Promise((resolve) => setTimeout(resolve, delay))
-    }
-  }
+Usei esse script para construir este portfólio inteiro — 29 user stories implementadas automaticamente. O segredo é:
 
-  throw new Error("Retry failed")
-}
+- **Stories pequenas:** cada uma deve caber em uma janela de contexto
+- **Ordem de dependência:** schema antes de UI, setup antes de features
+- **Acceptance criteria verificáveis:** nada vago, tudo que o agente pode checar
 
-// Uso:
-const data = await retry(
-  () => fetch("/api/data").then((r) => {
-    if (!r.ok) throw new Error(\`HTTP \${r.status}\`)
-    return r.json()
-  }),
-  { maxRetries: 3, baseDelay: 500 }
-)`,
-		explanation: `Padrão essencial para lidar com falhas transitórias em chamadas de rede. O **exponential backoff** aumenta o tempo entre tentativas exponencialmente (1s, 2s, 4s...), e o **jitter** adiciona variação aleatória para evitar que múltiplos clientes retentem ao mesmo tempo (thundering herd).
+## Dica importante
 
-**Como funciona:**
-1. Tenta executar \`fn()\`
-2. Se falhar e ainda houver tentativas, calcula o delay: \`baseDelay * 2^attempt + jitter\`
-3. Espera o delay e tenta novamente
-4. Se todas as tentativas falharem, propaga o último erro
-
-**\`maxDelay\`** impõe um teto — sem ele, o delay cresceria indefinidamente em cenários com muitas tentativas.
-
-**Quando usar:** chamadas HTTP, conexões WebSocket, operações de banco de dados.`,
-		tags: ["typescript", "async", "network", "resilience"],
-		category: "patterns",
-		createdAt: "2026-01-10",
-		updatedAt: "2026-03-01"
-	},
-	{
-		slug: "docker-compose-fullstack",
-		title: "Docker Compose — App Full-Stack",
-		description: "Template de docker-compose para app Node.js com PostgreSQL, Redis e Nginx como reverse proxy.",
-		locale: "pt",
-		language: "yaml",
-		code: `services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: postgres://app:secret@db:5432/myapp
-      REDIS_URL: redis://cache:6379
-      NODE_ENV: production
-    depends_on:
-      db:
-        condition: service_healthy
-      cache:
-        condition: service_started
-    restart: unless-stopped
-
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: myapp
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-  cache:
-    image: redis:7-alpine
-    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
-
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - app
-
-volumes:
-  pgdata:`,
-		explanation: `Template pronto para produção de uma stack Node.js completa. Pontos importantes:
-
-**Healthcheck no PostgreSQL:** O \`depends_on\` com \`condition: service_healthy\` garante que o app só inicia quando o banco está realmente pronto para aceitar conexões — não apenas quando o container subiu.
-
-**Redis com policy LRU:** O \`allkeys-lru\` faz o Redis evitar automaticamente as chaves menos usadas quando atingir o limite de memória. Ideal para cache.
-
-**Volumes nomeados:** \`pgdata\` persiste os dados do PostgreSQL entre rebuilds do container.
-
-**Nginx como reverse proxy:** Separar o proxy permite terminar SSL, servir arquivos estáticos, e adicionar rate limiting sem modificar o app.
-
-**Dica:** Em produção, troque as credenciais hardcoded por \`secrets\` do Docker ou variáveis de ambiente externas.`,
-		tags: ["docker", "devops", "postgres", "redis", "nginx"],
+O \`--dangerously-skip-permissions\` é necessário para execução autônoma, mas só use em ambientes controlados (devcontainers com firewall).`,
+		tags: ["bash", "automation", "ai-agents", "claude-code", "devops"],
 		category: "devops",
-		createdAt: "2026-03-05"
+		createdAt: "2026-03-25"
 	},
 	{
-		slug: "binary-search",
-		title: "Binary Search Genérico",
-		description: "Implementação genérica de busca binária com comparador customizável para arrays ordenados.",
+		slug: "ralph-agent-instructions",
+		title: "Instruções do agente Ralph (CLAUDE.md)",
+		description: "Template de instruções que o Claude Code recebe em cada iteração do Ralph loop para implementar user stories autonomamente.",
 		locale: "pt",
-		language: "ts",
-		code: `function binarySearch<T>(
-  arr: T[],
-  target: T,
-  compare: (a: T, b: T) => number = (a, b) =>
-    a < b ? -1 : a > b ? 1 : 0
-): number {
-  let low = 0
-  let high = arr.length - 1
+		language: "markdown",
+		code: `# Ralph Agent Instructions
 
-  while (low <= high) {
-    const mid = low + Math.floor((high - low) / 2)
-    const cmp = compare(arr[mid], target)
+You are an autonomous coding agent working on a software project.
 
-    if (cmp === 0) return mid
-    if (cmp < 0) low = mid + 1
-    else high = mid - 1
-  }
+## Your Task
 
-  return -1
-}
+1. Read the PRD at \`prd.json\`
+2. Read the progress log at \`progress.txt\` (check Codebase Patterns first)
+3. Check you're on the correct branch from PRD \`branchName\`
+4. Pick the **highest priority** user story where \`passes: false\`
+5. Implement that single user story
+6. Run quality checks (typecheck, lint, test)
+7. If checks pass, commit ALL changes
+8. Update the PRD to set \`passes: true\`
+9. Append your progress to \`progress.txt\`
 
-// Uso com números:
-binarySearch([1, 3, 5, 7, 9], 5) // 2
+## Progress Report Format
 
-// Uso com objetos:
-const users = [
-  { id: 1, name: "Ana" },
-  { id: 5, name: "Bruno" },
-  { id: 12, name: "Carlos" },
-]
-binarySearch(users, { id: 5 } as typeof users[0], (a, b) => a.id - b.id) // 1`,
-		explanation: `Busca binária é O(log n) — para um array de 1 milhão de elementos, faz no máximo ~20 comparações vs 1 milhão na busca linear.
+APPEND to progress.txt:
+\\\`\\\`\\\`
+## [Date/Time] - [Story ID]
+- What was implemented
+- Files changed
+- **Learnings for future iterations:**
+  - Patterns discovered
+  - Gotchas encountered
+\\\`\\\`\\\`
 
-**Por que genérico?** O comparador customizável permite usar em qualquer tipo de dado: números, strings, objetos. O comparador padrão funciona para tipos primitivos.
+## Stop Condition
 
-**Detalhe importante:** \`mid = low + Math.floor((high - low) / 2)\` em vez de \`(low + high) / 2\` para evitar overflow de inteiros em linguagens com inteiros de tamanho fixo. Em JavaScript isso não é estritamente necessário, mas é uma boa prática portável.
+If ALL stories have \`passes: true\`, reply with:
+<promise>COMPLETE</promise>`,
+		explanation: `## O que é isso
 
-**Retorna -1** se o elemento não for encontrado, seguindo a convenção de \`Array.prototype.indexOf\`.`,
-		tags: ["typescript", "algorithms", "search"],
-		category: "algorithms",
-		createdAt: "2026-01-25"
-	},
-	{
-		slug: "use-media-query",
-		title: "useMediaQuery Hook",
-		description: "Hook React para escutar media queries CSS com suporte a SSR e cleanup automático.",
-		locale: "pt",
-		language: "ts",
-		code: `import { useState, useEffect } from "react"
+Este é o "cérebro" do Ralph — as instruções que o agente recebe em cada iteração. O arquivo \`CLAUDE.md\` é injetado como prompt quando o Claude Code é executado com \`--print\`.
 
-function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false)
+## Conceitos chave
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query)
-    setMatches(mediaQuery.matches)
+### Progress como memória
 
-    const handler = (event: MediaQueryListEvent) => {
-      setMatches(event.matches)
-    }
+O agente não tem memória entre iterações. O \`progress.txt\` funciona como memória persistente:
 
-    mediaQuery.addEventListener("change", handler)
-    return () => mediaQuery.removeEventListener("change", handler)
-  }, [query])
+- **Codebase Patterns**: padrões gerais que todas as iterações devem seguir
+- **Logs por story**: o que foi feito, arquivos mudados, e lições aprendidas
 
-  return matches
-}
+### Uma story por iteração
 
-// Uso:
-// const isMobile = useMediaQuery("(max-width: 768px)")
-// const prefersDark = useMediaQuery("(prefers-color-scheme: dark)")
-// const prefersReducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)")`,
-		explanation: `Hook leve para reagir a mudanças de media queries no React. Usa a API nativa \`window.matchMedia\` que é mais performática que escutar \`resize\` events.
+Isso é crucial. Se o agente tentar fazer mais de uma story, o contexto estoura e ele produz código quebrado.
 
-**SSR-safe:** Inicializa com \`false\` e sincroniza no \`useEffect\`, evitando erros de hydration em frameworks como Next.js.
+### Stop condition
 
-**Cleanup automático:** O \`removeEventListener\` no return do \`useEffect\` garante que não há memory leaks quando o componente desmonta ou a query muda.
+O \`<promise>COMPLETE</promise>\` é o sinal que o script bash procura para parar o loop. Sem ele, o loop continua até o máximo de iterações.
 
-**Casos de uso comuns:**
-- Renderização condicional por breakpoint (alternativa ao CSS quando o HTML difere)
-- Detectar preferências do usuário (\`prefers-color-scheme\`, \`prefers-reduced-motion\`)
-- Adaptar comportamento de componentes (ex: drawer vs dropdown em mobile)`,
-		tags: ["react", "hooks", "responsive", "css"],
-		category: "hooks",
-		createdAt: "2026-02-28"
-	},
-	{
-		slug: "fetch-wrapper",
-		title: "Type-Safe Fetch Wrapper",
-		description: "A minimal, type-safe wrapper around fetch with automatic JSON parsing, error handling, and timeout support.",
-		locale: "en",
-		language: "ts",
-		code: `class HttpError extends Error {
-  constructor(
-    public status: number,
-    public statusText: string,
-    public body: unknown
-  ) {
-    super(\`HTTP \${status}: \${statusText}\`)
-    this.name = "HttpError"
-  }
-}
+## Por que guardo isso
 
-async function api<T>(
-  url: string,
-  options: RequestInit & { timeout?: number } = {}
-): Promise<T> {
-  const { timeout = 10000, ...fetchOptions } = options
-
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeout)
-
-  try {
-    const response = await fetch(url, {
-      ...fetchOptions,
-      signal: controller.signal,
-    })
-
-    if (!response.ok) {
-      const body = await response.text().catch(() => null)
-      throw new HttpError(response.status, response.statusText, body)
-    }
-
-    return (await response.json()) as T
-  } finally {
-    clearTimeout(timeoutId)
-  }
-}
-
-// Usage:
-interface User { id: number; name: string }
-const user = await api<User>("/api/users/1")
-const users = await api<User[]>("/api/users", { timeout: 5000 })`,
-		explanation: `A thin wrapper that adds three things the native \`fetch\` API lacks: **type safety**, **automatic error throwing**, and **timeouts**.
-
-**Why throw on non-ok responses?** Native \`fetch\` only rejects on network errors — a 404 or 500 resolves successfully. This wrapper throws an \`HttpError\` with the status code, making error handling consistent.
-
-**Timeout via AbortController:** The native \`fetch\` has no timeout option. This uses \`AbortController\` to abort the request after the specified duration (default 10s). The \`finally\` block ensures the timer is always cleaned up.
-
-**Type parameter \`<T>\`:** The return type is whatever you specify — the caller is responsible for ensuring the API actually returns that shape. For runtime validation, pair with zod or valibot.
-
-**What this does NOT do:** retries, caching, interceptors. Keep it minimal — compose with other utilities as needed.`,
-		tags: ["typescript", "fetch", "api", "error-handling"],
-		category: "utils",
-		createdAt: "2026-03-10"
-	},
-	{
-		slug: "github-actions-ci",
-		title: "GitHub Actions — CI Pipeline",
-		description: "Reusable CI workflow for Node.js projects with caching, type checking, linting, and testing in parallel.",
-		locale: "en",
-		language: "yaml",
-		code: `name: CI
-
-on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
-
-concurrency:
-  group: ci-\${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  quality:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        check: [typecheck, lint, test]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - name: Typecheck
-        if: matrix.check == 'typecheck'
-        run: npx tsc --noEmit
-
-      - name: Lint
-        if: matrix.check == 'lint'
-        run: npx biome check src/
-
-      - name: Test
-        if: matrix.check == 'test'
-        run: npm test -- --coverage`,
-		explanation: `A production-ready CI pipeline that runs **typecheck, lint, and test in parallel** using a matrix strategy. This is faster than running them sequentially in a single job.
-
-**Key decisions:**
-
-- **\`fail-fast: false\`**: All three checks run to completion even if one fails. This way you see ALL issues at once, not just the first.
-
-- **\`concurrency\` with \`cancel-in-progress\`**: If you push again while CI is running, the old run is cancelled. Saves runner minutes and avoids stale results.
-
-- **\`npm ci\` over \`npm install\`**: Faster, deterministic installs from lockfile. Never use \`npm install\` in CI.
-
-- **Node 22 + npm cache**: \`actions/setup-node\` caches the npm store automatically when you specify \`cache: npm\`.
-
-**To extend:** Add a \`build\` job with \`needs: [quality]\` to run only after all checks pass. Add a \`deploy\` job with environment protection rules for production.`,
-		tags: ["github-actions", "ci", "devops", "testing"],
-		category: "devops",
-		createdAt: "2026-03-12"
-	},
-	{
-		slug: "pipe-function",
-		title: "Pipe — Composição de Funções",
-		description: "Função pipe type-safe para compor transformações de forma legível, da esquerda para a direita.",
-		locale: "pt",
-		language: "ts",
-		code: `function pipe<A>(value: A): A
-function pipe<A, B>(value: A, fn1: (a: A) => B): B
-function pipe<A, B, C>(value: A, fn1: (a: A) => B, fn2: (b: B) => C): C
-function pipe<A, B, C, D>(
-  value: A,
-  fn1: (a: A) => B,
-  fn2: (b: B) => C,
-  fn3: (c: C) => D
-): D
-function pipe<A, B, C, D, E>(
-  value: A,
-  fn1: (a: A) => B,
-  fn2: (b: B) => C,
-  fn3: (c: C) => D,
-  fn4: (d: D) => E
-): E
-function pipe(value: unknown, ...fns: ((arg: unknown) => unknown)[]): unknown {
-  return fns.reduce((acc, fn) => fn(acc), value)
-}
-
-// Uso:
-const result = pipe(
-  "  Hello, World!  ",
-  (s) => s.trim(),
-  (s) => s.toLowerCase(),
-  (s) => s.replace(/\\s+/g, "-")
-)
-// "hello,-world!"
-
-const processUsers = (users: { name: string; age: number }[]) =>
-  pipe(
-    users,
-    (u) => u.filter((x) => x.age >= 18),
-    (u) => u.map((x) => x.name),
-    (u) => u.sort()
-  )`,
-		explanation: `O padrão **pipe** permite compor transformações da esquerda para a direita, de forma mais legível que funções aninhadas: \`pipe(x, f, g, h)\` é mais claro que \`h(g(f(x)))\`.
-
-**Type safety via overloads:** As múltiplas assinaturas de função garantem que o TypeScript rastreia o tipo em cada etapa da pipeline. Se \`fn1\` retorna \`string\`, \`fn2\` recebe \`string\`. Suporta até 4 funções com tipos completos.
-
-**A implementação real** é simples: um \`reduce\` que passa o resultado de cada função para a próxima.
-
-**Por que não usar \`Array.prototype\` encadeado?** Pipe funciona com qualquer transformação, não apenas arrays. Você pode alternar entre filtros, mapeamentos, formatações e operações de qualquer tipo.
-
-**Padrão popular em:** fp-ts, Effect, Ramda, RxJS (operadores encadeados).`,
-		tags: ["typescript", "functional", "composition"],
+Este template é a diferença entre um agente que produz lixo e um que entrega código funcional. Os detalhes importam: formato do progress, consolidação de patterns, critérios de qualidade.`,
+		tags: ["ai-agents", "claude-code", "prompt-engineering", "automation"],
 		category: "patterns",
-		createdAt: "2026-02-05"
+		createdAt: "2026-03-25"
 	},
 	{
-		slug: "useful-regex",
-		title: "Regex Úteis para Validação",
-		description: "Coleção de expressões regulares testadas para validação de email, URL, telefone BR, CPF e senha forte.",
+		slug: "devcontainer-dockerfile",
+		title: "Dockerfile para devcontainer com Claude Code",
+		description: "Dockerfile que cria um ambiente isolado com Claude Code, zsh, git-delta e firewall via iptables. Vai em .devcontainer/Dockerfile.",
 		locale: "pt",
-		language: "ts",
-		code: `const patterns = {
-  email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/,
+		language: "dockerfile",
+		code: `FROM node:20
 
-  url: /^https?:\\/\\/[\\w-]+(\\.[\\w-]+)+([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?$/,
+ARG TZ
+ENV TZ="$TZ"
 
-  brazilPhone: /^\\+?55\\s?\\(?\\d{2}\\)?\\s?9?\\d{4}[-\\s]?\\d{4}$/,
+ARG CLAUDE_CODE_VERSION=latest
 
-  cpf: /^\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}$/,
+# Install basic development tools and iptables/ipset
+RUN apt-get update && apt-get install -y --no-install-recommends \\
+  less git procps sudo fzf zsh man-db unzip gnupg2 gh \\
+  iptables ipset iproute2 dnsutils aggregate jq nano vim \\
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-  strongPassword:
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$/,
+# Ensure default node user has access to /usr/local/share
+RUN mkdir -p /usr/local/share/npm-global && \\
+  chown -R node:node /usr/local/share
 
-  slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+ARG USERNAME=node
 
-  hexColor: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
+# Persist bash history
+RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \\
+  && mkdir /commandhistory \\
+  && touch /commandhistory/.bash_history \\
+  && chown -R $USERNAME /commandhistory
 
-  isoDate: /^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:?\\d{2})?)?$/,
-} as const
+ENV DEVCONTAINER=true
 
-function validate(pattern: RegExp, value: string): boolean {
-  return pattern.test(value)
+# Create workspace and config directories
+RUN mkdir -p /workspace /home/node/.claude && \\
+  chown -R node:node /workspace /home/node/.claude
+
+WORKDIR /workspace
+
+# Install git-delta for better diffs
+ARG GIT_DELTA_VERSION=0.18.2
+RUN ARCH=$(dpkg --print-architecture) && \\
+  wget "https://github.com/dandavison/delta/releases/download/\${GIT_DELTA_VERSION}/git-delta_\${GIT_DELTA_VERSION}_\${ARCH}.deb" && \\
+  sudo dpkg -i "git-delta_\${GIT_DELTA_VERSION}_\${ARCH}.deb" && \\
+  rm "git-delta_\${GIT_DELTA_VERSION}_\${ARCH}.deb"
+
+USER node
+
+# Install global packages
+ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
+ENV PATH=$PATH:/usr/local/share/npm-global/bin
+ENV SHELL=/bin/zsh
+ENV EDITOR=nano
+ENV VISUAL=nano
+
+# Install zsh with powerlevel10k
+ARG ZSH_IN_DOCKER_VERSION=1.2.0
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v\${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \\
+  -p git -p fzf \\
+  -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \\
+  -a "source /usr/share/doc/fzf/examples/completion.zsh" \\
+  -x
+
+# Install Claude Code
+RUN npm install -g @anthropic-ai/claude-code@\${CLAUDE_CODE_VERSION}
+
+# Copy and set up firewall script
+COPY init-firewall.sh /usr/local/bin/
+USER root
+RUN chmod +x /usr/local/bin/init-firewall.sh && \\
+  echo "node ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/node-firewall && \\
+  chmod 0440 /etc/sudoers.d/node-firewall
+USER node`,
+		explanation: `## Arquivo: \`.devcontainer/Dockerfile\`
+
+Este Dockerfile cria um ambiente completo para rodar Claude Code de forma isolada e segura.
+
+**Fonte:** [Documentação oficial do Claude Code — Devcontainer](https://code.claude.com/docs/pt/devcontainer)
+
+## O que instala
+
+- **Node.js 20** como base
+- **Claude Code** via npm global
+- **zsh + Powerlevel10k** como shell padrão
+- **git-delta** para diffs bonitos no terminal
+- **iptables + ipset** para o firewall de rede
+- **gh (GitHub CLI)** para operações Git
+
+## Por que usar devcontainer?
+
+Quando você roda agentes autônomos com \`--dangerously-skip-permissions\`, o agente tem acesso total ao terminal. O devcontainer resolve dois problemas:
+
+1. **Isolamento**: o agente roda dentro de um container, não na sua máquina
+2. **Firewall**: o \`init-firewall.sh\` restringe acesso de rede — só GitHub, npm, e Anthropic API
+
+## Detalhes importantes
+
+- O firewall é configurado pelo \`init-firewall.sh\` (veja o asset separado)
+- A configuração do container é definida no \`devcontainer.json\` (veja o asset separado)
+- O Claude Code é instalado globalmente em \`/usr/local/share/npm-global/bin\`
+- O usuário \`node\` tem permissão de sudo apenas para o script de firewall`,
+		tags: ["docker", "devcontainer", "claude-code", "security", "devops"],
+		category: "devops",
+		createdAt: "2026-03-25"
+	},
+	{
+		slug: "devcontainer-json",
+		title: "devcontainer.json para Claude Code",
+		description: "Configuração do VS Code devcontainer com volumes persistentes, firewall de rede e extensões. Vai em .devcontainer/devcontainer.json.",
+		locale: "pt",
+		language: "json",
+		code: `{
+  "name": "Claude Code Sandbox",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "\${localEnv:TZ:America/Los_Angeles}",
+      "CLAUDE_CODE_VERSION": "latest",
+      "GIT_DELTA_VERSION": "0.18.2",
+      "ZSH_IN_DOCKER_VERSION": "1.2.0"
+    }
+  },
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
+    }
+  },
+  "remoteUser": "node",
+  "mounts": [
+    "source=claude-code-bashhistory-\${devcontainerId},target=/commandhistory,type=volume",
+    "source=claude-code-config-\${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+  },
+  "workspaceMount": "source=\${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh || true",
+  "waitFor": "postStartCommand"
+}`,
+		explanation: `## Arquivo: \`.devcontainer/devcontainer.json\`
+
+Este arquivo configura o VS Code para abrir o projeto dentro de um container Docker com Claude Code pré-instalado.
+
+**Fonte:** [Documentação oficial do Claude Code — Devcontainer](https://code.claude.com/docs/pt/devcontainer)
+
+## Configurações chave
+
+### Capabilities de rede
+
+\`"runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"]\` — necessário para o \`init-firewall.sh\` configurar iptables dentro do container.
+
+### Volumes persistentes
+
+- **bash history**: histórico de comandos persiste entre rebuilds
+- **claude config**: a configuração do Claude Code (\`~/.claude\`) persiste entre rebuilds, evitando re-autenticação
+
+### Firewall automático
+
+\`"postStartCommand": "sudo /usr/local/bin/init-firewall.sh || true"\` — o firewall é configurado automaticamente toda vez que o container inicia.
+
+### Extensões
+
+Instala automaticamente Claude Code, ESLint, Prettier e GitLens no VS Code dentro do container.
+
+## Como usar
+
+1. Coloque os 3 arquivos na pasta \`.devcontainer/\` na raiz do projeto:
+   - \`devcontainer.json\` (este arquivo)
+   - \`Dockerfile\` (veja asset separado)
+   - \`init-firewall.sh\` (veja asset separado)
+2. Abra o projeto no VS Code
+3. Ctrl+Shift+P → "Dev Containers: Reopen in Container"
+4. O container é construído com Claude Code + firewall automaticamente`,
+		tags: ["devcontainer", "vscode", "claude-code", "docker", "devops"],
+		category: "devops",
+		createdAt: "2026-03-25"
+	},
+	{
+		slug: "prd-skill-claude-code",
+		title: "Skill de PRD para Claude Code",
+		description: "Template de skill que ensina o Claude Code a gerar PRDs estruturados com user stories, acceptance criteria e perguntas clarificadoras. Vai em .claude/skills/prd/SKILL.md.",
+		locale: "pt",
+		language: "markdown",
+		code: `---
+name: prd
+description: "Generate a PRD for a new feature."
+user-invocable: true
+---
+
+# PRD Generator
+
+## The Job
+
+1. Receive a feature description from the user
+2. Ask 3-5 clarifying questions (with lettered options)
+3. Generate a structured PRD
+4. Save to \\\`tasks/prd-[feature-name].md\\\`
+
+## PRD Structure
+
+1. Introduction/Overview
+2. Goals (bullet list)
+3. User Stories (US-001 format with acceptance criteria)
+4. Functional Requirements (FR-1 format)
+5. Non-Goals (out of scope)
+6. Technical Considerations
+7. Success Metrics
+8. Open Questions
+
+## User Story Format
+
+### US-001: [Title]
+**Description:** As a [user], I want [feature] so that [benefit].
+**Acceptance Criteria:**
+- [ ] Specific verifiable criterion
+- [ ] Typecheck/lint passes
+- [ ] Verify in browser using dev-browser skill`,
+		explanation: `## O que são Skills no Claude Code?
+
+Skills são arquivos \`.md\` em \`.claude/skills/\` que ensinam o Claude Code a executar tarefas especializadas. Quando o usuário digita \`/prd\`, o Claude carrega esse arquivo como contexto adicional.
+
+## Por que essa skill é útil
+
+Escrever PRDs é repetitivo. Essa skill garante que todo PRD siga o mesmo formato:
+
+- Perguntas com opções letradas (usuário responde "1A, 2C, 3B")
+- User stories pequenas o suficiente para uma iteração do Ralph
+- Acceptance criteria verificáveis (não vagos)
+
+## Como usar
+
+1. Coloque o arquivo em \`.claude/skills/prd/SKILL.md\`
+2. No Claude Code, digite \`/prd\` seguido da descrição da feature
+3. O Claude faz perguntas, você responde, e ele gera o PRD
+
+## Composição com Ralph
+
+O fluxo completo é: \`/prd\` gera o markdown → \`/ralph\` converte para JSON → \`ralph.sh\` executa o loop. Três skills que se encadeiam.`,
+		tags: ["claude-code", "skills", "prd", "project-management"],
+		category: "patterns",
+		createdAt: "2026-03-25"
+	},
+	{
+		slug: "ralph-converter-skill",
+		title: "Skill de conversão PRD para Ralph JSON",
+		description: "Skill que converte PRDs em markdown para o formato prd.json usado pelo Ralph, com regras de sizing e ordenação de dependências.",
+		locale: "pt",
+		language: "markdown",
+		code: `---
+name: ralph
+description: "Convert PRDs to prd.json format for Ralph."
+user-invocable: true
+---
+
+# Ralph PRD Converter
+
+## Output Format
+
+\\\`\\\`\\\`json
+{
+  "project": "[Name]",
+  "branchName": "ralph/[feature-kebab]",
+  "prdSource": "tasks/prd-[name].md",
+  "userStories": [{
+    "id": "US-001",
+    "title": "[Title]",
+    "description": "As a [user], I want...",
+    "acceptanceCriteria": ["...", "Typecheck passes"],
+    "priority": 1,
+    "passes": false,
+    "notes": ""
+  }]
 }
+\\\`\\\`\\\`
 
-// Uso:
-validate(patterns.email, "user@example.com")         // true
-validate(patterns.brazilPhone, "+55 11 99999-1234")   // true
-validate(patterns.cpf, "123.456.789-09")              // true
-validate(patterns.slug, "meu-post-legal")             // true
-validate(patterns.strongPassword, "Abc@1234")         // true`,
-		explanation: `Coleção de regex prontas para uso que cobrem os casos mais comuns de validação em apps brasileiros.
+## The Number One Rule
 
-**Observações importantes:**
+Each story must be completable in ONE iteration.
 
-- **Email:** Esta regex cobre 99% dos emails válidos. Para validação 100% conforme RFC 5322, use uma biblioteca — a regex completa tem centenas de caracteres.
-- **Telefone BR:** Aceita formatos com/sem +55, com/sem parênteses no DDD, com/sem o 9° dígito.
-- **CPF:** Valida apenas o formato (com/sem pontuação). Para validar o dígito verificador, você precisa do algoritmo de módulo 11 separadamente.
-- **Senha forte:** Mínimo 8 caracteres, pelo menos: 1 minúscula, 1 maiúscula, 1 número, 1 caractere especial.
+## Story Ordering: Dependencies First
 
-**Dica:** Em produção, combine regex com bibliotecas como \`zod\` para mensagens de erro tipadas e composição de validações.`,
-		tags: ["regex", "validation", "typescript", "brazil"],
-		category: "utils",
-		createdAt: "2026-01-18",
-		updatedAt: "2026-03-15"
+1. Schema/database changes
+2. Server actions / backend
+3. UI components
+4. Dashboard/summary views`,
+		explanation: `## O que faz
+
+Essa skill ensina o Claude Code a converter um PRD em markdown (\`tasks/prd-*.md\`) para o formato JSON que o Ralph consome (\`scripts/ralph/prd.json\`).
+
+## Regras críticas
+
+### Tamanho da story
+
+Se você não consegue descrever a mudança em 2-3 frases, é grande demais. Divida.
+
+### Ordem de dependência
+
+Stories executam em ordem de prioridade. Se US-003 depende de US-001, US-001 deve ter prioridade menor (executar primeiro).
+
+### prdSource
+
+O campo \`prdSource\` permite que o Ralph saiba de onde veio o PRD, para arquivar corretamente quando terminar.
+
+## Fluxo completo
+
+1. \`/prd\` — gera \`tasks/prd-feature.md\`
+2. \`/ralph\` — converte para \`scripts/ralph/prd.json\`
+3. \`./scripts/ralph/ralph.sh --tool claude 20\` — executa
+
+## Por que guardo isso
+
+É a segunda metade do pipeline. Sem regras claras de sizing e ordenação, o Ralph falha — stories grandes demais estouram o contexto, e dependências fora de ordem causam erros de compilação.`,
+		tags: ["claude-code", "skills", "ralph", "automation"],
+		category: "patterns",
+		createdAt: "2026-03-25"
+	},
+	{
+		slug: "devcontainer-firewall",
+		title: "Firewall para devcontainer com iptables",
+		description: "Script que restringe acesso de rede em devcontainers, permitindo apenas GitHub, npm, e APIs essenciais. Vai em .devcontainer/init-firewall.sh.",
+		locale: "pt",
+		language: "bash",
+		code: `#!/bin/bash
+set -euo pipefail
+
+# Extract Docker DNS rules BEFORE flushing
+DOCKER_DNS_RULES=$(iptables-save -t nat | grep "127\\.0\\.0\\.11" || true)
+
+# Flush all rules
+iptables -F && iptables -X
+iptables -t nat -F && iptables -t nat -X
+ipset destroy allowed-domains 2>/dev/null || true
+
+# Restore Docker DNS
+if [ -n "$DOCKER_DNS_RULES" ]; then
+    iptables -t nat -N DOCKER_OUTPUT 2>/dev/null || true
+    echo "$DOCKER_DNS_RULES" | xargs -L 1 iptables -t nat
+fi
+
+# Allow DNS, SSH, localhost
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+# Create whitelist
+ipset create allowed-domains hash:net
+
+# Add GitHub IPs
+gh_ranges=$(curl -s https://api.github.com/meta)
+echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | \\
+  aggregate -q | while read -r cidr; do
+    ipset add allowed-domains "$cidr" -exist
+done
+
+# Add essential domains
+for domain in "registry.npmjs.org" "api.anthropic.com" \\
+  "sentry.io" "statsig.anthropic.com"; do
+    dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}' | \\
+      while read -r ip; do ipset add allowed-domains "$ip" -exist; done
+done
+
+# Allow host network
+HOST_IP=$(ip route | grep default | cut -d" " -f3)
+HOST_NET=$(echo "$HOST_IP" | sed "s/\\.[0-9]*$/.0\\/24/")
+iptables -A OUTPUT -d "$HOST_NET" -j ACCEPT
+
+# Set default DROP policy
+iptables -P OUTPUT DROP
+iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -m set --match-set allowed-domains dst -j ACCEPT
+iptables -A OUTPUT -j REJECT --reject-with icmp-admin-prohibited`,
+		explanation: `## Arquivo: \`.devcontainer/init-firewall.sh\`
+
+**Fonte:** [Documentação oficial do Claude Code — Devcontainer](https://code.claude.com/docs/pt/devcontainer)
+
+## O que faz
+
+Restringe todo o tráfego de saída do container, permitindo APENAS:
+
+- **DNS** (porta 53) — para resolver domínios
+- **Localhost** — comunicação interna
+- **Rede do host** — para o VS Code se comunicar com o container
+- **GitHub** (web, api, git) — para push/pull
+- **npm registry** — para instalar pacotes
+- **Anthropic API** — para o Claude Code funcionar
+
+Todo o resto é **bloqueado com REJECT**.
+
+## Por que isso importa
+
+Quando você roda \`claude --dangerously-skip-permissions\`, o agente pode executar qualquer comando. Sem firewall, ele poderia:
+
+- Fazer requests para APIs externas
+- Enviar dados para serviços não autorizados
+- Baixar e executar scripts arbitrários
+
+Com o firewall, mesmo que o agente tente, o tráfego é bloqueado.
+
+## Verificação
+
+O script inclui auto-teste:
+
+- Tenta acessar \`example.com\` — deve falhar
+- Tenta acessar \`api.github.com\` — deve funcionar
+
+## Requisitos
+
+- \`--cap-add=NET_ADMIN\` e \`--cap-add=NET_RAW\` no devcontainer
+- Pacotes: \`iptables\`, \`ipset\`, \`iproute2\`, \`dnsutils\`, \`aggregate\`, \`jq\`, \`curl\``,
+		tags: ["bash", "security", "docker", "devcontainer", "iptables"],
+		category: "devops",
+		createdAt: "2026-03-25"
 	}
 ]
 

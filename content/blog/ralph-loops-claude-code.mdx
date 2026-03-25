@@ -1,0 +1,113 @@
+---
+slug: "ralph-loops-claude-code"
+title: "Ralph Loops: como usei um agente autônomo para construir este portfólio"
+description: "Como descobri o Ralph e configurei com Claude Code para implementar 29 user stories automaticamente, incluindo devcontainer com firewall, skills customizadas e o pipeline completo de PRD a código."
+locale: "pt"
+date: "2026-01-12"
+tags: ["claude-code", "ai-agents", "automation", "devops", "ralph"]
+category: "devops"
+published: true
+---
+
+## O problema
+
+Construir um portfólio do zero é trabalhoso. São dezenas de componentes, páginas, animações, responsividade, SEO, i18n. Fazer tudo manualmente levaria semanas.
+
+Pesquisando sobre agentes de IA autônomos, encontrei o [Ralph](https://github.com/snarktank/ralph) — um projeto open source que executa agentes de IA em loop para implementar user stories automaticamente. A ideia me convenceu: **e se eu escrevesse apenas o _que_ quero, e deixasse um agente implementar?**
+
+## Ralph: loops autônomos para agentes de IA
+
+O Ralph foi criado pelo [snarktank](https://github.com/snarktank/ralph) e a mecânica é simples:
+
+1. Você escreve um **PRD** (Product Requirements Document) com user stories
+2. Converte para um **JSON** estruturado
+3. Um script bash executa o agente em **loop**
+4. Cada iteração implementa **uma story**, commita, e continua
+5. Quando tudo passa, o agente para
+
+Cada iteração é uma instância fresca do agente — sem memória das anteriores. O `progress.txt` funciona como memória persistente entre iterações.
+
+## Como adaptei para meu uso
+
+O Ralph original é genérico. Para funcionar bem no meu fluxo com Claude Code, fiz algumas adaptações que descobri testando e pesquisando na comunidade.
+
+### 1. Escrever o PRD com uma skill
+
+Encontrei o conceito de skills no Claude Code — arquivos `.md` que ensinam o agente a executar tarefas específicas. Adaptei uma skill (`/prd`) que gera PRDs estruturados com perguntas clarificadoras.
+
+Veja o snippet: [Skill de PRD para Claude Code](/pt/assets/prd-skill-claude-code)
+
+### 2. Converter para JSON com outra skill
+
+Outra skill (`/ralph`) converte o PRD markdown para o formato JSON que o Ralph consome, aplicando regras de sizing e ordenação por dependência que aprendi na prática.
+
+Veja o snippet: [Skill de conversão PRD para Ralph JSON](/pt/assets/ralph-converter-skill)
+
+### 3. Executar o loop
+
+O script `ralph.sh` executa o agente em loop, monitorando o sinal de conclusão:
+
+Veja o snippet: [Ralph Loop Script](/pt/assets/ralph-loop-script)
+
+Para rodar:
+
+```bash
+./scripts/ralph/ralph.sh --tool claude 20
+```
+
+### 4. Instruções do agente
+
+O `CLAUDE.md` são as instruções que o agente recebe em cada iteração. Adaptei o template original para incluir consolidação de patterns no `progress.txt` e auto-archive ao final do loop.
+
+Veja o snippet: [Instruções do agente Ralph](/pt/assets/ralph-agent-instructions)
+
+## Segurança: devcontainer com firewall
+
+Rodar um agente com `--dangerously-skip-permissions` na máquina local é arriscado. Pesquisando na [documentação oficial do Claude Code](https://code.claude.com/docs/pt/devcontainer), encontrei a solução recomendada: **devcontainer com firewall via iptables**.
+
+O container restringe todo o tráfego de saída, permitindo apenas GitHub, npm registry, e a API da Anthropic. Mesmo que o agente tente acessar algo não autorizado, o tráfego é bloqueado.
+
+Os arquivos são baseados na documentação oficial e ficam na pasta `.devcontainer/` na raiz do projeto:
+
+- [Dockerfile](/pt/assets/devcontainer-dockerfile) — instala Claude Code, zsh, git-delta e ferramentas de firewall
+- [devcontainer.json](/pt/assets/devcontainer-json) — configura volumes, capabilities de rede e extensões do VS Code
+- [init-firewall.sh](/pt/assets/devcontainer-firewall) — restringe tráfego de saída via iptables
+
+## Resultados
+
+Com esse setup, a v1 do portfólio foi implementada em **29 user stories**:
+
+- Hero com animações (text reveal, gradient blobs, cursor spotlight)
+- Componentes criativos (magnetic button, marquee, 3D tilt cards)
+- Páginas de projetos com galeria e filtros
+- Página about com timeline e skills
+- Dark/light theme
+- SEO com sitemap, robots.txt, JSON-LD
+- Performance e acessibilidade
+
+E depois a v2 com mais 18 stories:
+
+- Internacionalização (PT-BR, EN, ES) com next-intl
+- Blog com MDX e syntax highlighting
+- Seção "Meus Assets" (code snippets curados)
+- Polish de animações e responsividade
+
+## Lições aprendidas
+
+1. **Stories pequenas são tudo.** Se o agente não consegue terminar em uma iteração, ele produz código quebrado. A regra: se não cabe em 2-3 frases, divida.
+
+2. **Ordem de dependência importa.** Setup antes de features, data layer antes de UI, backend antes de frontend.
+
+3. **O progress.txt é a memória.** O agente descobre patterns ("biome usa tabs, não spaces") e registra para as próximas iterações. Sem isso, cada iteração repete os mesmos erros.
+
+4. **Firewall não é opcional.** Agentes autônomos com acesso total ao terminal precisam de isolamento de rede. A documentação do Claude Code já recomenda isso.
+
+5. **Skills se compõem.** `/prd` gera o markdown, `/ralph` converte para JSON, `ralph.sh` executa. Três peças que encaixam.
+
+## Conclusão
+
+Descobrir o Ralph e combiná-lo com Claude Code mudou minha forma de trabalhar. Eu defini a arquitetura, escolhi as tecnologias e tomei as decisões de design. A implementação mecânica — criar componentes, configurar rotas, escrever CSS — o agente fez sozinho.
+
+Não criei essas ferramentas do zero. Pesquisei, testei, adaptei e combinei peças que já existiam. O mérito está em montar o pipeline e entender como fazer cada parte funcionar junto.
+
+O código fonte de todo esse setup está disponível nos [meus assets](/pt/assets) e no [repositório do Ralph original](https://github.com/snarktank/ralph).
