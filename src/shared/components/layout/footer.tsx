@@ -1,11 +1,10 @@
-import { Github, Linkedin, Mail } from "lucide-react"
+import { Github, Mail } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { Separator } from "@/shared/components/ui/separator"
 
 const socialLinks = [
-	{ href: "https://github.com/luancamposk", label: "GitHub", icon: Github },
-	{ href: "https://linkedin.com/in/luancamposk", label: "LinkedIn", icon: Linkedin },
-	{ href: "mailto:contato@luancamposk.dev", label: "Email", icon: Mail }
+	{ href: "https://github.com/luancamposck", label: "GitHub", icon: Github },
+	{ href: "mailto:luancamposck@gmail.com", label: "Email", icon: Mail }
 ]
 
 async function Footer() {

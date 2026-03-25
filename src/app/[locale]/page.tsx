@@ -40,7 +40,7 @@ const HomePage = async ({ params }: Props) => {
 		url: "https://luancamposk.dev",
 		jobTitle: t("title"),
 		description: t("description"),
-		sameAs: ["https://github.com/luancamposk", "https://linkedin.com/in/luancamposk"],
+		sameAs: ["https://github.com/luancamposck"],
 		knowsAbout: ["TypeScript", "React", "Next.js", "Node.js", "Tailwind CSS", "PostgreSQL"]
 	}
 

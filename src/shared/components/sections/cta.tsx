@@ -1,6 +1,6 @@
 "use client"
 
-import { Github, Linkedin, Mail } from "lucide-react"
+import { Github, MessageCircle } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useTranslations } from "next-intl"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
@@ -8,10 +8,9 @@ import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 
 const MagneticButton = dynamic(() => import("@/shared/components/creative/magnetic-button").then((mod) => ({ default: mod.MagneticButton })), { ssr: false })
 
-const socialLinks = [
-	{ href: "https://github.com/luancamposk", label: "GitHub", icon: Github },
-	{ href: "https://linkedin.com/in/luancamposk", label: "LinkedIn", icon: Linkedin }
-]
+const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_PHONE_NUMBER}`
+
+const socialLinks = [{ href: "https://github.com/luancamposck", label: "GitHub", icon: Github }]
 
 export function CTA() {
 	const t = useTranslations("cta")
@@ -27,8 +26,8 @@ export function CTA() {
 
 					<div className="mt-10">
 						<MagneticButton>
-							<a href="mailto:contato@luancamposk.dev" className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-8 font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-								<Mail className="size-5" />
+							<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-8 font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+								<MessageCircle className="size-5" />
 								{t("button")}
 							</a>
 						</MagneticButton>
