@@ -2,7 +2,32 @@ import { Marquee } from "@/shared/components/creative/marquee"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { Separator } from "@/shared/components/ui/separator"
 
-const technologies = ["TypeScript", "React", "Next.js", "Node.js", "Tailwind CSS", "PostgreSQL", "Docker", "AWS", "GraphQL", "Redis", "Prisma", "Figma", "Git", "Python", "Go", "Kubernetes", "MongoDB", "Vercel"]
+const technologies = [
+	"TypeScript",
+	"React",
+	"Next.js",
+	"Node.js",
+	"Tailwind CSS",
+	"PostgreSQL",
+	"Vue",
+	"Supabase",
+	"Docker",
+	"Express.js",
+	"AWS",
+	"GraphQL",
+	"NestJS",
+	"Redis",
+	"Prisma",
+	"Figma",
+	"Git",
+	"Python",
+	"HTML",
+	"JavaScript",
+	"CSS",
+	"Fastify",
+	"MongoDB",
+	"Vercel"
+]
 
 export function TechStack() {
 	return (

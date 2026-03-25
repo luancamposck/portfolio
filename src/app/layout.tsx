@@ -21,23 +21,23 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
 	title: {
-		default: "Luan Campos K. — Desenvolvedor Full-Stack",
+		default: "Luan Campos K. — Arquiteto de Software",
 		template: "%s | Luan Campos K."
 	},
-	description: "Portfólio de Luan Campos K. — Desenvolvedor full-stack especializado em criar experiências digitais criativas e performáticas com React, Next.js e TypeScript.",
+	description: "Portfólio de Luan Campos K. — Arquiteto de software especializado em criar experiências digitais criativas e performáticas com React, Next.js e TypeScript.",
 	metadataBase: new URL("https://luancamposk.dev"),
 	openGraph: {
 		type: "website",
 		locale: "pt_BR",
 		siteName: "Luan Campos K.",
-		title: "Luan Campos K. — Desenvolvedor Full-Stack",
-		description: "Portfólio de Luan Campos K. — Desenvolvedor full-stack especializado em criar experiências digitais criativas e performáticas.",
-		images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: "Luan Campos K. — Desenvolvedor Full-Stack" }]
+		title: "Luan Campos K. — Arquiteto de Software",
+		description: "Portfólio de Luan Campos K. — Arquiteto de software especializado em criar experiências digitais criativas e performáticas.",
+		images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: "Luan Campos K. — Arquiteto de Software" }]
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Luan Campos K. — Desenvolvedor Full-Stack",
-		description: "Portfólio de Luan Campos K. — Desenvolvedor full-stack especializado em criar experiências digitais criativas e performáticas."
+		title: "Luan Campos K. — Arquiteto de Software",
+		description: "Portfólio de Luan Campos K. — Arquiteto de software especializado em criar experiências digitais criativas e performáticas."
 	},
 	robots: {
 		index: true,

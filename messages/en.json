@@ -1,7 +1,7 @@
 {
 	"metadata": {
-		"title": "Luan Campos K. — Full-Stack Developer",
-		"description": "Portfolio of Luan Campos K. — Full-stack developer specializing in creative and high-performance digital experiences with React, Next.js, and TypeScript."
+		"title": "Luan Campos K. — Software Architect",
+		"description": "Portfolio of Luan Campos K. — Software architect specializing in creative and high-performance digital experiences with React, Next.js, and TypeScript."
 	},
 	"layout": {
 		"skipToContent": "Skip to content"
@@ -30,7 +30,7 @@
 	},
 	"hero": {
 		"heading": "Turning ideas into memorable digital experiences",
-		"subtitle": "Full-stack developer passionate about building beautiful, performant interfaces that deliver real results.",
+		"subtitle": "Software architect passionate about building beautiful, performant interfaces that deliver real results.",
 		"cta": "View projects"
 	},
 	"featuredProjects": {
@@ -40,7 +40,7 @@
 	},
 	"aboutPreview": {
 		"heading": "About me",
-		"bio1": "I'm a full-stack developer passionate about creating digital experiences that make a difference. With years of experience across diverse projects, I combine creative design with robust code to deliver solutions that exceed expectations.",
+		"bio1": "I'm a software architect passionate about creating digital experiences that make a difference. With years of experience across diverse projects, I combine architectural vision with robust code to deliver solutions that exceed expectations.",
 		"bio2": "My approach is user-centered and results-driven. I believe technology should serve people, and every project is an opportunity to create something that truly impacts lives and businesses.",
 		"learnMore": "Learn more",
 		"stats": {
@@ -53,7 +53,7 @@
 	"cta": {
 		"heading": "Let's build something amazing together?",
 		"description": "Get in touch and let's turn your idea into a memorable digital experience.",
-		"button": "Get in touch"
+		"button": "Message on WhatsApp"
 	},
 	"notFound": {
 		"heading": "Page not found",
@@ -88,15 +88,15 @@
 	},
 	"aboutPage": {
 		"title": "About",
-		"metaDescription": "Meet Luan Campos K. — a full-stack developer with over 8 years of experience creating creative and high-performance digital experiences."
+		"metaDescription": "Meet Luan Campos K. — Software architect with experience creating creative and high-performance digital experiences."
 	},
 	"aboutHero": {
 		"name": "Luan Campos K.",
-		"role": "Full-Stack Developer & UI Engineer"
+		"role": "Software Architect & Full-Stack Developer"
 	},
 	"aboutBio": {
 		"heading": "About me",
-		"paragraph1": "I'm a full-stack developer with over 8 years of experience building digital products that blend creative design with high-quality engineering. My journey started with a curiosity about how things work on the web — and grew into a passion for creating experiences that truly matter.",
+		"paragraph1": "I'm a software architect with experience building digital products that blend creative design with high-quality engineering. Currently working as software architect at Kyntech Group and as fullstack developer at Yampi. My journey started with a curiosity about how things work on the web — and grew into a passion for creating experiences that truly matter.",
 		"paragraph2": "Over the years, I've worked with startups, agencies, and tech companies, always striving for the right balance between performance, accessibility, and aesthetics. I believe the best code is the one that serves people — invisible to the user, yet powerful behind the scenes.",
 		"paragraph3": "My approach is user-centered and results-driven. Every project is an opportunity to solve real problems, simplify complexity, and deliver measurable value. I thrive on challenges that push me out of my comfort zone and allow me to learn something new."
 	},
@@ -110,29 +110,23 @@
 	"aboutTimeline": {
 		"heading": "Professional Experience",
 		"experiences": {
-			"nexus": {
-				"role": "Senior Full-Stack Developer",
-				"company": "Nexus Digital Agency",
-				"period": "2022 — Present",
-				"description": "Technical leadership on high-impact projects for enterprise clients. Architecting scalable solutions with Next.js, Node.js, and AWS services."
+			"kyntech": {
+				"role": "Software Architect",
+				"company": "Kyntech Group",
+				"period": "2025 — Present",
+				"description": "Architecting SaaS and ERP solutions with Next.js and Supabase. Overseeing frontend and backend teams, defining technical standards and code review."
 			},
-			"techvista": {
+			"yampi": {
 				"role": "Full-Stack Developer",
-				"company": "TechVista Solutions",
-				"period": "2020 — 2022",
-				"description": "Building SaaS and e-commerce platforms. Implementing CI/CD pipelines and DevOps practices for continuous delivery."
+				"company": "Yampi",
+				"period": "2024 — Present",
+				"description": "Maintaining e-commerce stores and building ERP integration APIs. Developing bidirectional sync solutions with Node.js and Fastify."
 			},
-			"criativa": {
-				"role": "Frontend Developer",
-				"company": "Criativa Digital",
-				"period": "2018 — 2020",
-				"description": "Creating responsive and accessible interfaces with a focus on performance. Working closely with design teams to turn prototypes into code."
-			},
-			"startup": {
-				"role": "Junior Developer",
-				"company": "StartUp Labs",
-				"period": "2016 — 2018",
-				"description": "Early career building features for web applications. Accelerated learning in agile methodologies and coding best practices."
+			"freelancer": {
+				"role": "Full-Stack Developer — Freelancer",
+				"company": "Self-employed",
+				"period": "2017 — 2024",
+				"description": "Building landing pages, small ERPs and virtual catalogs for various clients. Consulting for companies looking to migrate legacy systems to modern platforms."
 			}
 		}
 	},

@@ -1,7 +1,7 @@
 {
 	"metadata": {
-		"title": "Luan Campos K. — Desenvolvedor Full-Stack",
-		"description": "Portfólio de Luan Campos K. — Desenvolvedor full-stack especializado em criar experiências digitais criativas e performáticas com React, Next.js e TypeScript."
+		"title": "Luan Campos K. — Arquiteto de Software",
+		"description": "Portfólio de Luan Campos K. — Arquiteto de software especializado em criar experiências digitais criativas e performáticas com React, Next.js e TypeScript."
 	},
 	"layout": {
 		"skipToContent": "Pular para o conteúdo"
@@ -30,7 +30,7 @@
 	},
 	"hero": {
 		"heading": "Transformando ideias em experiências digitais memoráveis",
-		"subtitle": "Desenvolvedor full-stack apaixonado por criar interfaces bonitas, performáticas e que entregam resultados reais.",
+		"subtitle": "Arquiteto de software apaixonado por criar interfaces bonitas, performáticas e que entregam resultados reais.",
 		"cta": "Ver projetos"
 	},
 	"featuredProjects": {
@@ -40,7 +40,7 @@
 	},
 	"aboutPreview": {
 		"heading": "Sobre mim",
-		"bio1": "Sou um desenvolvedor full-stack apaixonado por criar experiências digitais que fazem a diferença. Com anos de experiência em projetos variados, combino design criativo com código robusto para entregar soluções que superam expectativas.",
+		"bio1": "Sou arquiteto de software apaixonado por criar experiências digitais que fazem a diferença. Com anos de experiência em projetos variados, combino visão arquitetural com código robusto para entregar soluções que superam expectativas.",
 		"bio2": "Minha abordagem é centrada no usuário e orientada a resultados. Acredito que a tecnologia deve servir às pessoas, e cada projeto é uma oportunidade de criar algo que realmente impacta vidas e negócios.",
 		"learnMore": "Saiba mais",
 		"stats": {
@@ -53,7 +53,7 @@
 	"cta": {
 		"heading": "Vamos construir algo incrível juntos?",
 		"description": "Entre em contato e vamos transformar sua ideia em uma experiência digital memorável.",
-		"button": "Entrar em contato"
+		"button": "Chamar no WhatsApp"
 	},
 	"notFound": {
 		"heading": "Página não encontrada",
@@ -88,15 +88,15 @@
 	},
 	"aboutPage": {
 		"title": "Sobre",
-		"metaDescription": "Conheça Luan Campos K. — desenvolvedor full-stack com mais de 8 anos de experiência em criar experiências digitais criativas e performáticas."
+		"metaDescription": "Conheça Luan Campos K. — Arquiteto de software com experiência em criar experiências digitais criativas e performáticas."
 	},
 	"aboutHero": {
 		"name": "Luan Campos K.",
-		"role": "Desenvolvedor Full-Stack & UI Engineer"
+		"role": "Software Architect & Full-Stack Developer"
 	},
 	"aboutBio": {
 		"heading": "Sobre mim",
-		"paragraph1": "Sou um desenvolvedor full-stack com mais de 8 anos de experiência construindo produtos digitais que combinam design criativo com engenharia de alta qualidade. Minha jornada começou na curiosidade de entender como as coisas funcionam na web — e se transformou numa paixão por criar experiências que realmente importam.",
+		"paragraph1": "Sou arquiteto de software com experiência construindo produtos digitais que combinam design criativo com engenharia de alta qualidade. Atualmente atuo como software architect no Grupo Kyntech e como dev fullstack na Yampi. Minha jornada começou na curiosidade de entender como as coisas funcionam na web — e se transformou numa paixão por criar experiências que realmente importam.",
 		"paragraph2": "Ao longo dos anos, trabalhei com startups, agências e empresas de tecnologia, sempre buscando o equilíbrio entre performance, acessibilidade e estética. Acredito que o melhor código é aquele que serve às pessoas — invisível para o usuário, mas poderoso por trás das telas.",
 		"paragraph3": "Minha abordagem é centrada no usuário e orientada a resultados. Cada projeto é uma oportunidade de resolver problemas reais, simplificar o complexo e entregar valor mensurável. Gosto de desafios que me empurram para fora da zona de conforto e me permitem aprender algo novo."
 	},
@@ -110,29 +110,23 @@
 	"aboutTimeline": {
 		"heading": "Experiência Profissional",
 		"experiences": {
-			"nexus": {
-				"role": "Senior Full-Stack Developer",
-				"company": "Nexus Digital Agency",
-				"period": "2022 — Presente",
-				"description": "Liderança técnica em projetos de alto impacto para clientes enterprise. Arquitetura de soluções escaláveis com Next.js, Node.js e serviços AWS."
+			"kyntech": {
+				"role": "Software Architect",
+				"company": "Grupo Kyntech",
+				"period": "2025 — Presente",
+				"description": "Arquitetura de soluções SaaS e ERPs com Next.js e Supabase. Supervisão de equipes de frontend e backend, definição de padrões técnicos e revisão de código."
 			},
-			"techvista": {
+			"yampi": {
 				"role": "Full-Stack Developer",
-				"company": "TechVista Solutions",
-				"period": "2020 — 2022",
-				"description": "Desenvolvimento de plataformas SaaS e e-commerce. Implementação de pipelines CI/CD e práticas de DevOps para entregas contínuas."
+				"company": "Yampi",
+				"period": "2024 — Presente",
+				"description": "Manutenção de e-commerces e criação de APIs de integração com ERPs. Desenvolvimento de soluções de sincronização bidirecional com Node.js e Fastify."
 			},
-			"criativa": {
-				"role": "Frontend Developer",
-				"company": "Criativa Digital",
-				"period": "2018 — 2020",
-				"description": "Criação de interfaces responsivas e acessíveis com foco em performance. Colaboração direta com equipes de design para traduzir protótipos em código."
-			},
-			"startup": {
-				"role": "Desenvolvedor Júnior",
-				"company": "StartUp Labs",
-				"period": "2016 — 2018",
-				"description": "Início de carreira desenvolvendo features em aplicações web. Aprendizado acelerado em metodologias ágeis e boas práticas de código."
+			"freelancer": {
+				"role": "Desenvolvedor Full-Stack Freelancer",
+				"company": "Autônomo",
+				"period": "2017 — 2024",
+				"description": "Desenvolvimento de landing pages, pequenos ERPs e catálogos virtuais para diversos clientes. Consultoria para empresas que buscavam migrar sistemas legados para plataformas modernas."
 			}
 		}
 	},

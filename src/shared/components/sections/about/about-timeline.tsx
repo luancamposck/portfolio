@@ -7,13 +7,12 @@ import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { Badge } from "@/shared/components/ui/badge"
 
-const experienceKeys = ["nexus", "techvista", "criativa", "startup"] as const
+const experienceKeys = ["kyntech", "yampi", "freelancer"] as const
 
 const experienceTags: Record<(typeof experienceKeys)[number], string[]> = {
-	nexus: ["Next.js", "Node.js", "AWS", "PostgreSQL"],
-	techvista: ["React", "TypeScript", "Docker", "MongoDB"],
-	criativa: ["React", "Tailwind CSS", "Figma", "REST APIs"],
-	startup: ["JavaScript", "HTML/CSS", "Node.js", "Git"]
+	kyntech: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS", "Web Scraping"],
+	yampi: ["Vue.js", "Node.js", "Fastify", "Bling API", "TypeScript"],
+	freelancer: ["React", "Node.js", "TypeScript", "WordPress", "PostgreSQL"]
 }
 
 export function AboutTimeline() {

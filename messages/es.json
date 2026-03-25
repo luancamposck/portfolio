@@ -1,7 +1,7 @@
 {
 	"metadata": {
-		"title": "Luan Campos K. — Desarrollador Full-Stack",
-		"description": "Portafolio de Luan Campos K. — Desarrollador full-stack especializado en crear experiencias digitales creativas y de alto rendimiento con React, Next.js y TypeScript."
+		"title": "Luan Campos K. — Arquitecto de Software",
+		"description": "Portafolio de Luan Campos K. — Arquitecto de software especializado en crear experiencias digitales creativas y de alto rendimiento con React, Next.js y TypeScript."
 	},
 	"layout": {
 		"skipToContent": "Ir al contenido"
@@ -30,7 +30,7 @@
 	},
 	"hero": {
 		"heading": "Transformando ideas en experiencias digitales memorables",
-		"subtitle": "Desarrollador full-stack apasionado por crear interfaces hermosas, de alto rendimiento y que entregan resultados reales.",
+		"subtitle": "Arquitecto de software apasionado por crear interfaces hermosas, de alto rendimiento y que entregan resultados reales.",
 		"cta": "Ver proyectos"
 	},
 	"featuredProjects": {
@@ -40,7 +40,7 @@
 	},
 	"aboutPreview": {
 		"heading": "Sobre mí",
-		"bio1": "Soy un desarrollador full-stack apasionado por crear experiencias digitales que marcan la diferencia. Con años de experiencia en proyectos diversos, combino diseño creativo con código robusto para entregar soluciones que superan expectativas.",
+		"bio1": "Soy arquitecto de software apasionado por crear experiencias digitales que marcan la diferencia. Con años de experiencia en proyectos diversos, combino visión arquitectónica con código robusto para entregar soluciones que superan expectativas.",
 		"bio2": "Mi enfoque está centrado en el usuario y orientado a resultados. Creo que la tecnología debe servir a las personas, y cada proyecto es una oportunidad de crear algo que realmente impacta vidas y negocios.",
 		"learnMore": "Saber más",
 		"stats": {
@@ -53,7 +53,7 @@
 	"cta": {
 		"heading": "¿Construimos algo increíble juntos?",
 		"description": "Ponte en contacto y transformemos tu idea en una experiencia digital memorable.",
-		"button": "Contactar"
+		"button": "Escribir por WhatsApp"
 	},
 	"notFound": {
 		"heading": "Página no encontrada",
@@ -88,15 +88,15 @@
 	},
 	"aboutPage": {
 		"title": "Sobre mí",
-		"metaDescription": "Conoce a Luan Campos K. — desarrollador full-stack con más de 8 años de experiencia creando experiencias digitales creativas y de alto rendimiento."
+		"metaDescription": "Conoce a Luan Campos K. — Arquitecto de software con experiencia creando experiencias digitales creativas y de alto rendimiento."
 	},
 	"aboutHero": {
 		"name": "Luan Campos K.",
-		"role": "Desarrollador Full-Stack & UI Engineer"
+		"role": "Software Architect & Full-Stack Developer"
 	},
 	"aboutBio": {
 		"heading": "Sobre mí",
-		"paragraph1": "Soy un desarrollador full-stack con más de 8 años de experiencia construyendo productos digitales que combinan diseño creativo con ingeniería de alta calidad. Mi camino comenzó con la curiosidad de entender cómo funcionan las cosas en la web — y se transformó en una pasión por crear experiencias que realmente importan.",
+		"paragraph1": "Soy arquitecto de software con experiencia construyendo productos digitales que combinan diseño creativo con ingeniería de alta calidad. Actualmente trabajo como software architect en el Grupo Kyntech y como dev fullstack en Yampi. Mi camino comenzó con la curiosidad de entender cómo funcionan las cosas en la web — y se transformó en una pasión por crear experiencias que realmente importan.",
 		"paragraph2": "A lo largo de los años, he trabajado con startups, agencias y empresas de tecnología, siempre buscando el equilibrio entre rendimiento, accesibilidad y estética. Creo que el mejor código es el que sirve a las personas — invisible para el usuario, pero poderoso detrás de escena.",
 		"paragraph3": "Mi enfoque está centrado en el usuario y orientado a resultados. Cada proyecto es una oportunidad de resolver problemas reales, simplificar lo complejo y entregar valor medible. Disfruto los desafíos que me sacan de mi zona de confort y me permiten aprender algo nuevo."
 	},
@@ -110,29 +110,23 @@
 	"aboutTimeline": {
 		"heading": "Experiencia Profesional",
 		"experiences": {
-			"nexus": {
-				"role": "Senior Full-Stack Developer",
-				"company": "Nexus Digital Agency",
-				"period": "2022 — Presente",
-				"description": "Liderazgo técnico en proyectos de alto impacto para clientes enterprise. Arquitectura de soluciones escalables con Next.js, Node.js y servicios AWS."
+			"kyntech": {
+				"role": "Software Architect",
+				"company": "Grupo Kyntech",
+				"period": "2025 — Presente",
+				"description": "Arquitectura de soluciones SaaS y ERPs con Next.js y Supabase. Supervisión de equipos de frontend y backend, definición de estándares técnicos y revisión de código."
 			},
-			"techvista": {
+			"yampi": {
 				"role": "Full-Stack Developer",
-				"company": "TechVista Solutions",
-				"period": "2020 — 2022",
-				"description": "Desarrollo de plataformas SaaS y e-commerce. Implementación de pipelines CI/CD y prácticas de DevOps para entregas continuas."
+				"company": "Yampi",
+				"period": "2024 — Presente",
+				"description": "Mantenimiento de e-commerces y creación de APIs de integración con ERPs. Desarrollo de soluciones de sincronización bidireccional con Node.js y Fastify."
 			},
-			"criativa": {
-				"role": "Frontend Developer",
-				"company": "Criativa Digital",
-				"period": "2018 — 2020",
-				"description": "Creación de interfaces responsivas y accesibles con enfoque en rendimiento. Colaboración directa con equipos de diseño para traducir prototipos en código."
-			},
-			"startup": {
-				"role": "Desarrollador Junior",
-				"company": "StartUp Labs",
-				"period": "2016 — 2018",
-				"description": "Inicio de carrera desarrollando funcionalidades en aplicaciones web. Aprendizaje acelerado en metodologías ágiles y buenas prácticas de código."
+			"freelancer": {
+				"role": "Desarrollador Full-Stack — Freelancer",
+				"company": "Autónomo",
+				"period": "2017 — 2024",
+				"description": "Desarrollo de landing pages, pequeños ERPs y catálogos virtuales para diversos clientes. Consultoría para empresas que buscaban migrar sistemas legados a plataformas modernas."
 			}
 		}
 	},
