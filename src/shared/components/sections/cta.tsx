@@ -26,7 +26,12 @@ export function CTA() {
 
 					<div className="mt-10">
 						<MagneticButton>
-							<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-8 font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+							<a
+								href={whatsappUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-8 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+							>
 								<MessageCircle className="size-5" />
 								{t("button")}
 							</a>
