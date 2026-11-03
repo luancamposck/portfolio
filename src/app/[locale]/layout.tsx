@@ -52,7 +52,6 @@ const LocaleLayout = async ({ children, params }: { children: React.ReactNode; p
 					{t("skipToContent")}
 				</a>
 				<Navbar />
-				{/* biome-ignore lint/correctness/useUniqueElementIds: root layout renders once — static id is safe for skip-to-content target */}
 				<main id="main-content" className="flex-1 pt-16">
 					{children}
 				</main>

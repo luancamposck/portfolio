@@ -47,4 +47,4 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
 	return <DialogPrimitive.Description data-slot="dialog-description" className={cn("text-muted-foreground text-sm", className)} {...props} />
 }
 
-export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogBackdrop, DialogPortal, DialogTitle, DialogTrigger }
+export { Dialog, DialogBackdrop, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogPortal, DialogTitle, DialogTrigger }

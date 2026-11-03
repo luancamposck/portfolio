@@ -23,6 +23,7 @@ export function TextReveal({ text, className, delay = 0, mode = "words" }: TextR
 		<span className={cn(className)}>
 			{items.map((item, i) => (
 				<motion.span
+					// biome-ignore lint/suspicious/noArrayIndexKey: positions identify repeated words and characters in this text animation
 					key={`${i}-${item}`}
 					className="inline-block"
 					initial={{ opacity: 0, y: 20 }}
