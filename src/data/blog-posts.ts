@@ -1,8 +1,10 @@
 import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
+import type { Locale } from "../i18n/routing"
+import { validateBlogFrontmatter } from "../modules/blog/validation"
 
-export type BlogLocale = "pt" | "en" | "es"
+export type BlogLocale = Locale
 
 export interface BlogPost {
 	slug: string
@@ -28,13 +30,11 @@ function calculateReadingTime(content: string): string {
 	return `${minutes} min`
 }
 
-function parseMdxFile(filePath: string): BlogPost | null {
+function parseMdxFile(filePath: string): BlogPost {
 	const raw = fs.readFileSync(filePath, "utf-8")
 	const { data, content } = matter(raw)
 
-	if (!data.slug || !data.title || !data.locale) {
-		return null
-	}
+	validateBlogFrontmatter(data, filePath)
 
 	return {
 		slug: data.slug,
@@ -59,7 +59,13 @@ function loadAllPosts(): BlogPost[] {
 
 	const files = fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith(".mdx"))
 
-	const posts = files.map((file) => parseMdxFile(path.join(BLOG_DIR, file))).filter((post): post is BlogPost => post !== null)
+	const posts = files.map((file) => parseMdxFile(path.join(BLOG_DIR, file)))
+	const identities = new Set<string>()
+	for (const post of posts) {
+		const identity = `${post.locale}/${post.slug}`
+		if (identities.has(identity)) throw new Error(`Duplicate blog post: ${identity}`)
+		identities.add(identity)
+	}
 
 	return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }

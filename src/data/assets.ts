@@ -1,4 +1,6 @@
-export type AssetLocale = "pt" | "en" | "es"
+import type { Locale } from "../i18n/routing"
+
+export type AssetLocale = Locale
 export type AssetCategory = "utils" | "hooks" | "patterns" | "algorithms" | "devops"
 
 export interface CodeAsset {
