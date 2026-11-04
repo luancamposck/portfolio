@@ -29,7 +29,6 @@ Acesse `http://localhost:3000` — o proxy redireciona automaticamente para `htt
 | `npm run build` | Build de producao |
 | `npm run start` | Serve o build |
 | `npm run lint` | Biome linter |
-| `npm test` | Testes automatizados |
 | `npm run format` | Biome formatter |
 
 ## Estrutura do projeto
