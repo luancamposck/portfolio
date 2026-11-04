@@ -1,8 +1,8 @@
 "use client"
 
 import { motion, useReducedMotion } from "motion/react"
-import type { CodeAsset } from "@/data/assets"
 import { Link } from "@/i18n/navigation"
+import type { AssetSummary } from "@/modules/assets/data"
 import { Badge } from "@/shared/components/ui/badge"
 
 const languageColors: Record<string, string> = {
@@ -24,7 +24,7 @@ function getCodePreview(code: string, maxLines = 4): string {
 }
 
 interface AssetCardProps {
-	asset: CodeAsset
+	asset: AssetSummary
 	index: number
 }
 

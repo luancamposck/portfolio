@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Suspense } from "react"
 import { routing } from "@/i18n/routing"
+import { type AssetLocale, getAllAssetCategories, getAssetSummaries } from "@/modules/assets/data"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { AssetsListing } from "@/shared/components/sections/assets/assets-listing"
@@ -39,7 +40,7 @@ export default async function AssetsPage({ params }: Props) {
 
 				<div className="mt-12">
 					<Suspense>
-						<AssetsListing locale={locale} />
+						<AssetsListing assets={getAssetSummaries(locale as AssetLocale)} categories={getAllAssetCategories()} />
 					</Suspense>
 				</div>
 			</div>

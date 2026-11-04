@@ -1,8 +1,8 @@
 import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
-import type { Locale } from "../i18n/routing"
-import { validateBlogFrontmatter } from "../modules/blog/validation"
+import type { Locale } from "../../i18n/routing"
+import { validateBlogFrontmatter } from "./validation"
 
 export type BlogLocale = Locale
 
@@ -20,6 +20,8 @@ export interface BlogPost {
 	published: boolean
 	content: string
 }
+
+export type BlogPostSummary = Omit<BlogPost, "content">
 
 const BLOG_DIR = path.join(process.cwd(), "content/blog")
 
@@ -105,4 +107,8 @@ export function getAllPostCategories(): string[] {
 
 export function getAllPostTags(): string[] {
 	return [...new Set(getAllPosts().flatMap((p) => p.tags))].sort()
+}
+
+export function getPostSummaries(locale: BlogLocale): BlogPostSummary[] {
+	return getPostsByLocale(locale).map(({ content: _content, ...post }) => post)
 }

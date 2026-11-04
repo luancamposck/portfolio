@@ -4,12 +4,12 @@ import { Search } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
-import type { BlogPost } from "@/data/blog-posts"
+import type { BlogPostSummary } from "@/modules/blog/data"
 import { cn } from "@/shared/lib/utils"
 import { BlogCard } from "./blog-card"
 
 interface BlogListingProps {
-	posts: BlogPost[]
+	posts: BlogPostSummary[]
 	categories: string[]
 }
 
@@ -21,7 +21,7 @@ export function BlogListing({ posts, categories }: BlogListingProps) {
 	const [search, setSearch] = useState(initialSearch)
 
 	const filteredPosts = useMemo(() => {
-		let result: BlogPost[] = posts
+		let result: BlogPostSummary[] = posts
 
 		if (activeCategory !== "all") {
 			result = result.filter((p) => p.category === activeCategory)

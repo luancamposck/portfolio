@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"
-import type { BlogPost } from "@/data/blog-posts"
 import { Link } from "@/i18n/navigation"
+import type { BlogPost } from "@/modules/blog/data"
 
 interface BlogNavigationProps {
 	prev: BlogPost | null

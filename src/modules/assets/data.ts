@@ -1,4 +1,4 @@
-import type { Locale } from "../i18n/routing"
+import type { Locale } from "../../i18n/routing"
 
 export type AssetLocale = Locale
 export type AssetCategory = "utils" | "hooks" | "patterns" | "algorithms" | "devops"
@@ -16,6 +16,8 @@ export interface CodeAsset {
 	createdAt: string
 	updatedAt?: string
 }
+
+export type AssetSummary = Omit<CodeAsset, "explanation">
 
 export const assets: CodeAsset[] = [
 	{
@@ -612,4 +614,8 @@ export function getAllAssetTags(): string[] {
 
 export function getAssetsByLocale(locale: AssetLocale): CodeAsset[] {
 	return assets.filter((a) => a.locale === locale)
+}
+
+export function getAssetSummaries(locale: AssetLocale): AssetSummary[] {
+	return getAssetsByLocale(locale).map(({ explanation: _explanation, code, ...asset }) => ({ ...asset, code: code.split("\n").slice(0, 4).join("\n") }))
 }
