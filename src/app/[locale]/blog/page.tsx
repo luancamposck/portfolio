@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Suspense } from "react"
-import { type BlogLocale, getAllPostCategories, getPostsByLocale } from "@/data/blog-posts"
 import { routing } from "@/i18n/routing"
+import { type BlogLocale, getAllPostCategories, getPostSummaries } from "@/modules/blog/data"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { BlogListing } from "@/shared/components/sections/blog/blog-listing"
@@ -29,7 +29,7 @@ export default async function BlogPage({ params }: Props) {
 	const { locale } = await params
 	setRequestLocale(locale)
 	const t = await getTranslations("blogPage")
-	const posts = getPostsByLocale(locale as BlogLocale)
+	const posts = getPostSummaries(locale as BlogLocale)
 	const categories = getAllPostCategories()
 
 	return (

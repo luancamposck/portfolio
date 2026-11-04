@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next"
-import { assets } from "@/data/assets"
-import { getAllPosts } from "@/data/blog-posts"
-import { projects } from "@/data/projects"
 import { routing } from "@/i18n/routing"
+import { assets } from "@/modules/assets/data"
+import { getAllPosts } from "@/modules/blog/data"
+import { projects } from "@/modules/projects/data"
 
 const BASE_URL = "https://luancamposk.dev"
 

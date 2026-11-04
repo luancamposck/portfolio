@@ -4,26 +4,23 @@ import { Search } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
-import type { AssetCategory, AssetLocale, CodeAsset } from "@/data/assets"
-import { getAllAssetCategories, getAssetsByLocale } from "@/data/assets"
+import type { AssetCategory, AssetSummary } from "@/modules/assets/data"
 import { cn } from "@/shared/lib/utils"
 import { AssetCard } from "./asset-card"
 
 interface AssetsListingProps {
-	locale: string
+	assets: AssetSummary[]
+	categories: AssetCategory[]
 }
 
-export function AssetsListing({ locale }: AssetsListingProps) {
+export function AssetsListing({ assets, categories }: AssetsListingProps) {
 	const t = useTranslations("assetsPage")
 	const searchParams = useSearchParams()
 	const [activeCategory, setActiveCategory] = useState<AssetCategory | "all">("all")
 	const [search, setSearch] = useState(searchParams.get("search") ?? "")
 
-	const allAssets = useMemo(() => getAssetsByLocale(locale as AssetLocale), [locale])
-	const categories = useMemo(() => getAllAssetCategories(), [])
-
 	const filteredAssets = useMemo(() => {
-		let result: CodeAsset[] = allAssets
+		let result: AssetSummary[] = assets
 
 		if (activeCategory !== "all") {
 			result = result.filter((a) => a.category === activeCategory)
@@ -35,7 +32,7 @@ export function AssetsListing({ locale }: AssetsListingProps) {
 		}
 
 		return result
-	}, [allAssets, activeCategory, search])
+	}, [assets, activeCategory, search])
 
 	return (
 		<>

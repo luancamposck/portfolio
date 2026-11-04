@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useState } from "react"
-import { getAllCategories, getProjectsByCategory } from "@/data/projects"
+import { getAllCategories, getProjectsByCategory } from "@/modules/projects/data"
 import { ProjectCard } from "@/shared/components/creative/project-card"
 import { cn } from "@/shared/lib/utils"
 

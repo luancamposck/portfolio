@@ -29,6 +29,7 @@ Acesse `http://localhost:3000` — o proxy redireciona automaticamente para `htt
 | `npm run build` | Build de producao |
 | `npm run start` | Serve o build |
 | `npm run lint` | Biome linter |
+| `npm test` | Testes automatizados |
 | `npm run format` | Biome formatter |
 
 ## Estrutura do projeto
@@ -49,10 +50,11 @@ src/
       blog/page.tsx
       blog/[slug]/page.tsx
       not-found.tsx
-  data/
-    projects.ts               # Dados dos projetos
-    assets.ts                 # Code assets (snippets curados)
-    blog-posts.ts             # Loader de posts MDX
+  modules/
+    projects/data.ts         # Dados e consultas dos projetos
+    assets/data.ts           # Code assets e consultas
+    blog/data.ts             # Leitura e consultas de posts MDX
+    blog/validation.ts       # Validação do frontmatter
   i18n/
     routing.ts                # Config de locales
     navigation.ts             # Link, useRouter, usePathname i18n-aware
@@ -137,7 +139,7 @@ function hello() {
 
 ### Novo code asset
 
-Edite `src/data/assets.ts` e adicione um objeto ao array `assets`:
+Edite `src/modules/assets/data.ts` e adicione um objeto ao array `assets`:
 
 ```ts
 {
@@ -180,7 +182,7 @@ Explicacao em markdown sobre o que faz, quando usar e por que e util.
 
 ### Novo projeto
 
-Edite `src/data/projects.ts` e adicione um objeto ao array `projects`:
+Edite `src/modules/projects/data.ts` e adicione um objeto ao array `projects`:
 
 ```ts
 {
