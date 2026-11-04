@@ -135,7 +135,7 @@ function hello() {
 - `<CodeBlock>` — Bloco de codigo com botao de copiar
 - Syntax highlighting automatico em blocos de codigo com suporte a `title="arquivo.ts"` e line highlighting
 
-**Post em outro idioma:** Crie outro arquivo `.mdx` com `locale: "en"` (ou `"es"`). Sao itens independentes, nao ha linking entre versoes.
+**Post em outro idioma:** Crie outro arquivo `.mdx` com o mesmo `slug` e o `locale` correspondente (`"en"` ou `"es"`). Cada combinação de idioma e slug deve ser única. Rascunhos (`published: false`) não são públicos. Quando não houver tradução, a troca de idioma leva à listagem; sitemap e metadados anunciam apenas versões publicadas.
 
 ### Novo code asset
 
@@ -213,7 +213,8 @@ O site suporta 3 idiomas: **Portugues** (padrao), **English** e **Espanol**.
 - Rotas usam prefixo: `/pt/projects`, `/en/projects`, `/es/projects`
 - O proxy detecta o idioma do browser e redireciona automaticamente
 - Traducoes de UI ficam em `messages/{locale}.json`
-- Conteudo (blog, assets) usa campo `locale` — cada item pertence a um idioma
+- Conteudo (blog, assets) usa campo `locale` — cada item pertence a um idioma; versões com o mesmo slug são tratadas como traduções.
+- Detalhes indisponíveis no idioma solicitado retornam 404; o seletor abre a listagem nesse idioma quando não existe tradução.
 
 Para adicionar/editar traducoes de UI, edite os arquivos em `messages/`.
 

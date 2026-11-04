@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import type { Locale } from "@/i18n/routing"
 import { routing } from "@/i18n/routing"
+import { assets } from "@/modules/assets/data"
+import { getAllPosts } from "@/modules/blog/data"
 import { Footer } from "@/shared/components/layout/footer"
 import { Navbar } from "@/shared/components/layout/navbar"
 import { ThemeProvider } from "@/shared/components/theme-provider"
@@ -51,7 +53,7 @@ const LocaleLayout = async ({ children, params }: { children: React.ReactNode; p
 				>
 					{t("skipToContent")}
 				</a>
-				<Navbar />
+				<Navbar contentLocales={{ blog: getAllPosts().map(({ slug, locale }) => ({ slug, locale })), assets: assets.map(({ slug, locale }) => ({ slug, locale })) }} />
 				<main id="main-content" className="flex-1 pt-16">
 					{children}
 				</main>

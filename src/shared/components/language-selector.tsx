@@ -2,6 +2,7 @@
 
 import { Globe } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
+import { type ContentLocales, localizedContentPath } from "@/i18n/content-locales"
 import { usePathname, useRouter } from "@/i18n/navigation"
 import { type Locale, routing } from "@/i18n/routing"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
@@ -12,14 +13,14 @@ const localeLabels: Record<Locale, string> = {
 	es: "Español"
 }
 
-function LanguageSelector() {
+function LanguageSelector({ contentLocales }: { contentLocales: ContentLocales }) {
 	const t = useTranslations("languageSelector")
 	const locale = useLocale() as Locale
 	const router = useRouter()
 	const pathname = usePathname()
 
 	function switchLocale(newLocale: Locale) {
-		router.replace(pathname, { locale: newLocale })
+		router.replace(localizedContentPath(pathname, newLocale, contentLocales), { locale: newLocale })
 	}
 
 	return (
