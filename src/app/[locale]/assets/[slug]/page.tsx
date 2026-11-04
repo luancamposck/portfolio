@@ -6,9 +6,9 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { codeToHtml } from "shiki"
 import { unified } from "unified"
-import { type AssetLocale, assets, getAssetBySlug, getAssetsByLocale } from "@/data/assets"
 import { Link } from "@/i18n/navigation"
-import { routing } from "@/i18n/routing"
+import { type AssetLocale, assets, getAssetBySlug, getAssetsByLocale } from "@/modules/assets/data"
+import { codeThemes } from "@/modules/content/highlighting"
 import { AssetCodeBlock } from "@/shared/components/sections/assets/asset-code-block"
 import { AssetNavigation } from "@/shared/components/sections/assets/asset-navigation"
 import { Badge } from "@/shared/components/ui/badge"
@@ -27,16 +27,18 @@ type Props = {
 	params: Promise<{ locale: string; slug: string }>
 }
 
-export async function generateStaticParams() {
-	return assets.map((asset) => ({
-		slug: asset.slug
-	}))
+export async function generateStaticParams({ params }: { params: { locale: string } }) {
+	return assets
+		.filter((asset) => asset.locale === params.locale)
+		.map((asset) => ({
+			slug: asset.slug
+		}))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale, slug } = await params
 	setRequestLocale(locale)
-	const asset = getAssetBySlug(slug)
+	const asset = getAssetBySlug(slug, locale)
 
 	if (!asset) {
 		const t = await getTranslations("assetDetail")
@@ -48,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 		description: asset.description,
 		alternates: {
 			canonical: `https://luancamposk.dev/${locale}/assets/${slug}`,
-			languages: Object.fromEntries(routing.locales.map((l) => [l, `https://luancamposk.dev/${l}/assets/${slug}`]))
+			languages: Object.fromEntries(assets.filter((a) => a.slug === slug).map((a) => [a.locale, `https://luancamposk.dev/${a.locale}/assets/${slug}`]))
 		}
 	}
 }
@@ -63,7 +65,7 @@ async function renderMarkdown(markdown: string): Promise<string> {
 export default async function AssetDetailPage({ params }: Props) {
 	const { locale, slug } = await params
 	setRequestLocale(locale)
-	const asset = getAssetBySlug(slug)
+	const asset = getAssetBySlug(slug, locale)
 
 	if (!asset) {
 		notFound()
@@ -74,10 +76,7 @@ export default async function AssetDetailPage({ params }: Props) {
 	const [highlightedCode, explanationHtml] = await Promise.all([
 		codeToHtml(asset.code, {
 			lang: asset.language,
-			themes: {
-				dark: "github-dark-default",
-				light: "github-light-default"
-			}
+			themes: codeThemes
 		}),
 		renderMarkdown(asset.explanation)
 	])

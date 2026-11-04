@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next"
-import { assets } from "@/data/assets"
-import { getAllPosts } from "@/data/blog-posts"
-import { projects } from "@/data/projects"
 import { routing } from "@/i18n/routing"
+import { assets } from "@/modules/assets/data"
+import { getAllPosts } from "@/modules/blog/data"
+import { projects } from "@/modules/projects/data"
 
 const BASE_URL = "https://luancamposk.dev"
 
@@ -39,26 +39,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
 		}))
 	)
 
-	const assetUrls: MetadataRoute.Sitemap = assets.flatMap((asset) =>
-		routing.locales.map((locale) => ({
-			url: `${BASE_URL}/${locale}/assets/${asset.slug}`,
-			lastModified: asset.updatedAt ? new Date(asset.updatedAt) : new Date(asset.createdAt),
-			changeFrequency: "monthly" as const,
-			priority: 0.6,
-			alternates: { languages: localeAlternates(`/assets/${asset.slug}`) }
-		}))
-	)
+	const assetUrls: MetadataRoute.Sitemap = assets.map((asset) => ({
+		url: `${BASE_URL}/${asset.locale}/assets/${asset.slug}`,
+		lastModified: new Date(asset.updatedAt ?? asset.createdAt),
+		changeFrequency: "monthly",
+		priority: 0.6,
+		alternates: { languages: Object.fromEntries(assets.filter((a) => a.slug === asset.slug).map((a) => [a.locale, `${BASE_URL}/${a.locale}/assets/${a.slug}`])) }
+	}))
 
 	const posts = getAllPosts()
-	const blogUrls: MetadataRoute.Sitemap = posts.flatMap((post) =>
-		routing.locales.map((locale) => ({
-			url: `${BASE_URL}/${locale}/blog/${post.slug}`,
-			lastModified: post.updatedAt ? new Date(post.updatedAt) : new Date(post.date),
-			changeFrequency: "monthly" as const,
-			priority: 0.7,
-			alternates: { languages: localeAlternates(`/blog/${post.slug}`) }
-		}))
-	)
+	const blogUrls: MetadataRoute.Sitemap = posts.map((post) => ({
+		url: `${BASE_URL}/${post.locale}/blog/${post.slug}`,
+		lastModified: new Date(post.updatedAt ?? post.date),
+		changeFrequency: "monthly",
+		priority: 0.7,
+		alternates: { languages: Object.fromEntries(posts.filter((p) => p.slug === post.slug).map((p) => [p.locale, `${BASE_URL}/${p.locale}/blog/${p.slug}`])) }
+	}))
 
 	return [...staticUrls, ...projectUrls, ...assetUrls, ...blogUrls]
 }

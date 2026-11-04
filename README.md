@@ -49,10 +49,11 @@ src/
       blog/page.tsx
       blog/[slug]/page.tsx
       not-found.tsx
-  data/
-    projects.ts               # Dados dos projetos
-    assets.ts                 # Code assets (snippets curados)
-    blog-posts.ts             # Loader de posts MDX
+  modules/
+    projects/data.ts         # Dados e consultas dos projetos
+    assets/data.ts           # Code assets e consultas
+    blog/data.ts             # Leitura e consultas de posts MDX
+    blog/validation.ts       # Validação do frontmatter
   i18n/
     routing.ts                # Config de locales
     navigation.ts             # Link, useRouter, usePathname i18n-aware
@@ -133,11 +134,11 @@ function hello() {
 - `<CodeBlock>` — Bloco de codigo com botao de copiar
 - Syntax highlighting automatico em blocos de codigo com suporte a `title="arquivo.ts"` e line highlighting
 
-**Post em outro idioma:** Crie outro arquivo `.mdx` com `locale: "en"` (ou `"es"`). Sao itens independentes, nao ha linking entre versoes.
+**Post em outro idioma:** Crie outro arquivo `.mdx` com o mesmo `slug` e o `locale` correspondente (`"en"` ou `"es"`). Cada combinação de idioma e slug deve ser única. Rascunhos (`published: false`) não são públicos. Quando não houver tradução, a troca de idioma leva à listagem; sitemap e metadados anunciam apenas versões publicadas.
 
 ### Novo code asset
 
-Edite `src/data/assets.ts` e adicione um objeto ao array `assets`:
+Edite `src/modules/assets/data.ts` e adicione um objeto ao array `assets`:
 
 ```ts
 {
@@ -180,7 +181,7 @@ Explicacao em markdown sobre o que faz, quando usar e por que e util.
 
 ### Novo projeto
 
-Edite `src/data/projects.ts` e adicione um objeto ao array `projects`:
+Edite `src/modules/projects/data.ts` e adicione um objeto ao array `projects`:
 
 ```ts
 {
@@ -211,7 +212,8 @@ O site suporta 3 idiomas: **Portugues** (padrao), **English** e **Espanol**.
 - Rotas usam prefixo: `/pt/projects`, `/en/projects`, `/es/projects`
 - O proxy detecta o idioma do browser e redireciona automaticamente
 - Traducoes de UI ficam em `messages/{locale}.json`
-- Conteudo (blog, assets) usa campo `locale` — cada item pertence a um idioma
+- Conteudo (blog, assets) usa campo `locale` — cada item pertence a um idioma; versões com o mesmo slug são tratadas como traduções.
+- Detalhes indisponíveis no idioma solicitado retornam 404; o seletor abre a listagem nesse idioma quando não existe tradução.
 
 Para adicionar/editar traducoes de UI, edite os arquivos em `messages/`.
 

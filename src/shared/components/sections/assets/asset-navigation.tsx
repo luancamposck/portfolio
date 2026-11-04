@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"
-import type { CodeAsset } from "@/data/assets"
 import { Link } from "@/i18n/navigation"
+import type { CodeAsset } from "@/modules/assets/data"
 
 interface AssetNavigationProps {
 	prev: CodeAsset | null

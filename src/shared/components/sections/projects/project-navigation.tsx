@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"
-import type { Project } from "@/data/projects"
 import { Link } from "@/i18n/navigation"
+import type { Project } from "@/modules/projects/data"
 
 interface ProjectNavigationProps {
 	prev: Project | null

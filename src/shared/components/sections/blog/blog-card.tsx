@@ -4,12 +4,12 @@ import { Calendar, Clock } from "lucide-react"
 import { motion, useReducedMotion } from "motion/react"
 import Image from "next/image"
 import { useLocale } from "next-intl"
-import type { BlogPost } from "@/data/blog-posts"
 import { Link } from "@/i18n/navigation"
+import type { BlogPostSummary } from "@/modules/blog/data"
 import { Badge } from "@/shared/components/ui/badge"
 
 interface BlogCardProps {
-	post: BlogPost
+	post: BlogPostSummary
 	index: number
 }
 
