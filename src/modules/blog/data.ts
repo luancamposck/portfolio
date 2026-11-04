@@ -85,8 +85,8 @@ export function getAllPosts(): BlogPost[] {
 	return getPosts().filter((p) => p.published)
 }
 
-export function getPostBySlug(slug: string): BlogPost | undefined {
-	return getPosts().find((p) => p.slug === slug)
+export function getPostBySlug(slug: string, locale: string): BlogPost | undefined {
+	return getAllPosts().find((p) => p.slug === slug && p.locale === locale)
 }
 
 export function getPostsByTag(tag: string): BlogPost[] {

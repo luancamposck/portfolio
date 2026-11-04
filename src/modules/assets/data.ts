@@ -592,8 +592,8 @@ O script inclui auto-teste:
 	}
 ]
 
-export function getAssetBySlug(slug: string): CodeAsset | undefined {
-	return assets.find((a) => a.slug === slug)
+export function getAssetBySlug(slug: string, locale: string): CodeAsset | undefined {
+	return assets.find((a) => a.slug === slug && a.locale === locale)
 }
 
 export function getAssetsByCategory(category: AssetCategory): CodeAsset[] {

@@ -8,9 +8,9 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings"
 import rehypePrettyCode from "rehype-pretty-code"
 import rehypeSlug from "rehype-slug"
 import { Link } from "@/i18n/navigation"
-import { routing } from "@/i18n/routing"
 import { useMDXComponents } from "@/mdx-components"
 import { type BlogLocale, getAllPosts, getPostBySlug, getPostsByLocale } from "@/modules/blog/data"
+import { prettyCodeOptions } from "@/modules/content/highlighting"
 import { BlogNavigation } from "@/shared/components/sections/blog/blog-navigation"
 import { Badge } from "@/shared/components/ui/badge"
 
@@ -18,16 +18,18 @@ type Props = {
 	params: Promise<{ locale: string; slug: string }>
 }
 
-export async function generateStaticParams() {
-	return getAllPosts().map((post) => ({
-		slug: post.slug
-	}))
+export async function generateStaticParams({ params }: { params: { locale: string } }) {
+	return getAllPosts()
+		.filter((post) => post.locale === params.locale)
+		.map((post) => ({
+			slug: post.slug
+		}))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale, slug } = await params
 	setRequestLocale(locale)
-	const post = getPostBySlug(slug)
+	const post = getPostBySlug(slug, locale)
 
 	if (!post) {
 		const t = await getTranslations("blogDetail")
@@ -48,7 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 		},
 		alternates: {
 			canonical: `https://luancamposk.dev/${locale}/blog/${slug}`,
-			languages: Object.fromEntries(routing.locales.map((l) => [l, `https://luancamposk.dev/${l}/blog/${slug}`]))
+			languages: Object.fromEntries(
+				getAllPosts()
+					.filter((p) => p.slug === slug)
+					.map((p) => [p.locale, `https://luancamposk.dev/${p.locale}/blog/${slug}`])
+			)
 		}
 	}
 }
@@ -66,18 +72,10 @@ function formatDate(dateStr: string, locale: string): string {
 	})
 }
 
-const rehypePrettyCodeOptions = {
-	theme: {
-		dark: "github-dark-default",
-		light: "github-light-default"
-	},
-	keepBackground: false
-}
-
 export default async function BlogPostPage({ params }: Props) {
 	const { locale, slug } = await params
 	setRequestLocale(locale)
-	const post = getPostBySlug(slug)
+	const post = getPostBySlug(slug, locale)
 
 	if (!post) {
 		notFound()
@@ -143,7 +141,7 @@ export default async function BlogPostPage({ params }: Props) {
 						mdxOptions: {
 							rehypePlugins: [
 								rehypeSlug,
-								[rehypePrettyCode, rehypePrettyCodeOptions],
+								[rehypePrettyCode, prettyCodeOptions],
 								[
 									rehypeAutolinkHeadings,
 									{
