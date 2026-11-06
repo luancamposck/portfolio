@@ -1,8 +1,9 @@
 "use client"
 
-import { ExternalLink, Github } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
+import { GithubIcon } from "@/shared/components/icons/brand-icons"
 import { buttonVariants } from "@/shared/components/ui/button-variants"
 
 type ProjectLinksProps = {
@@ -23,7 +24,7 @@ export function ProjectLinks({ liveUrl, githubUrl }: ProjectLinksProps) {
 			)}
 			{githubUrl && (
 				<a href={githubUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline" })}>
-					<Github data-icon="inline-start" />
+					<GithubIcon data-icon="inline-start" />
 					GitHub
 				</a>
 			)}

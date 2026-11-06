@@ -1,16 +1,17 @@
 "use client"
 
-import { Github, MessageCircle } from "lucide-react"
+import { MessageCircle } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useTranslations } from "next-intl"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
+import { GithubIcon } from "@/shared/components/icons/brand-icons"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 
 const MagneticButton = dynamic(() => import("@/shared/components/creative/magnetic-button").then((mod) => ({ default: mod.MagneticButton })), { ssr: false })
 
 const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_PHONE_NUMBER}`
 
-const socialLinks = [{ href: "https://github.com/luancamposck", label: "GitHub", icon: Github }]
+const socialLinks = [{ href: "https://github.com/luancamposck", label: "GitHub", icon: GithubIcon }]
 
 export function CTA() {
 	const t = useTranslations("cta")
