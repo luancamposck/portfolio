@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Suspense } from "react"
 import { routing } from "@/i18n/routing"

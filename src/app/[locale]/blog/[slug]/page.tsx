@@ -2,6 +2,7 @@ import { Calendar, Clock, Tag } from "lucide-react"
 import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import rehypeAutolinkHeadings from "rehype-autolink-headings"

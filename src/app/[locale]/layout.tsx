@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { NextIntlClientProvider } from "next-intl"
+// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import type { Locale } from "@/i18n/routing"
 import { routing } from "@/i18n/routing"

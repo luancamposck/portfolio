@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { routing } from "@/i18n/routing"
 import { getProjectBySlug, projects } from "@/modules/projects/data"

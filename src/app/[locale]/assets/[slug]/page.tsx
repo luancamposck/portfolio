@@ -1,6 +1,7 @@
 import { toHtml } from "hast-util-to-html"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
