@@ -1,7 +1,7 @@
 {
 	"metadata": {
-		"title": "Luan Campos K. — Arquiteto de Software",
-		"description": "Portfólio de Luan Campos K. — Arquiteto de software especializado em criar experiências digitais criativas e performáticas com React, Next.js e TypeScript."
+		"title": "Luan Campos K. — Desenvolvedor full stack sênior",
+		"description": "Portfólio de Luan Campos K. — desenvolvimento full stack, integrações e produtos digitais."
 	},
 	"layout": {
 		"skipToContent": "Pular para o conteúdo"
@@ -29,8 +29,8 @@
 		"system": "Sistema"
 	},
 	"hero": {
-		"heading": "Transformando ideias em experiências digitais memoráveis",
-		"subtitle": "Arquiteto de software apaixonado por criar interfaces bonitas, performáticas e que entregam resultados reais.",
+		"heading": "Arquitetura, código e produtos que resolvem problemas reais",
+		"subtitle": "Desenvolvedor full stack sênior com experiência em produtos B2B, integrações, infraestrutura e IA aplicada.",
 		"cta": "Ver projetos"
 	},
 	"featuredProjects": {
@@ -40,14 +40,20 @@
 	},
 	"aboutPreview": {
 		"heading": "Sobre mim",
-		"bio1": "Sou arquiteto de software apaixonado por criar experiências digitais que fazem a diferença. Com anos de experiência em projetos variados, combino visão arquitetural com código robusto para entregar soluções que superam expectativas.",
-		"bio2": "Minha abordagem é centrada no usuário e orientada a resultados. Acredito que a tecnologia deve servir às pessoas, e cada projeto é uma oportunidade de criar algo que realmente impacta vidas e negócios.",
+		"bio1": "Sou Luan Vitor de Campos Oliveira, desenvolvedor full stack sênior. Atuo da definição da arquitetura à implementação e operação de produtos digitais.",
+		"bio2": "Minha experiência inclui integrações para e-commerce, plataformas de gestão, análise de dados e ferramentas com IA.",
 		"learnMore": "Saiba mais",
 		"stats": {
 			"experience": "Anos de experiência",
 			"projects": "Projetos entregues",
 			"clients": "Clientes satisfeitos",
 			"technologies": "Tecnologias dominadas"
+		},
+		"areas": {
+			"architecture": "Arquitetura de software",
+			"fullstack": "Desenvolvimento full stack",
+			"integrations": "Integrações e APIs",
+			"ai": "IA aplicada e infraestrutura"
 		}
 	},
 	"cta": {
@@ -88,17 +94,17 @@
 	},
 	"aboutPage": {
 		"title": "Sobre",
-		"metaDescription": "Conheça Luan Campos K. — Arquiteto de software com experiência em criar experiências digitais criativas e performáticas."
+		"metaDescription": "Conheça Luan Campos K. — desenvolvedor full stack sênior com experiência em arquitetura, integrações e produtos digitais."
 	},
 	"aboutHero": {
 		"name": "Luan Campos K.",
-		"role": "Software Architect & Full-Stack Developer"
+		"role": "Desenvolvedor full stack sênior"
 	},
 	"aboutBio": {
 		"heading": "Sobre mim",
-		"paragraph1": "Sou arquiteto de software com experiência construindo produtos digitais que combinam design criativo com engenharia de alta qualidade. Atualmente atuo como software architect no Grupo Kyntech e como dev fullstack na Yampi. Minha jornada começou na curiosidade de entender como as coisas funcionam na web — e se transformou numa paixão por criar experiências que realmente importam.",
-		"paragraph2": "Ao longo dos anos, trabalhei com startups, agências e empresas de tecnologia, sempre buscando o equilíbrio entre performance, acessibilidade e estética. Acredito que o melhor código é aquele que serve às pessoas — invisível para o usuário, mas poderoso por trás das telas.",
-		"paragraph3": "Minha abordagem é centrada no usuário e orientada a resultados. Cada projeto é uma oportunidade de resolver problemas reais, simplificar o complexo e entregar valor mensurável. Gosto de desafios que me empurram para fora da zona de conforto e me permitem aprender algo novo."
+		"paragraph1": "Sou Luan Vitor de Campos Oliveira, também conhecido como Vitor. Sou desenvolvedor full stack sênior e trabalho com arquitetura de software e implementação de produtos digitais.",
+		"paragraph2": "Na Embalalab e na Kyntech, minha atuação inclui definição de soluções, orientação de equipes e participação nas entregas. Também trabalhei com integrações para e-commerce, sistemas de gestão e produtos de análise de dados.",
+		"paragraph3": "Tenho experiência com React, Next.js, TypeScript, Node.js e Python, além de PostgreSQL, Docker e AWS. Curso Engenharia de Software na Unicesumar, com previsão de conclusão em 2027."
 	},
 	"aboutSkills": {
 		"heading": "Habilidades & Tecnologias",
@@ -108,25 +114,55 @@
 		"tools": "Ferramentas"
 	},
 	"aboutTimeline": {
-		"heading": "Experiência Profissional",
+		"heading": "Experiência e projetos profissionais",
 		"experiences": {
+			"embalalab": {
+				"company": "Embalalab",
+				"role": "Desenvolvedor full stack sênior",
+				"period": "jul. 2026 — atual",
+				"description": "Definição de arquitetura e padrões, orientação da equipe e implementação de produtos e ferramentas de IA."
+			},
 			"kyntech": {
-				"role": "Software Architect",
-				"company": "Grupo Kyntech",
-				"period": "2025 — Presente",
-				"description": "Arquitetura de soluções SaaS e ERPs com Next.js e Supabase. Supervisão de equipes de frontend e backend, definição de padrões técnicos e revisão de código."
+				"company": "Kyntech",
+				"role": "Desenvolvedor full stack sênior",
+				"period": "dez. 2025 — atual",
+				"description": "Arquitetura e liderança técnica de projetos sob demanda, além de operação e deploy de infraestrutura."
+			},
+			"gabinete": {
+				"company": "Gabinete NEO",
+				"role": "Desenvolvedor full stack sênior",
+				"period": "set. 2025 — mar. 2026",
+				"description": "Arquitetura e desenvolvimento full stack de uma plataforma de gestão, incluindo autenticação, controle de acesso, dados e integrações."
 			},
 			"yampi": {
-				"role": "Full-Stack Developer",
 				"company": "Yampi",
-				"period": "2024 — Presente",
-				"description": "Manutenção de e-commerces e criação de APIs de integração com ERPs. Desenvolvimento de soluções de sincronização bidirecional com Node.js e Fastify."
+				"role": "Desenvolvedor full stack sênior",
+				"period": "jul. 2024 — mai. 2026",
+				"description": "Desenvolvimento de APIs e integrações para lojas, incluindo automações de estoque e regras de frete."
 			},
-			"freelancer": {
-				"role": "Desenvolvedor Full-Stack Freelancer",
-				"company": "Autônomo",
-				"period": "2017 — 2024",
-				"description": "Desenvolvimento de landing pages, pequenos ERPs e catálogos virtuais para diversos clientes. Consultoria para empresas que buscavam migrar sistemas legados para plataformas modernas."
+			"meo": {
+				"company": "MEO Leasing",
+				"role": "Desenvolvedor full stack sênior",
+				"period": "mai. 2025 — ago. 2025",
+				"description": "Desenvolvimento de uma plataforma de simulações e financiamento de energia solar, com fluxos de aprovação e documentos."
+			},
+			"yieldmaster": {
+				"company": "YieldMaster",
+				"role": "Desenvolvedor full stack pleno",
+				"period": "mar. 2023 — set. 2025",
+				"description": "Desenvolvimento de análises financeiras, integração de cotações e recursos de consulta em linguagem natural."
+			},
+			"bankup": {
+				"company": "BANKUP",
+				"role": "Projeto freelance",
+				"period": "jun. 2022 — ago. 2023",
+				"description": "Automação de coleta e processamento de dados financeiros de diferentes fontes, com relatórios por e-mail."
+			},
+			"rodrigocar": {
+				"company": "RodrigoCar",
+				"role": "Desenvolvedor full stack júnior",
+				"period": "fev. 2021 — jan. 2023",
+				"description": "Desenvolvimento de integrações, autenticação e fluxos para um sistema de fidelidade e seus estabelecimentos parceiros."
 			}
 		}
 	},

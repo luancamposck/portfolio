@@ -10,19 +10,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 const skillCategories = [
 	{
 		titleKey: "frontend" as const,
-		skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Motion", "HTML/CSS", "Figma"]
+		skills: ["React", "Next.js", "TypeScript", "JavaScript", "Vue", "Tailwind CSS", "React Native"]
 	},
 	{
 		titleKey: "backend" as const,
-		skills: ["Node.js", "Python", "PostgreSQL", "MongoDB", "REST APIs", "GraphQL", "Redis"]
+		skills: ["Node.js", "Python", "FastAPI", "Express", "NestJS", "PostgreSQL", "GraphQL"]
 	},
 	{
 		titleKey: "devops" as const,
-		skills: ["Docker", "AWS", "Vercel", "CI/CD", "GitHub Actions", "Nginx", "Linux"]
+		skills: ["Docker", "Kubernetes", "AWS", "Linux", "CI/CD", "GitHub Actions", "Redis"]
 	},
 	{
 		titleKey: "tools" as const,
-		skills: ["Git", "VS Code", "Postman", "Jira", "Notion", "Storybook", "Vitest"]
+		skills: ["Git", "OpenAI", "MCP", "RAG", "Puppeteer", "Stripe", "RabbitMQ"]
 	}
 ]
 

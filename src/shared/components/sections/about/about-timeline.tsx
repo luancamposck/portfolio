@@ -2,17 +2,34 @@
 
 import { Briefcase } from "lucide-react"
 import { motion, useReducedMotion } from "motion/react"
+import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 import { Badge } from "@/shared/components/ui/badge"
 
-const experienceKeys = ["kyntech", "yampi", "freelancer"] as const
+const experienceKeys = ["embalalab", "kyntech", "gabinete", "yampi", "meo", "yieldmaster", "bankup", "rodrigocar"] as const
+
+const companyLogos: Partial<Record<(typeof experienceKeys)[number], string>> = {
+	embalalab: "/images/companies/embalalab.jpeg",
+	kyntech: "/images/companies/kyntech.png",
+	gabinete: "/images/companies/gabinete-neo.png",
+	yampi: "/images/companies/yampi.jpeg",
+	meo: "/images/companies/meo-leasing.jpeg",
+	yieldmaster: "/images/companies/yieldmaster.png",
+	bankup: "/images/companies/bankup.png",
+	rodrigocar: "/images/companies/rodrigocar.png"
+}
 
 const experienceTags: Record<(typeof experienceKeys)[number], string[]> = {
-	kyntech: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS", "Web Scraping"],
-	yampi: ["Vue.js", "Node.js", "Fastify", "Bling API", "TypeScript"],
-	freelancer: ["React", "Node.js", "TypeScript", "WordPress", "PostgreSQL"]
+	embalalab: ["TypeScript", "Next.js", "Python", "FastAPI", "NestJS", "Linux"],
+	kyntech: ["TypeScript", "Next.js", "Python", "FastAPI", "Linux"],
+	gabinete: ["Next.js", "PostgreSQL", "Stripe", "React Query", "AWS"],
+	yampi: ["Node.js", "Express", "Vue", "PostgreSQL", "Bling API"],
+	meo: ["Next.js", "Node.js", "PostgreSQL", "Docker", "AWS"],
+	yieldmaster: ["React", "Next.js", "Node.js", "PostgreSQL", "Python"],
+	bankup: ["Python", "Node.js", "Next.js", "Docker", "AWS"],
+	rodrigocar: ["React", "Node.js", "PostgreSQL", "RabbitMQ", "OAuth"]
 }
 
 export function AboutTimeline() {
@@ -48,9 +65,14 @@ export function AboutTimeline() {
 								{/* Content card */}
 								<div className={`ml-12 md:ml-0 md:w-[calc(50%-2rem)] ${index % 2 === 0 ? "md:pr-8" : "md:pl-8"}`}>
 									<div className="rounded-lg border bg-card p-6">
-										<span className="text-sm font-medium text-primary">{t(`experiences.${key}.period`)}</span>
-										<h3 className="mt-1 text-lg font-bold">{t(`experiences.${key}.role`)}</h3>
-										<p className="text-sm text-muted-foreground">{t(`experiences.${key}.company`)}</p>
+										<div className="flex items-start gap-4">
+											{companyLogos[key] && <Image src={companyLogos[key]} alt="" width={56} height={56} className="size-14 shrink-0 rounded-lg border object-contain" />}
+											<div className="min-w-0">
+												<span className="text-sm font-medium text-primary">{t(`experiences.${key}.period`)}</span>
+												<h3 className="mt-1 text-lg font-bold">{t(`experiences.${key}.company`)}</h3>
+												<p className="text-sm text-muted-foreground">{t(`experiences.${key}.role`)}</p>
+											</div>
+										</div>
 										<p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t(`experiences.${key}.description`)}</p>
 										<div className="mt-4 flex flex-wrap gap-1.5">
 											{experienceTags[key].map((tag) => (
