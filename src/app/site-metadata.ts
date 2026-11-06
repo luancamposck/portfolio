@@ -1,9 +1,7 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 
-import "./globals.css"
-
-const varelaRound = localFont({
+export const varelaRound = localFont({
 	src: "../../public/fonts/varela-round-latin.woff2",
 	weight: "400",
 	style: "normal",
@@ -12,7 +10,7 @@ const varelaRound = localFont({
 	fallback: ["system-ui", "arial", "sans-serif"]
 })
 
-const geistMono = localFont({
+export const geistMono = localFont({
 	src: "../../public/fonts/geist-mono-latin.woff2",
 	variable: "--font-geist-mono",
 	display: "swap",
@@ -44,13 +42,3 @@ export const metadata: Metadata = {
 		follow: true
 	}
 }
-
-const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
-	return (
-		<html lang="pt-BR" className={`${varelaRound.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
-			<body className="min-h-full flex flex-col">{children}</body>
-		</html>
-	)
-}
-
-export default RootLayout

@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
-// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { getTranslations } from "next-intl/server"
 import { routing } from "@/i18n/routing"
 import { getProjectBySlug, projects } from "@/modules/projects/data"
 import { ProjectGallery } from "@/shared/components/sections/projects/project-gallery"
@@ -23,7 +22,6 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale, slug } = await params
-	setRequestLocale(locale)
 	const project = getProjectBySlug(slug)
 
 	if (!project) {
@@ -47,8 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProjectDetailPage({ params }: Props) {
-	const { locale, slug } = await params
-	setRequestLocale(locale)
+	const { slug } = await params
 	const project = getProjectBySlug(slug)
 
 	if (!project) {

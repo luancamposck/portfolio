@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
-// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { getTranslations } from "next-intl/server"
 import { routing } from "@/i18n/routing"
 import { AboutPreview } from "@/shared/components/sections/about-preview"
 import { CTA } from "@/shared/components/sections/cta"
@@ -16,7 +15,6 @@ const BASE_URL = "https://luancamposk.dev"
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale } = await params
-	setRequestLocale(locale)
 	const t = await getTranslations("metadata")
 	return {
 		title: t("title"),
@@ -28,10 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	}
 }
 
-const HomePage = async ({ params }: Props) => {
-	const { locale } = await params
-	setRequestLocale(locale)
-
+const HomePage = async () => {
 	const t = await getTranslations("metadata")
 
 	const jsonLd = {

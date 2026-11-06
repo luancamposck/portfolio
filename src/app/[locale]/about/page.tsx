@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
-// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { getTranslations } from "next-intl/server"
 import { routing } from "@/i18n/routing"
 import { AboutBio } from "@/shared/components/sections/about/about-bio"
 import { AboutHero } from "@/shared/components/sections/about/about-hero"
@@ -14,7 +13,6 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale } = await params
-	setRequestLocale(locale)
 	const t = await getTranslations("aboutPage")
 	return {
 		title: t("title"),
@@ -26,10 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	}
 }
 
-export default async function AboutPage({ params }: Props) {
-	const { locale } = await params
-	setRequestLocale(locale)
-
+export default async function AboutPage() {
 	return (
 		<>
 			<AboutHero />

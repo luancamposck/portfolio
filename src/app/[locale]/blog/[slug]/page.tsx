@@ -2,8 +2,7 @@ import { Calendar, Clock, Tag } from "lucide-react"
 import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
-// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { getTranslations } from "next-intl/server"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import rehypeAutolinkHeadings from "rehype-autolink-headings"
 import rehypePrettyCode from "rehype-pretty-code"
@@ -29,7 +28,6 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale, slug } = await params
-	setRequestLocale(locale)
 	const post = getPostBySlug(slug, locale)
 
 	if (!post) {
@@ -75,7 +73,6 @@ function formatDate(dateStr: string, locale: string): string {
 
 export default async function BlogPostPage({ params }: Props) {
 	const { locale, slug } = await params
-	setRequestLocale(locale)
 	const post = getPostBySlug(slug, locale)
 
 	if (!post) {

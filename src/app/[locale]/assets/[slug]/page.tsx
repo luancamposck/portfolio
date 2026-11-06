@@ -1,8 +1,7 @@
 import { toHtml } from "hast-util-to-html"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-// biome-ignore lint/suspicious/noDeprecatedImports: required for static i18n until root-params migration
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { getTranslations } from "next-intl/server"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { codeToHtml } from "shiki"
@@ -38,7 +37,6 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale, slug } = await params
-	setRequestLocale(locale)
 	const asset = getAssetBySlug(slug, locale)
 
 	if (!asset) {
@@ -65,7 +63,6 @@ async function renderMarkdown(markdown: string): Promise<string> {
 
 export default async function AssetDetailPage({ params }: Props) {
 	const { locale, slug } = await params
-	setRequestLocale(locale)
 	const asset = getAssetBySlug(slug, locale)
 
 	if (!asset) {
