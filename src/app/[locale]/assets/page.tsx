@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { routing } from "@/i18n/routing"
 import { type AssetLocale, getAllAssetCategories, getAssetSummaries } from "@/modules/assets/data"
@@ -13,7 +13,6 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { locale } = await params
-	setRequestLocale(locale)
 	const t = await getTranslations("assetsPage")
 	return {
 		title: t("title"),
@@ -27,7 +26,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AssetsPage({ params }: Props) {
 	const { locale } = await params
-	setRequestLocale(locale)
 	const t = await getTranslations("assetsPage")
 
 	return (

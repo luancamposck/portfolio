@@ -1,232 +1,83 @@
-# Luan Campos K. — Portfolio
+# Luan Campos K. — software engineering portfolio
 
-Portfolio pessoal multi-idioma com blog, code assets e projetos. Construido com Next.js 16, React 19 e Tailwind CSS v4.
+A personal portfolio bringing together professional projects, technical writing, and a collection of reusable code assets. The application is built with Next.js and organized around localized routes, content modules, and shared interface components.
 
-## Stack
+**[Visit the portfolio →](https://luancamposk.dev)**
 
-- **Framework:** Next.js 16 + React 19
-- **Styling:** Tailwind CSS v4 + shadcn (base-nova)
-- **Animacoes:** Motion (ex-Framer Motion)
-- **i18n:** next-intl (PT-BR, EN, ES)
-- **Blog:** MDX + rehype-pretty-code + shiki
-- **Linting:** Biome
-- **Fontes:** Varela Round (sans) + Geist Mono (mono)
+![Portfolio homepage showing the main introduction and navigation in the dark theme](docs/readme/homepage.webp)
 
-## Setup
+## Visual showcase
 
-```bash
-npm install
-npm run dev
-```
+The project collection presents work through filterable cards that lead to dedicated detail pages with context, technologies, and galleries.
 
-Acesse `http://localhost:3000` — o proxy redireciona automaticamente para `http://localhost:3000/pt`.
+![Portfolio projects page with category filters and project cards](docs/readme/projects.webp)
 
-## Scripts
+The technical blog renders MDX articles with linked headings and a dedicated reading layout. The article shown here is published in Portuguese.
 
-| Comando | Descricao |
-|---|---|
-| `npm run dev` | Dev server |
-| `npm run build` | Build de producao |
-| `npm run start` | Serve o build |
-| `npm run lint` | Biome linter |
-| `npm run format` | Biome formatter |
+![Technical article page showing its title, reading time, tags, and article content](docs/readme/blog.webp)
 
-## Estrutura do projeto
+The code asset library combines searchable cards with detail pages for highlighted source code and explanations. These views show the portfolio's own interface, with examples from its content collection.
 
-```
+![Code asset library showing search, category filters, and snippet previews](docs/readme/code-assets.webp)
+
+![Code asset detail page displaying a syntax-highlighted shell script](docs/readme/asset-detail.webp)
+
+## Architecture and project structure
+
+```text
 src/
-  app/
-    layout.tsx                # Root layout (fontes, metadata global)
-    globals.css               # Tailwind + theme vars
-    [locale]/                 # Rotas com prefixo de idioma (/pt, /en, /es)
-      layout.tsx              # Locale layout (Navbar, Footer, ThemeProvider)
-      page.tsx                # Home
-      about/page.tsx
-      projects/page.tsx
-      projects/[slug]/page.tsx
-      assets/page.tsx
-      assets/[slug]/page.tsx
-      blog/page.tsx
-      blog/[slug]/page.tsx
-      not-found.tsx
-  modules/
-    projects/data.ts         # Dados e consultas dos projetos
-    assets/data.ts           # Code assets e consultas
-    blog/data.ts             # Leitura e consultas de posts MDX
-    blog/validation.ts       # Validação do frontmatter
-  i18n/
-    routing.ts                # Config de locales
-    navigation.ts             # Link, useRouter, usePathname i18n-aware
-    request.ts                # Server-side locale resolution
-  proxy.ts                    # Proxy (middleware do Next.js 16) para i18n routing
-  shared/
-    components/
-      ui/                     # Componentes shadcn
-      layout/                 # Navbar, Footer, SectionWrapper
-      creative/               # Animacoes (GradientBlob, TextReveal, MagneticButton, etc.)
-      sections/               # Secoes de pagina (hero, cta, about, projects, blog, assets)
-      mdx/                    # Componentes usaveis dentro de MDX (Callout, CodeBlock)
-    hooks/
-    lib/
-content/
-  blog/                       # Posts MDX
-messages/
-  pt.json                     # Traducoes PT-BR
-  en.json                     # Traducoes EN
-  es.json                     # Traducoes ES
+├── app/                  Routes, layouts, metadata, and page composition
+│   └── [locale]/         Localized pages and detail routes
+├── modules/
+│   ├── projects/         Project data and queries
+│   ├── blog/             MDX loading, queries, and frontmatter validation
+│   ├── assets/           Code asset data and listing summaries
+│   └── content/          Shared syntax-highlighting configuration
+├── shared/
+│   ├── components/       UI primitives, layouts, sections, and MDX components
+│   ├── hooks/            Shared hooks
+│   └── lib/              Shared utilities
+├── i18n/                 Locale routing, navigation, and message loading
+└── proxy.ts              Locale-aware request routing
+
+content/blog/             MDX articles and frontmatter
+messages/                 Interface translations
+public/                   Images, fonts, and static files
 ```
 
-## Adicionando conteudo
+Route files compose pages and generate metadata while the content modules own data access and content-specific operations. Shared components provide the visual building blocks used across routes. This keeps an article's MDX parsing and validation separate from its page layout, while leaving route behavior visible in the App Router.
 
-### Novo post no blog
+## Engineering decisions
 
-1. Crie um arquivo `.mdx` em `content/blog/`:
+### Server rendering with focused client boundaries
 
-```mdx
----
-slug: "meu-novo-post"
-title: "Titulo do post"
-description: "Descricao curta"
-locale: "pt"
-date: "2026-03-25"
-tags: ["react", "nextjs"]
-category: "frontend"
-coverImage: "/images/blog/meu-post.png"
-published: true
----
+Page and layout files are Server Components. Interactive pieces, including the navigation, filtering controls, theme switcher, and animation components, are isolated behind client boundaries. The hero and call to action dynamically load the magnetic button; the hero also loads its cursor spotlight with server rendering disabled. This keeps browser-dependent effects out of the server-rendered component tree while preserving server-side page composition.
 
-Conteudo em markdown aqui.
+### Content models shaped for their consumers
 
-## Subtitulo
+Projects and assets are maintained in domain modules; blog articles are read from MDX files. The blog loader validates required frontmatter, dates, locales, and duplicate locale/slug pairs before exposing published posts. Blog and asset listing pages pass summaries to client components, omitting full article bodies and asset explanations; asset code previews are limited to the first four lines. Detail pages access the complete content when needed.
 
-Paragrafo com **negrito** e `codigo inline`.
+### Localization tied to content availability
 
-<Callout type="info">
-  Voce pode usar componentes React dentro do MDX!
-</Callout>
+`next-intl` provides locale-aware routing and loads interface messages for Portuguese, English, and Spanish. Blog posts and assets carry their own locale, so translated interface routes do not imply that every content item is translated. Detail lookup and static parameters use both locale and slug; when a translation is unavailable, the language selector returns to the corresponding listing. Project data is shared across locales rather than translated in the content module.
 
-```tsx title="exemplo.tsx"
-function hello() {
-  return "world"
-}
-```
-```
+### Search metadata and motion preferences
 
-2. Pronto! O post aparece automaticamente em `/<locale>/blog` para o locale definido no frontmatter.
+Pages define metadata and canonical URLs; localized content details and the sitemap derive language alternatives from available posts and assets. The homepage also includes person-shaped JSON-LD. Motion components such as project cards, text reveals, and section wrappers check the reduced-motion preference, and the layout provides a skip link. These are targeted measures within the implementation rather than a claim of comprehensive accessibility coverage.
 
-**Campos do frontmatter:**
+## Technology stack
 
-| Campo | Tipo | Obrigatorio | Descricao |
-|---|---|---|---|
-| `slug` | string | sim | Identificador unico (usado na URL) |
-| `title` | string | sim | Titulo do post |
-| `description` | string | sim | Descricao curta (SEO e cards) |
-| `locale` | `"pt"` \| `"en"` \| `"es"` | sim | Idioma do post |
-| `date` | string | sim | Data de publicacao (YYYY-MM-DD) |
-| `tags` | string[] | sim | Tags para filtragem |
-| `category` | string | sim | Categoria (ex: "frontend", "devops") |
-| `coverImage` | string | nao | Path da imagem de capa |
-| `published` | boolean | sim | `false` esconde o post da listagem |
+| Responsibility | Technologies |
+| --- | --- |
+| Application | Next.js 16, React 19, TypeScript |
+| Styling and UI | Tailwind CSS v4, shadcn/ui, Base UI |
+| Interaction | Motion, Embla Carousel |
+| Internationalization | next-intl |
+| Content and code | MDX, gray-matter, rehype, Shiki |
+| Development tooling | Biome |
 
-**Componentes disponiveis no MDX:**
+## About the developer
 
-- `<Callout type="info|warning|error">` — Bloco de destaque
-- `<CodeBlock>` — Bloco de codigo com botao de copiar
-- Syntax highlighting automatico em blocos de codigo com suporte a `title="arquivo.ts"` e line highlighting
+Luan Campos K. is a software engineer whose work spans full-stack development, software architecture, and building web applications.
 
-**Post em outro idioma:** Crie outro arquivo `.mdx` com o mesmo `slug` e o `locale` correspondente (`"en"` ou `"es"`). Cada combinação de idioma e slug deve ser única. Rascunhos (`published: false`) não são públicos. Quando não houver tradução, a troca de idioma leva à listagem; sitemap e metadados anunciam apenas versões publicadas.
-
-### Novo code asset
-
-Edite `src/modules/assets/data.ts` e adicione um objeto ao array `assets`:
-
-```ts
-{
-  slug: "meu-snippet",
-  title: "Nome do snippet",
-  description: "O que esse codigo faz e por que e util",
-  locale: "pt",
-  language: "ts",
-  code: `function exemplo() {
-  return "hello"
-}`,
-  explanation: `## Por que guardo isso?
-
-Explicacao em markdown sobre o que faz, quando usar e por que e util.
-
-### Quando usar
-- Caso de uso 1
-- Caso de uso 2`,
-  tags: ["typescript", "utils"],
-  category: "utils",
-  createdAt: "2026-03-25"
-}
-```
-
-**Campos do CodeAsset:**
-
-| Campo | Tipo | Obrigatorio | Descricao |
-|---|---|---|---|
-| `slug` | string | sim | Identificador unico (URL) |
-| `title` | string | sim | Nome do snippet |
-| `description` | string | sim | Descricao curta |
-| `locale` | `"pt"` \| `"en"` \| `"es"` | sim | Idioma |
-| `language` | string | sim | Linguagem do codigo (ts, js, python, go, bash, css, etc.) |
-| `code` | string | sim | O codigo em si |
-| `explanation` | string | sim | Explicacao em markdown |
-| `tags` | string[] | sim | Tags |
-| `category` | `"utils"` \| `"hooks"` \| `"patterns"` \| `"algorithms"` \| `"devops"` | sim | Categoria |
-| `createdAt` | string | sim | Data de criacao (YYYY-MM-DD) |
-| `updatedAt` | string | nao | Data de atualizacao |
-
-### Novo projeto
-
-Edite `src/modules/projects/data.ts` e adicione um objeto ao array `projects`:
-
-```ts
-{
-  slug: "meu-projeto",
-  title: "Nome do Projeto",
-  subtitle: "Subtitulo curto",
-  description: "Descricao para os cards",
-  longDescription: "Descricao completa para a pagina de detalhe.\n\nSuporta multiplos paragrafos.",
-  coverImage: "/images/projects/meu-projeto.png",
-  images: ["/images/projects/meu-projeto-1.png", "/images/projects/meu-projeto-2.png"],
-  tags: ["Next.js", "TypeScript", "PostgreSQL"],
-  category: "SaaS",
-  client: "Nome do Cliente",
-  year: 2026,
-  liveUrl: "https://exemplo.com",
-  githubUrl: "https://github.com/user/repo",
-  featured: true,
-  results: ["40% de reducao no tempo de carregamento", "12k usuarios diarios"]
-}
-```
-
-Marque `featured: true` para aparecer na home.
-
-## i18n
-
-O site suporta 3 idiomas: **Portugues** (padrao), **English** e **Espanol**.
-
-- Rotas usam prefixo: `/pt/projects`, `/en/projects`, `/es/projects`
-- O proxy detecta o idioma do browser e redireciona automaticamente
-- Traducoes de UI ficam em `messages/{locale}.json`
-- Conteudo (blog, assets) usa campo `locale` — cada item pertence a um idioma; versões com o mesmo slug são tratadas como traduções.
-- Detalhes indisponíveis no idioma solicitado retornam 404; o seletor abre a listagem nesse idioma quando não existe tradução.
-
-Para adicionar/editar traducoes de UI, edite os arquivos em `messages/`.
-
-## Tema
-
-Dark mode e o padrao. O visitante pode alternar entre dark, light e system pelo toggle no navbar.
-
-As cores usam formato oklch e estao definidas em `src/app/globals.css`.
-
-## Convencoes
-
-- `page.tsx` e `layout.tsx` sao sempre Server Components (nunca `"use client"`)
-- Componentes shadcn em `src/shared/components/ui/`
-- Componentes de secao em `src/shared/components/sections/<nome>/`
-- Commits semanticos em ingles: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `style:`
-- Biome: tabs, double quotes, sem semicolons, sem trailing commas
+[Portfolio](https://luancamposk.dev) · [GitHub](https://github.com/luancamposck)

@@ -3,16 +3,10 @@
 import { ArrowRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
-import { Counter } from "@/shared/components/creative/counter"
 import { TextReveal } from "@/shared/components/creative/text-reveal"
 import { SectionWrapper } from "@/shared/components/layout/section-wrapper"
 
-const statsData = [
-	{ target: 8, suffix: "+", labelKey: "experience" as const },
-	{ target: 50, suffix: "+", labelKey: "projects" as const },
-	{ target: 30, suffix: "+", labelKey: "clients" as const },
-	{ target: 25, suffix: "+", labelKey: "technologies" as const }
-]
+const areas = ["architecture", "fullstack", "integrations", "ai"] as const
 
 export function AboutPreview() {
 	const t = useTranslations("aboutPreview")
@@ -34,12 +28,9 @@ export function AboutPreview() {
 					</div>
 
 					<div className="grid grid-cols-2 gap-3 sm:gap-6">
-						{statsData.map((stat) => (
-							<div key={stat.labelKey} className="bg-card rounded-xl border p-4 sm:p-6 text-center">
-								<div className="text-primary text-2xl sm:text-3xl font-bold md:text-4xl">
-									<Counter target={stat.target} suffix={stat.suffix} />
-								</div>
-								<p className="text-muted-foreground mt-2 text-sm">{t(`stats.${stat.labelKey}`)}</p>
+						{areas.map((area) => (
+							<div key={area} className="flex min-h-24 items-center rounded-xl border bg-card p-4 sm:p-6 text-lg font-medium text-foreground">
+								{t(`areas.${area}`)}
 							</div>
 						))}
 					</div>

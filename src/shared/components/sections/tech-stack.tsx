@@ -17,16 +17,13 @@ const technologies = [
 	"GraphQL",
 	"NestJS",
 	"Redis",
-	"Prisma",
-	"Figma",
 	"Git",
 	"Python",
 	"HTML",
 	"JavaScript",
 	"CSS",
 	"Fastify",
-	"MongoDB",
-	"Vercel"
+	"Kubernetes"
 ]
 
 export function TechStack() {

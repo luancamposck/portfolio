@@ -6,6 +6,7 @@ import { prettyCodeOptions } from "./src/modules/content/highlighting"
 const nextConfig: NextConfig = {
 	pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
 	reactCompiler: true,
+	experimental: { globalNotFound: true },
 }
 
 const withMDX = createMDX({
