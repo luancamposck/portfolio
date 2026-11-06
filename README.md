@@ -1,6 +1,6 @@
 # Luan Campos K. — software engineering portfolio
 
-A personal portfolio bringing together professional projects, technical writing, and a collection of reusable code assets. The application is built with Next.js and organized around localized routes, content modules, and shared interface components.
+A personal portfolio bringing together professional projects, technical writing, and a collection of reusable code assets. The monorepo contains a Next.js application and a new Django project that will support future backend features.
 
 **[Visit the portfolio →](https://luancamposk.dev)**
 
@@ -25,27 +25,59 @@ The code asset library combines searchable cards with detail pages for highlight
 ## Architecture and project structure
 
 ```text
-src/
-├── app/                  Routes, layouts, metadata, and page composition
-│   └── [locale]/         Localized pages and detail routes
-├── modules/
-│   ├── projects/         Project data and queries
-│   ├── blog/             MDX loading, queries, and frontmatter validation
-│   ├── assets/           Code asset data and listing summaries
-│   └── content/          Shared syntax-highlighting configuration
-├── shared/
-│   ├── components/       UI primitives, layouts, sections, and MDX components
-│   ├── hooks/            Shared hooks
-│   └── lib/              Shared utilities
-├── i18n/                 Locale routing, navigation, and message loading
-└── proxy.ts              Locale-aware request routing
-
-content/blog/             MDX articles and frontmatter
-messages/                 Interface translations
-public/                   Images, fonts, and static files
+apps/
+├── web/                      Next.js application
+│   ├── content/blog/         MDX articles and frontmatter
+│   ├── messages/             Interface translations
+│   ├── public/               Images, fonts, and static files
+│   └── src/
+│       ├── app/              Routes, layouts, metadata, and page composition
+│       ├── modules/          Project, blog, asset, and content data
+│       ├── shared/           Components, hooks, and utilities
+│       ├── i18n/             Locale routing and message loading
+│       └── proxy.ts          Locale-aware request routing
+└── api/                      Django project and Python dependencies
+.github/workflows/            Web and API checks
+docs/                         Project documentation
 ```
 
 Route files compose pages and generate metadata while the content modules own data access and content-specific operations. Shared components provide the visual building blocks used across routes. This keeps an article's MDX parsing and validation separate from its page layout, while leaving route behavior visible in the App Router.
+
+## Local development
+
+The applications are independent and are run from their own directories.
+
+### Web
+
+Requires Node.js 24 and npm. Run from the repository root:
+
+```sh
+cd apps/web
+npm ci
+cp .env.example .env.local
+npm run dev
+```
+
+Use `npm run lint`, `npx next typegen`, `npx tsc --noEmit --incremental false`, and `npm run build` to reproduce the web CI checks. The build and development server must run from `apps/web`, where the blog content and public assets live.
+
+### API
+
+Requires Python 3.14. Django 5.2 LTS was generated with `django-admin startproject`. From the repository root:
+
+```sh
+cd apps/api
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+The initial project uses SQLite locally and has no chatbot endpoint yet. Run `python manage.py check` and `python manage.py test` for the API CI checks. Settings are read from environment variables, not automatically from `.env` files; `apps/api/.env.example` documents them. For local development `DJANGO_DEBUG` defaults to `true` and a development-only key is used. When `DJANGO_DEBUG=false`, set a unique `DJANGO_SECRET_KEY` and configure `DJANGO_ALLOWED_HOSTS`. Production hosting and security settings will be completed with the API deployment.
+
+## Deployment
+
+The web and API have independent deployment targets. For Vercel, set the existing project's **Root Directory** to `apps/web` when the migration is available on the linked Git branch. Keep source files outside the root directory disabled unless the web gains a documented dependency on them. `apps/web/vercel.json` defines an ignored-build script that compares web files against the last successful deployment for the same branch; when that commit is unavailable, it builds rather than skipping. Check a preview deployment and verify that an API-only change is ignored after the migration. The Django project is not deployed yet; its future CKRG deployment and OmniRoute integration are separate work.
 
 ## Engineering decisions
 
@@ -69,7 +101,8 @@ Pages define metadata and canonical URLs; localized content details and the site
 
 | Responsibility | Technologies |
 | --- | --- |
-| Application | Next.js 16, React 19, TypeScript |
+| Web application | Next.js 16, React 19, TypeScript |
+| API foundation | Python 3.14, Django 5.2 LTS |
 | Styling and UI | Tailwind CSS v4, shadcn/ui, Base UI |
 | Interaction | Motion, Embla Carousel |
 | Internationalization | next-intl |
